@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html class="light overflow-x-hidden" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Contact Us — Let's Start A Conversation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Hanken+Grotesk:wght@300;400;500;700&family=Great+Vibes&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          primary: '#5f2859',
+          'primary-container': '#7A3F72',
+          'deep-aubergine': '#3D1A38',
+          secondary: '#C9A36B',
+          'secondary-fixed-dim': '#C9A36B',
+          'secondary-fixed': '#efe0cd',
+          'on-secondary-fixed': '#453c2e',
+          'on-secondary': '#453c2e',
+          'soft-sand': '#efe0cd',
+          'golden-beige': '#fdd397',
+          surface: '#3D1A38',
+          'on-surface': '#efe0cd',
+          'on-surface-variant': '#EADBC8',
+          'on-primary': '#efe0cd',
+          'on-primary-container': '#efe0cd',
+          error: '#C0455A',
+        },
+        fontFamily: {
+          aptos: ['Hanken Grotesk', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<style>
+    :root {
+      --primary: #5f2859;
+      --primary-container: #7A3F72;
+      --deep-aubergine: #3D1A38;
+      --secondary: #C9A36B;
+      --secondary-fixed-dim: #C9A36B;
+      --secondary-fixed: #efe0cd;
+      --on-secondary-fixed: #453c2e;
+      --on-secondary: #453c2e;
+      --soft-sand: #efe0cd;
+      --golden-beige: #fdd397;
+      --surface: #3D1A38;
+      --on-surface: #efe0cd;
+      --on-surface-rgb: 239, 224, 205;
+      --on-surface-variant: #EADBC8;
+      --on-primary: #efe0cd;
+      --on-primary-container: #efe0cd;
+      --error: #C0455A;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* ===== Custom Hanger Cursor ===== */
+  body {
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="%23C9A36B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3m0 0a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm-9 12c0-1.5 2-3 9-3s9 1.5 9 3v1H3v-1z"/><path d="M12 5v2"/></svg>'), auto;
+  }
+
+  /* ===== Hero ===== */
+  .spotlight {
+      background: radial-gradient(circle at 50% 0%, rgba(201, 163, 107, 0.18) 0%, rgba(90, 42, 86, 0) 70%);
+  }
+
+  .hero-gif-container {
+      position: relative;
+      overflow: hidden;
+      background: var(--primary);
+  }
+  .hero-gif-mask {
+      mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+  }
+  .hero-blend-overlay {
+      background: linear-gradient(to bottom, var(--primary) 0%, transparent 25%, transparent 75%, var(--primary) 100%);
+  }
+
+  /* Floating fabric-swatch accents in hero */
+  .swatch {
+      position: absolute;
+      border-radius: 9999px;
+      filter: blur(40px);
+      opacity: 0.35;
+      pointer-events: none;
+  }
+  @keyframes drift {
+      0%, 100% { transform: translateY(0) translateX(0); }
+      50% { transform: translateY(-24px) translateX(14px); }
+  }
+
+  /* ===== Ticker ===== */
+  .ticker-wrap { overflow: hidden; white-space: nowrap; }
+  .ticker-move { display: inline-block; animation: ticker 28s linear infinite; }
+  @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  /* ===== Film roll ===== */
+  .film-roll-wrap { overflow: hidden; white-space: nowrap; position: relative; }
+  .film-roll-move { display: inline-flex; animation: film-roll 55s linear infinite; gap: 2rem; }
+  .film-roll-wrap:hover .film-roll-move { animation-play-state: paused; }
+  @keyframes film-roll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  .font-aptos { font-family: 'Hanken Grotesk', sans-serif; }
+
+  /* ===== Logo ===== */
+  .logo-icon-container { width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; }
+  .logo-icon-img { width: 100%; height: 100%; object-fit: contain; }
+
+  /* ===== Polaroid Card ===== */
+  .polaroid-card {
+      background: #efe0cd;
+      padding: 0.75rem;
+      padding-bottom: 2.25rem;
+      box-shadow: 0 12px 24px -6px rgba(61,26,58,0.18), 0 4px 8px -4px rgba(61,26,58,0.12);
+      transform: rotate(var(--rotation));
+      width: 230px;
+      flex-shrink: 0;
+      border: 1px solid rgba(201, 163, 107, 0.4);
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      cursor: pointer;
+      white-space: normal;
+  }
+  .polaroid-card:hover {
+      transform: scale(1.07) rotate(0deg) !important;
+      box-shadow: 0 20px 40px -8px rgba(61,26,58,0.28), 0 8px 16px -8px rgba(61,26,58,0.2);
+      z-index: 10;
+  }
+  .polaroid-caption {
+    font-family: 'Great Vibes', cursive;
+    color: var(--primary);
+  }
+
+  /* ===== Cycle / Signature diagram ===== */
+  .cycle-step {
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+  .cycle-step:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 32px -10px rgba(61,26,58,0.25);
+  }
+  .cycle-connector {
+      stroke-dasharray: 6 8;
+      animation: dash 18s linear infinite;
+  }
+  @keyframes dash { to { stroke-dashoffset: -200; } }
+
+  /* ===== General reveal-on-scroll ===== */
+  .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+  }
+
+  /* Card hover lift */
+  .lift-on-hover { transition: transform .35s ease, box-shadow .35s ease; }
+  .lift-on-hover:hover { transform: translateY(-6px); }
+
+      .page-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 3rem;
+      max-width: 900px;
+      width: 100%;
+      align-items: start;
+    }
+
+    /* LEFT COLUMN */
+    .left-col h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      line-height: 1.2;
+      color: var(--secondary);
+      margin-bottom: 0.75rem;
+    }
+
+    .left-col p {
+      font-size: 0.95rem;
+      color: var(--on-surface-variant);
+      line-height: 1.6;
+      margin-bottom: .5rem;
+    }
+    
+    .info-card {
+      background: rgba(133, 73, 125, 0.38);
+      border: 1px solid rgba(201, 163, 107, 0.22);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .info-card:hover {
+      background: rgba(133, 73, 125, 0.55);
+    }
+
+    .info-card .icon-wrap {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: rgba(253, 211, 151, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .info-card .icon-wrap svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--golden-beige);
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .info-card .card-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--golden-beige);
+      margin-bottom: 2px;
+    }
+
+    .info-card .card-value {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--soft-sand);
+    }
+
+    /* RIGHT COLUMN — FORM */
+    .form-card {
+      background: #5f2859;
+      border-radius: 16px;
+      padding: 2rem 1.75rem;
+      border: 1px solid rgba(201, 163, 107, 0.18);
+      box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.45);
+    }
+
+    .field-group {
+      margin-bottom: 1.35rem;
+    }
+
+    .field-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #fdd397;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .form-card input[type="text"],
+    .form-card input[type="email"],
+    .form-card select,
+    .form-card textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(201, 163, 107, 0.35);
+      color: #efe0cd;
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-size: 0.95rem;
+      padding: 0.5rem 0;
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .form-card input::placeholder,
+    .form-card textarea::placeholder {
+      color: rgba(239, 224, 205, 0.38);
+    }
+
+    .form-card input:focus,
+    .form-card select:focus,
+    .form-card textarea:focus {
+      border-bottom-color: #C9A36B;
+    }
+
+    .form-card select {
+      cursor: pointer;
+      color: rgba(239, 224, 205, 0.38);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23C9A36B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 4px center;
+      padding-right: 1.5rem;
+    }
+
+    .form-card select option {
+      background: #5f2859;
+      color: #efe0cd;
+    }
+
+    .form-card select.has-value {
+      color: #efe0cd;
+    }
+
+    .row-two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-card textarea {
+      resize: none;
+      height: 88px;
+      line-height: 1.6;
+    }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: 1.75rem;
+      padding: 1rem;
+      background: #C9A36B;
+      color: #453c2e;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      transition: background 0.2s, color 0.2s, transform 0.1s;
+    }
+
+    .submit-btn:hover { background: #fdd397; color: #453c2e; }
+    .submit-btn:active { transform: scale(0.98); }
+
+    .submit-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: #453c2e;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .social-icons a img {
+      width: 24px;
+      height: 24px;
+      transition: background-color 0.2s;
+      background-color: #C9A36B;
+      border-radius: 4px;
+    }
+
+    .social-icons a:hover img {
+      background-color: #fdd397;
+    }
+    
+    @media (max-width: 680px) {
+      .page-wrapper {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .left-col h1 { font-size: 1.8rem; }
+      .row-two { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body class="bg-surface text-on-surface font-aptos overflow-x-hidden">
+
+<!-- Header -->
+<header class="fixed top-0 left-0 right-0 z-[60] backdrop-blur-md border-b flex justify-between items-center w-full px-6 md:px-12 py-2" style="background: rgba(61,26,56,0.92); border-color: rgba(201,163,107,0.2);">
+  <!-- Spacer for mobile layout balance -->
+  <div class="w-8 lg:hidden"></div>
+
+  <!-- Centered Logo on Mobile -->
+  <div class="h-16 flex items-center gap-3 absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0">
+    <a href="index.html" class="flex items-center gap-3">
+      <div class="logo-icon-container">
+        <img alt="Saha's Icon" class="logo-icon-img" src="assets/logo.png" onerror="this.style.display='none'"/>
+      </div>
+      <span class="font-['Playfair_Display'] text-2xl tracking-wide hidden sm:block" style="color:#C9A36B;">Saha's</span>
+    </a>
+  </div>
+  <!-- Desktop Nav -->
+  <nav class="hidden lg:flex gap-6 items-center">
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="index.html#how-it-works">How it Works<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="vault.html">Style Vault<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="fit-match.html">Fit Match<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="policy.html">Policy<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative font-bold text-xs uppercase tracking-widest py-1" style="color:#C9A36B;" href="contact.html">Contact<span class="absolute bottom-0 left-0 w-full h-[2px]" style="background:#C9A36B;"></span></a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1 flex items-center gap-1" style="color:#efe0cd;" href="account.html"><span class="material-symbols-outlined text-base">person</span><span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <button onclick="window.location.href='vault.html'" class="px-7 py-2.5 rounded-sm font-bold text-xs uppercase tracking-[0.15em] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300" style="background:#C9A36B; color:#453c2e;" onmouseover="this.style.background='#fdd397'" onmouseout="this.style.background='#C9A36B'">Rent Now</button>
+  </nav>
+  <!-- Burger Menu Button -->
+  <button class="lg:hidden relative z-[70]" style="color:#C9A36B;" onclick="toggleMenu()"><span class="material-symbols-outlined text-3xl" id="menu-icon">menu</span></button>
+</header>
+
+<!-- Mobile Menu Overlay -->
+<div id="mobile-menu" class="fixed top-20 right-6 w-56 shadow-2xl rounded-md z-[55] flex flex-col items-center gap-5 p-6 opacity-0 pointer-events-none scale-95 origin-top-right transition-all duration-300 lg:hidden" style="background:#5f2859; border:1px solid rgba(201,163,107,0.25);">
+    <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="vault.html" onclick="toggleMenu()">Style Vault</a>
+    <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="fit-match.html" onclick="toggleMenu()">Saha Fit Match</a>
+    <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="policy.html" onclick="toggleMenu()">Policy</a>
+    <a class="font-bold text-sm uppercase tracking-widest" style="color:#C9A36B;" href="contact.html" onclick="toggleMenu()">Contact Us</a>
+    <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="account.html" onclick="toggleMenu()">My Account</a>
+    <button onclick="window.location.href='vault.html'" class="px-6 py-3 w-full mt-2 rounded-sm font-bold text-xs uppercase tracking-[0.15em]" style="background:#C9A36B; color:#453c2e;">Rent Now</button>
+</div>
+
+<main class="pt-[72px] pb-24 md:pb-0">
+<div class="page-wrapper" style="margin: 0 auto; padding: 5rem 1rem">
+
+  <!-- LEFT -->
+  <div class="left-col">
+    <h1>Let's Start A Conversation</h1>
+    <p>Got a question, a proposal, or a brilliant idea? We're all ears. Use the form below to get in touch, and we'll get back to you as soon as we can.</p>
+
+    <a class="info-card" href="mailto:hello@sahaswardrobe.com">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+      </div>
+      <div>
+        <div class="card-label">Concierge Support</div>
+        <div class="card-value">hello@sahaswardrobe.com</div>
+      </div>
+    </a>
+
+    <div class="social-icons">
+      <a href="#"><img src="https://img.icons8.com/material-outlined/24/000000/facebook-new.png"/></a>
+      <a href="#"><img src="https://img.icons8.com/material-outlined/24/000000/instagram-new.png"/></a>
+      <a href="#"><img src="https://img.icons8.com/material-outlined/24/000000/twitter.png"/></a>
+    </div>
+  </div>
+
+  <!-- RIGHT — FORM -->
+  <div class="form-card">
+
+    <div class="field-group">
+      <label class="field-label" for="name">What should we call you?</label>
+      <input type="text" id="name" placeholder="Your Name" />
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="email">Where can we reach you?</label>
+      <input type="email" id="email" placeholder="email@example.com" />
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="message">Tell us more...</label>
+      <textarea id="message" placeholder="I'm looking for a specific designer piece..."></textarea>
+    </div>
+
+    <button class="submit-btn" onclick="handleSubmit()">
+      Send to My Stylist
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+
+  </div>
+</div>
+</main>
+
+<!-- Mobile Bottom Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-soft-sand/95 backdrop-blur-md border-t border-golden-beige/30 flex justify-around items-center w-full px-2 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+  <a class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="index.html">
+    <span class="material-symbols-outlined text-2xl">home</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Home</span>
+  </a>
+  <a class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="vault.html">
+    <span class="material-symbols-outlined text-2xl">checkroom</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Vault</span>
+  </a>
+  <a class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="fit-match.html">
+    <span class="material-symbols-outlined text-2xl">straighten</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Fit Match</span>
+  </a>
+  <a class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="account.html">
+    <span class="material-symbols-outlined text-2xl">person</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Account</span>
+  </a>
+</nav>
+
+<script>
+  // Mobile Menu Toggle
+  function toggleMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const icon = document.getElementById('menu-icon');
+    const isHidden = menu.classList.contains('opacity-0');
+    if(isHidden) {
+        menu.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+        menu.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
+        icon.innerText = 'close';
+    } else {
+        menu.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+        menu.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+        icon.innerText = 'menu';
+    }
+  }
+  function handleSubmit() {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    if (!name || !email) {
+      alert('Please fill in your name and email before sending.');
+      return;
+    }
+    alert('Thank you, ' + name + '! Your stylist will be in touch soon.');
+  }
+</script>
+</body>
+</html>

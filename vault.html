@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saha's Wardrobe — The Style Vault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          primary: '#5f2859', 'primary-container': '#7A3F72', 'deep-aubergine': '#3D1A38',
+          secondary: '#C9A36B', 'secondary-fixed-dim': '#C9A36B', 'secondary-fixed': '#efe0cd',
+          'on-secondary-fixed': '#453c2e', 'soft-sand': '#efe0cd', 'golden-beige': '#fdd397',
+          surface: '#3D1A38', 'on-surface': '#efe0cd', 'on-surface-variant': '#EADBC8',
+          'on-primary': '#efe0cd', 'on-primary-container': '#efe0cd', error: '#C0455A',
+        },
+        fontFamily: { aptos: ['Hanken Grotesk', 'sans-serif'] }
+      }
+    }
+  }
+</script>
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --bg:#3D1A38;
+  --card:#5F2859;
+  --glass:rgba(133,73,125,.35);
+  --glass-strong:rgba(133,73,125,.55);
+  --gold:#C9A36B;
+  --gold-bright:#FDD397;
+  --cream:#EFE0CD;
+  --cream-2:#EADBC8;
+  --btn-text:#453C2E;
+  --ok:#7FA86B;
+  --busy:#B15A5A;
+  --partial:#D9B45B;
+  --blocked:#6B5A68;
+  --shadow:0 18px 40px rgba(0,0,0,.45);
+  --ease-spring:cubic-bezier(.34,1.45,.5,1);
+  --ease-soft:cubic-bezier(.22,.61,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(133,73,125,.28), transparent 60%),
+    radial-gradient(900px 500px at 100% 110%, rgba(95,40,89,.5), transparent 60%),
+    var(--bg);
+  color:var(--cream-2);
+  font-family:"Hanken Grotesk","Aptos",system-ui,sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+  padding-top:72px;
+}
+::selection{background:var(--gold);color:var(--btn-text)}
+h1,h2{font-family:"Playfair Display",Georgia,serif;font-weight:600;color:var(--gold);letter-spacing:.01em}
+.script{font-family:"Great Vibes",cursive;font-weight:400;color:var(--gold)}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:6px}
+img,svg{display:block}
+
+/* ============ SITE HEADER ============ */
+.logo-icon-container{width:64px;height:64px;display:flex;align-items:center;justify-content:center}
+.logo-icon-img{width:100%;height:100%;object-fit:contain}
+.nav-badge{
+  display:none;position:absolute;top:-6px;right:-10px;min-width:16px;height:16px;padding:0 4px;
+  border-radius:999px;background:var(--gold);color:var(--btn-text);
+  font-size:.6rem;font-weight:800;line-height:16px;text-align:center;
+}
+.nav-badge.show{display:inline-block}
+
+/* ============ IN-PAGE SEARCH ============ */
+.hero-search{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;padding:0 16px;margin-top:0}
+.search{
+  display:flex;align-items:center;gap:12px;
+  background:var(--cream);
+  border:1px solid rgba(201,163,107,.4);
+  border-radius:999px;
+  padding:13px 22px;
+  width:min(500px,92vw);
+  box-shadow:0 10px 30px rgba(0,0,0,.28);
+  transition:width .35s var(--ease-soft),border-color .3s,box-shadow .3s;
+}
+.search:focus-within{
+  width:min(560px,94vw);
+  border-color:var(--gold);
+  box-shadow:0 0 0 1px var(--gold),0 0 26px rgba(201,163,107,.35),0 10px 30px rgba(0,0,0,.28);
+}
+.search svg{flex:none}
+.search input{
+  background:none;border:none;outline:none;
+  color:var(--btn-text);font-size:.95rem;width:100%;font-family:inherit;
+}
+.search input::placeholder{color:rgba(69,60,46,.55)}
+
+@media (min-width:901px){
+  .search{
+    width:min(680px,52vw);
+    padding:10px 26px;
+    box-shadow:0 6px 22px rgba(0,0,0,.22);
+  }
+  .search:focus-within{width:min(720px,54vw)}
+}
+
+/* ============ HERO ============ */
+.hero{text-align:center;padding:44px 20px 24px}
+
+/* ============ FILTER TOGGLE ============ */
+.filter-toggle{
+  display:grid;place-items:center;flex:none;
+  width:48px;height:48px;border-radius:999px;
+  background:var(--cream);border:1px solid rgba(201,163,107,.4);
+  color:var(--btn-text);box-shadow:0 10px 30px rgba(0,0,0,.28);
+  transition:background .25s,transform .25s var(--ease-spring),box-shadow .25s,color .25s,border-color .25s;
+}
+.filter-toggle .material-symbols-outlined{font-size:1.35rem}
+.filter-toggle:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(0,0,0,.32)}
+.filter-toggle[aria-expanded="true"]{
+  background:var(--gold);border-color:var(--gold);color:var(--btn-text);
+  box-shadow:0 0 22px rgba(253,211,151,.4);
+}
+
+/* ============ FILTER BAR ============ */
+.filters{
+  max-width:1280px;margin:0 auto;
+  padding:0 clamp(16px,3vw,32px);
+  background:var(--glass);
+  border:1px solid rgba(201,163,107,.2);
+  border-radius:24px;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  opacity:0;max-height:0;overflow:hidden;border-width:0;
+  transition:opacity .3s var(--ease-soft),max-height .4s var(--ease-soft),padding .3s var(--ease-soft),margin .3s var(--ease-soft),border-width .3s;
+}
+.filters.show{
+  opacity:1;max-height:600px;padding:20px clamp(16px,3vw,32px);margin:20px auto 8px;border-width:1px;
+}
+.filter-group{display:flex;align-items:baseline;flex-wrap:wrap;gap:10px;padding:8px 0}
+.filter-group + .filter-group{border-top:1px solid rgba(201,163,107,.14)}
+.filter-label{
+  flex:none;width:110px;
+  color:var(--gold-bright);font-size:.68rem;font-weight:700;
+  letter-spacing:.28em;text-transform:uppercase;
+}
+.chip{
+  background:rgba(133,73,125,.3);
+  border:1px solid rgba(201,163,107,.3);
+  color:var(--cream-2);
+  padding:7px 16px;border-radius:999px;
+  font-size:.8rem;font-weight:500;
+  transition:transform .22s var(--ease-spring),border-color .22s,background .22s,color .22s,box-shadow .22s;
+}
+.chip:hover{transform:translateY(-2px);border-color:var(--gold);color:var(--gold-bright)}
+.chip[aria-pressed="true"]{
+  background:var(--gold);color:var(--btn-text);border-color:var(--gold);
+  box-shadow:0 0 18px rgba(253,211,151,.45);font-weight:600;
+}
+.filter-clear{
+  margin-left:auto;background:none;border:none;
+  color:var(--gold);font-size:.78rem;letter-spacing:.08em;
+  border-bottom:1px solid transparent;padding:4px 2px;border-radius:0;
+  transition:border-color .25s,color .25s;
+}
+.filter-clear:hover{border-bottom-color:var(--gold);color:var(--gold-bright)}
+.avail-toggle{display:inline-flex;align-items:center;gap:8px;font-weight:600}
+.avail-toggle i{width:8px;height:8px;border-radius:99px;background:var(--ok);box-shadow:0 0 8px rgba(127,168,107,.7);flex:none}
+.avail-toggle[aria-pressed="true"] i{background:var(--btn-text);box-shadow:none}
+
+/* ============ VAULT / RODS ============ */
+.vault{max-width:1280px;margin:0 auto;padding:20px clamp(12px,3vw,32px) 120px}
+.rod-section{
+  margin-top:64px;
+  opacity:0;transform:translateY(40px);
+  transition:opacity .8s var(--ease-soft),transform .8s var(--ease-soft);
+}
+.rod-section.in{opacity:1;transform:none}
+.rod-section::after{
+  content:"";display:block;height:1px;max-width:920px;margin:72px auto 0;
+  background:linear-gradient(90deg,transparent,rgba(201,163,107,.55),transparent);
+}
+.rod-section:last-of-type::after{display:none}
+.rod-head{display:flex;align-items:baseline;gap:18px;padding:0 8px 14px}
+.rod-head h2{font-size:clamp(1.4rem,2.6vw,2rem)}
+.rod-head .count-label{
+  color:var(--gold-bright);font-size:.65rem;font-weight:700;
+  letter-spacing:.3em;text-transform:uppercase;
+}
+.rod-wrap{position:relative;will-change:transform}
+.rod-bar{
+  position:absolute;left:6px;right:6px;top:50px;height:6px;
+  border-radius:6px;z-index:0;
+  background:linear-gradient(180deg,#F9E7BE 0%,#E4C68C 30%,#C9A36B 55%,#8F6C3F 100%);
+  box-shadow:0 4px 12px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.55);
+}
+.rod-bar::before,.rod-bar::after{
+  content:"";position:absolute;top:-4.5px;width:11px;height:15px;border-radius:5px;
+  background:linear-gradient(180deg,#E4C68C,#7C5C34);
+  box-shadow:0 3px 8px rgba(0,0,0,.5);
+}
+.rod-bar::before{left:-7px}
+.rod-bar::after{right:-7px}
+.rod-items{
+  position:relative;z-index:1;
+  display:flex;align-items:flex-start;
+  padding:30px 26px 44px;
+  overflow-x:auto;overflow-y:visible;
+  scrollbar-width:thin;scrollbar-color:var(--gold) transparent;
+}
+.rod-items::-webkit-scrollbar{height:6px}
+.rod-items::-webkit-scrollbar-thumb{background:rgba(201,163,107,.5);border-radius:3px}
+.piece{
+  flex:none;width:150px;
+  margin-left:-52px; /* ~35% overlap, exactly like a real rack */
+  background:none;border:none;padding:0;
+  position:relative;z-index:1;
+}
+.piece:first-child{margin-left:0}
+.piece .fig{
+  display:block;
+  transition:transform .25s var(--ease-spring),filter .25s var(--ease-soft);
+  transform-origin:50% 6%; /* pivots from the rod, like a real hanger */
+  filter:drop-shadow(0 16px 18px rgba(0,0,0,.4)) drop-shadow(0 5px 7px rgba(0,0,0,.28));
+}
+.piece svg{width:100%;height:auto;overflow:visible}
+/* real outfit photos hanging on the rod */
+.piece .fig .hang{width:100%;height:auto;overflow:visible}
+.piece .fig .cloth-img{
+  display:block;width:88%;margin:-8px auto 0;
+  max-height:240px;object-fit:contain;object-position:top center;
+}
+.detail-stage .hang{width:150px;height:auto}
+.detail-stage .cloth-img{
+  display:block;width:200px;margin-top:-10px;
+  max-height:320px;object-fit:contain;
+  filter:drop-shadow(0 20px 26px rgba(0,0,0,.5));
+}
+.piece:hover,.piece:focus-visible,.piece.open{z-index:40}
+.piece:hover .fig,.piece:focus-visible .fig,.piece.open .fig{
+  transform:translateY(-18px) scale(1.12) rotate(.6deg);
+  filter:drop-shadow(0 32px 34px rgba(0,0,0,.55)) drop-shadow(0 10px 12px rgba(0,0,0,.35)) drop-shadow(0 0 18px rgba(253,211,151,.18));
+}
+.piece.shift-l .fig{transform:translateX(-16px) rotate(-1.2deg)}
+.piece.shift-r .fig{transform:translateX(16px) rotate(1.2deg)}
+.piece-label{
+  position:absolute;left:50%;bottom:-6px;transform:translateX(-50%) translateY(6px);
+  white-space:nowrap;pointer-events:none;
+  background:rgba(61,26,56,.9);border:1px solid rgba(201,163,107,.4);
+  color:var(--gold-bright);font-size:.66rem;letter-spacing:.08em;
+  padding:5px 12px;border-radius:999px;
+  opacity:0;transition:opacity .25s,transform .25s var(--ease-soft);
+}
+.piece:hover .piece-label,.piece:focus-visible .piece-label{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty-state{
+  display:none;text-align:center;padding:90px 20px;color:var(--cream);
+}
+.empty-state .script{font-size:2.4rem}
+.empty-state p{margin-top:8px;font-size:.9rem;color:var(--cream-2)}
+.vault.no-results .empty-state{display:block}
+
+/* ============ SIDEBAR ============ */
+.overlay{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(24,8,22,.55);backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:opacity .35s;
+}
+.overlay.show{opacity:1;pointer-events:auto}
+.sidebar{
+  position:fixed;top:0;right:0;height:100dvh;z-index:310;
+  width:min(480px,100vw);
+  background:rgba(72,31,66,.9);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-left:1px solid rgba(201,163,107,.35);
+  border-radius:26px 0 0 26px;
+  box-shadow:-30px 0 70px rgba(0,0,0,.5);
+  transform:translateX(106%);
+  transition:transform .42s var(--ease-spring);
+  overflow-y:auto;overscroll-behavior:contain;
+  scrollbar-width:thin;scrollbar-color:var(--gold) transparent;
+}
+.sidebar.show{transform:none}
+.sidebar-inner{padding:26px 28px 40px}
+.sidebar-close{
+  position:sticky;top:0;margin-left:auto;z-index:5;
+  display:grid;place-items:center;width:40px;height:40px;
+  background:var(--glass);border:1px solid rgba(201,163,107,.35);
+  border-radius:999px;color:var(--gold-bright);font-size:1.05rem;
+  transition:background .25s,transform .25s;
+}
+.sidebar-close:hover{background:var(--glass-strong);transform:rotate(90deg)}
+.detail-stage{
+  margin:6px 0 18px;padding:18px 10px 6px;
+  background:var(--glass);border:1px solid rgba(201,163,107,.22);
+  border-radius:22px;display:grid;place-items:center;
+}
+.detail-stage svg{width:190px;height:auto;filter:drop-shadow(0 20px 26px rgba(0,0,0,.5))}
+.detail-brand{color:var(--gold-bright);font-size:.66rem;font-weight:700;letter-spacing:.32em;text-transform:uppercase}
+.detail-name{font-size:1.55rem;line-height:1.25;margin:6px 0 4px}
+.spec{
+  background:var(--card);border:1px solid rgba(201,163,107,.18);
+  border-radius:16px;padding:12px 14px;
+}
+.spec .k{color:var(--gold-bright);font-size:.6rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase}
+.spec .v{color:var(--cream);font-size:.92rem;margin-top:4px;font-weight:500}
+.sizes{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.size-dot{
+  width:34px;height:34px;border-radius:999px;display:grid;place-items:center;
+  border:1px solid rgba(201,163,107,.4);color:var(--cream-2);
+  font-size:.72rem;font-weight:600;background:rgba(133,73,125,.25);
+  transition:background .2s,color .2s,transform .2s var(--ease-spring);cursor:pointer;
+}
+.size-dot:hover{transform:translateY(-2px)}
+.size-dot.sel{background:var(--gold);color:var(--btn-text);border-color:var(--gold)}
+.stars{color:var(--gold-bright);letter-spacing:2px;font-size:.85rem}
+h3.section-title{
+  font-family:"Playfair Display",Georgia,serif;font-weight:500;font-style:italic;color:var(--gold);
+  font-size:1.25rem;letter-spacing:.02em;margin:26px 0 10px;
+}
+
+/* ============ CALENDAR ============ */
+.calendar{
+  background:var(--card);border:1px solid rgba(201,163,107,.22);
+  border-radius:20px;padding:16px;
+}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-title{color:var(--cream);font-weight:600;font-size:.95rem;letter-spacing:.04em}
+.cal-nav{
+  width:34px;height:34px;border-radius:999px;border:1px solid rgba(201,163,107,.4);
+  background:rgba(133,73,125,.25);color:var(--gold-bright);font-size:.9rem;
+  transition:background .2s,transform .2s;
+}
+.cal-nav:hover:not(:disabled){background:var(--glass-strong);transform:scale(1.08)}
+.cal-nav:disabled{opacity:.3;cursor:default}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal-dow{
+  text-align:center;color:var(--gold-bright);font-size:.6rem;
+  font-weight:700;letter-spacing:.14em;padding:4px 0;
+}
+.day{
+  aspect-ratio:1;border-radius:999px;border:none;
+  display:grid;place-items:center;font-size:.76rem;font-weight:500;
+  background:transparent;color:var(--cream-2);position:relative;
+  transition:transform .18s var(--ease-spring),box-shadow .18s;
+}
+.day.pad{visibility:hidden}
+.day::after{
+  content:"";position:absolute;bottom:4px;width:5px;height:5px;border-radius:99px;
+}
+.day.available{background:rgba(127,168,107,.16);color:#CBE3BC}
+.day.available::after{background:var(--ok)}
+.day.partial{background:rgba(217,180,91,.16);color:#F0DCA8}
+.day.partial::after{background:var(--partial)}
+.day.booked{background:rgba(177,90,90,.16);color:#E3B0B0;cursor:not-allowed}
+.day.booked::after{background:var(--busy)}
+.day.blocked{background:rgba(107,90,104,.14);color:#8F7E8C;cursor:not-allowed}
+.day.blocked::after{background:var(--blocked)}
+.day.available:hover,.day.partial:hover{transform:scale(1.14);box-shadow:0 0 12px rgba(253,211,151,.35)}
+.day.in-range{background:rgba(201,163,107,.28);color:var(--gold-bright)}
+.day.sel{background:var(--gold)!important;color:var(--btn-text)!important;font-weight:700;box-shadow:0 0 16px rgba(253,211,151,.55)}
+.day.sel::after{background:var(--btn-text)}
+.cal-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
+.leg{display:flex;align-items:center;gap:6px;font-size:.64rem;color:var(--cream-2);letter-spacing:.04em}
+.leg i{width:9px;height:9px;border-radius:99px;flex:none}
+.cal-note{margin-top:10px;font-size:.72rem;color:var(--gold-bright);min-height:1em}
+
+/* ============ PRICE CARD / CTAs ============ */
+.price-card{
+  margin-top:16px;background:var(--glass);
+  border:1px solid rgba(201,163,107,.25);border-radius:20px;padding:16px 18px;
+}
+.price-row{display:flex;justify-content:space-between;padding:7px 0;font-size:.85rem;color:var(--cream)}
+.price-row + .price-row{border-top:1px dashed rgba(201,163,107,.2)}
+.price-row .k{color:var(--cream-2)}
+.price-row .v{font-weight:600;color:var(--cream)}
+.price-row.total .k{color:var(--gold-bright);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.72rem}
+.price-row.total .v{color:var(--gold-bright);font-size:1.15rem;font-weight:700}
+.cta-row{display:flex;gap:12px;margin-top:18px}
+.btn{
+  position:relative;overflow:hidden;border-radius:999px;border:none;
+  padding:14px 22px;font-size:.85rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;
+  transition:background .25s,transform .25s var(--ease-spring),box-shadow .25s;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn-gold{background:var(--gold);color:var(--btn-text);flex:1}
+.btn-gold:hover{background:var(--gold-bright);box-shadow:0 10px 26px rgba(253,211,151,.35)}
+.btn-gold:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-ghost{
+  background:rgba(133,73,125,.25);color:var(--gold-bright);
+  border:1px solid rgba(201,163,107,.45);flex:none;
+}
+.btn-ghost:hover{background:var(--glass-strong)}
+.btn-ghost.on{background:var(--gold);color:var(--btn-text);border-color:var(--gold)}
+.ripple{
+  position:absolute;border-radius:999px;pointer-events:none;
+  background:rgba(255,255,255,.45);transform:scale(0);
+  animation:rip .55s var(--ease-soft) forwards;
+}
+@keyframes rip{to{transform:scale(3.2);opacity:0}}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:900px){
+  .filter-label{width:100%}
+  .piece{width:126px;margin-left:-44px}
+}
+@media (max-width:600px){
+  .sidebar{width:100vw;border-radius:0;border-left:none}
+  .piece{width:112px;margin-left:-39px}
+  .rod-head h2{font-size:1.3rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  .rod-section{opacity:1;transform:none}
+}
+</style>
+</head>
+<body class="bg-surface text-on-surface font-aptos overflow-x-hidden">
+
+<!-- ════════════════ SITE HEADER ════════════════ -->
+<header class="fixed top-0 left-0 right-0 z-[60] backdrop-blur-md border-b flex justify-between items-center w-full px-6 md:px-12 py-2" style="background:rgba(61,26,56,0.92);border-color:rgba(201,163,107,0.2);">
+  <div class="w-8 lg:hidden"></div>
+  <div class="h-16 flex items-center gap-3 absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0">
+    <a href="index.html" class="flex items-center gap-3">
+      <div class="logo-icon-container">
+        <img alt="Saha's" class="logo-icon-img" src="assets/logo.png" onerror="this.style.display='none'"/>
+      </div>
+      <span class="font-['Playfair_Display'] text-2xl tracking-wide hidden sm:block" style="color:#C9A36B;">Saha's</span>
+    </a>
+  </div>
+  <nav class="hidden lg:flex gap-6 items-center">
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="index.html#how-it-works">How it Works<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative font-bold text-xs uppercase tracking-widest py-1" style="color:#C9A36B;" href="vault.html">Style Vault<span class="absolute bottom-0 left-0 w-full h-[2px]" style="background:#C9A36B;"></span></a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="fit-match.html">Fit Match<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="policy.html">Policy<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="contact.html">Contact<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative flex items-center gap-1.5 font-bold text-xs uppercase tracking-widest" style="color:#efe0cd;" href="checkout.html" aria-label="My Cart">
+      <span class="material-symbols-outlined text-xl">shopping_bag</span>
+      <span class="hidden xl:inline">My Cart</span>
+      <span id="cartCount" class="nav-badge"></span>
+    </a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1 flex items-center gap-1" style="color:#efe0cd;" href="account.html"><span class="material-symbols-outlined text-base">person</span><span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <button onclick="document.getElementById('vault').scrollIntoView({behavior:'smooth'})" class="px-7 py-2.5 rounded-sm font-bold text-xs uppercase tracking-[0.15em] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300" style="background:#C9A36B;color:#453c2e;" onmouseover="this.style.background='#fdd397'" onmouseout="this.style.background='#C9A36B'">Rent Now</button>
+  </nav>
+  <button class="lg:hidden relative z-[70]" style="color:#C9A36B;" onclick="toggleMenu()"><span class="material-symbols-outlined text-3xl" id="menu-icon">menu</span></button>
+</header>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="fixed top-20 right-6 w-56 shadow-2xl rounded-md z-[55] flex flex-col items-center gap-5 p-6 opacity-0 pointer-events-none scale-95 origin-top-right transition-all duration-300 lg:hidden" style="background:#5f2859;border:1px solid rgba(201,163,107,0.25);">
+  <a class="font-bold text-sm uppercase tracking-widest" style="color:#C9A36B;" href="vault.html" onclick="toggleMenu()">Style Vault</a>
+  <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="fit-match.html" onclick="toggleMenu()">Saha Fit Match</a>
+  <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="policy.html" onclick="toggleMenu()">Policy</a>
+  <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="contact.html" onclick="toggleMenu()">Contact Us</a>
+  <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="account.html" onclick="toggleMenu()">My Account</a>
+  <a class="font-bold text-sm uppercase tracking-widest flex items-center gap-1.5" style="color:#efe0cd;" href="checkout.html" onclick="toggleMenu()"><span class="material-symbols-outlined text-base">shopping_bag</span>My Cart</a>
+  <button onclick="toggleMenu();document.getElementById('vault').scrollIntoView({behavior:'smooth'})" class="px-6 py-3 w-full mt-2 rounded-sm font-bold text-xs uppercase tracking-[0.15em]" style="background:#C9A36B;color:#453c2e;">Rent Now</button>
+</div>
+
+<!-- ============ HERO / SEARCH ============ -->
+<header class="hero">
+  <div class="hero-search">
+    <div class="search" role="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#453C2E" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
+      </svg>
+      <input id="searchInput" type="search" placeholder="Search the vault — gowns, brands, occasions…" aria-label="Search outfits">
+    </div>
+    <button class="filter-toggle" id="filterToggleBtn" aria-expanded="false" aria-controls="filtersPanel" aria-label="Show filters">
+      <span class="material-symbols-outlined" aria-hidden="true">tune</span>
+    </button>
+  </div>
+</header>
+
+<!-- ============ FILTERS ============ -->
+<section class="filters" id="filtersPanel" aria-label="Filter the vault">
+  <div class="filter-group">
+    <span class="filter-label">Size</span>
+    <div id="sizeChips" style="display:flex;flex-wrap:wrap;gap:10px"></div>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Category</span>
+    <div id="catChips" style="display:flex;flex-wrap:wrap;gap:10px"></div>
+  </div>
+  <div class="filter-group">
+    <button class="chip avail-toggle" id="availNowBtn" aria-pressed="false"><i aria-hidden="true"></i>Available Now</button>
+    <button class="filter-clear" id="clearFilters">Clear all</button>
+  </div>
+</section>
+
+<!-- ============ THE VAULT ============ -->
+<main class="vault" id="vault">
+  <div class="empty-state">
+    <div class="script">Nothing on this rod…</div>
+    <p>No pieces match those filters. Loosen one and the rack refills.</p>
+  </div>
+</main>
+
+<!-- ============ SIDEBAR ============ -->
+<div class="overlay" id="overlay"></div>
+<aside class="sidebar" id="sidebar" role="dialog" aria-modal="true" aria-label="Outfit details">
+  <div class="sidebar-inner" id="sidebarInner"></div>
+</aside>
+
+<!-- Mobile Bottom Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-soft-sand/95 backdrop-blur-md border-t border-golden-beige/30 flex justify-around items-center w-full px-2 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+  <a class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="index.html">
+    <span class="material-symbols-outlined text-2xl">home</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Home</span>
+  </a>
+  <a class="flex flex-col items-center gap-1 text-secondary transition-colors" href="vault.html">
+    <span class="material-symbols-outlined text-2xl">checkroom</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Vault</span>
+  </a>
+  <a class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="fit-match.html">
+    <span class="material-symbols-outlined text-2xl">straighten</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Fit Match</span>
+  </a>
+  <a class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="account.html">
+    <span class="material-symbols-outlined text-2xl">person</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Account</span>
+  </a>
+</nav>
+
+<script>
+/* ---------- mobile menu (site header) ---------- */
+function toggleMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const icon = document.getElementById('menu-icon');
+  const isHidden = menu.classList.contains('opacity-0');
+  if(isHidden) {
+      menu.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+      menu.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
+      icon.innerText = 'close';
+  } else {
+      menu.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+      menu.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+      icon.innerText = 'menu';
+  }
+}
+
+/* =====================================================
+   SAHA'S STYLE VAULT — data, rendering & interactions
+   All availability flows through VaultAPI (bottom) so a
+   real backend can be plugged in without touching UI.
+===================================================== */
+
+/* ---------- seeded rng (deterministic per item) ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+
+/* ---------- garment SVG library ---------- */
+const HANGER = `
+  <g stroke="#FDD397" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M65 34 v-7 a7.5 7.5 0 1 1 7.5 -7.5"/>
+    <path d="M65 34 L27 57 H103 Z"/>
+  </g>`;
+const SHEEN = `<path d="M52 70 Q58 130 54 190" stroke="rgba(255,255,255,.14)" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+
+/* ---------- YOUR REAL OUTFIT PHOTOS ----------
+   Drop transparent PNGs into an /images folder next to this file,
+   then map them by item id below. Any item WITHOUT an entry keeps
+   its illustrated SVG, so you can migrate one photo at a time.
+   Item ids run party-1 … party-10, wedding-1 … designer-10.     */
+const IMAGES = {
+  // 'party-1'  : 'images/party-1.png',
+  // 'wedding-3': 'images/wedding-3.png',
+  // 'luxury-7' : 'images/velvet-gown.png',
+};
+const HANGER_ONLY = `<svg class="hang" viewBox="0 0 130 62" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${HANGER}</svg>`;
+
+const GARMENTS = {
+  gown:(c1,c2)=>`
+    <path d="M49 52 L46 40 M81 52 L84 40" stroke="${c1}" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M46 52 Q65 66 84 52 L88 96 Q65 105 42 96 Z" fill="${c1}"/>
+    <path d="M42 96 Q65 105 88 96 L113 266 Q65 290 17 266 Z" fill="${c2}"/>
+    <path d="M55 105 Q52 190 40 262 M75 105 Q78 190 90 262" stroke="rgba(0,0,0,.14)" stroke-width="2.5" fill="none"/>
+    ${SHEEN}`,
+  dress:(c1,c2)=>`
+    <path d="M50 52 L48 42 M80 52 L82 42" stroke="${c1}" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M47 53 L83 53 L89 112 Q65 121 41 112 Z" fill="${c1}"/>
+    <path d="M41 112 Q65 121 89 112 L101 196 Q65 210 29 196 Z" fill="${c2}"/>
+    <path d="M41 114 Q65 123 89 114" stroke="rgba(253,211,151,.5)" stroke-width="2.5" fill="none"/>
+    ${SHEEN}`,
+  slip:(c1)=>`
+    <path d="M53 52 L51 42 M77 52 L79 42" stroke="${c1}" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M51 53 Q65 62 79 53 L88 224 Q65 238 42 224 Z" fill="${c1}"/>
+    <path d="M51 53 Q65 70 79 53" stroke="rgba(0,0,0,.15)" stroke-width="2" fill="none"/>
+    ${SHEEN}`,
+  blazer:(c1,c2)=>`
+    <path d="M42 56 Q65 47 88 56 L94 186 Q65 195 36 186 Z" fill="${c1}"/>
+    <path d="M42 56 L28 168 L42 172 L50 70 Z" fill="${c1}"/>
+    <path d="M88 56 L102 168 L88 172 L80 70 Z" fill="${c1}"/>
+    <path d="M65 60 L49 57 L59 108 L65 82 L71 108 L81 57 Z" fill="${c2}"/>
+    <path d="M65 84 L64 186" stroke="rgba(0,0,0,.22)" stroke-width="2"/>
+    <circle cx="69" cy="122" r="2.6" fill="#FDD397"/><circle cx="69" cy="140" r="2.6" fill="#FDD397"/>`,
+  shirt:(c1,c2)=>`
+    <path d="M44 56 Q65 48 86 56 L91 162 Q65 170 39 162 Z" fill="${c1}"/>
+    <path d="M44 56 L31 130 L43 134 L50 68 Z" fill="${c1}"/>
+    <path d="M86 56 L99 130 L87 134 L80 68 Z" fill="${c1}"/>
+    <path d="M57 54 L65 66 L73 54 L69 50 L65 55 L61 50 Z" fill="${c2}"/>
+    <path d="M65 66 L65 162" stroke="rgba(0,0,0,.18)" stroke-width="2"/>
+    <circle cx="65" cy="86" r="2" fill="#FDD397"/><circle cx="65" cy="106" r="2" fill="#FDD397"/><circle cx="65" cy="126" r="2" fill="#FDD397"/>`,
+  lehenga:(c1,c2)=>`
+    <path d="M50 52 L48 42 M80 52 L82 42" stroke="${c1}" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M48 53 L82 53 L86 98 Q65 106 44 98 Z" fill="${c1}"/>
+    <path d="M44 106 Q65 114 86 106 L86 98 Q65 106 44 98 Z" fill="#C9A36B"/>
+    <path d="M43 108 Q65 116 87 108 L116 262 Q65 286 14 262 Z" fill="${c2}"/>
+    <path d="M52 114 Q44 200 26 256 M65 116 L65 268 M78 114 Q86 200 104 256" stroke="rgba(0,0,0,.16)" stroke-width="2.5" fill="none"/>
+    <path d="M18 260 Q65 282 112 260" stroke="#FDD397" stroke-width="3" fill="none" opacity=".8"/>`,
+  coat:(c1,c2)=>`
+    <path d="M41 56 Q65 47 89 56 L97 244 Q65 254 33 244 Z" fill="${c1}"/>
+    <path d="M41 56 L27 176 L40 180 L49 70 Z" fill="${c1}"/>
+    <path d="M89 56 L103 176 L90 180 L81 70 Z" fill="${c1}"/>
+    <path d="M65 62 L51 58 L60 100 L65 80 L70 100 L79 58 Z" fill="${c2}"/>
+    <path d="M65 82 L64 244" stroke="rgba(0,0,0,.22)" stroke-width="2"/>
+    <rect x="44" y="130" width="42" height="9" rx="4.5" fill="${c2}"/>
+    <rect x="58" y="128" width="14" height="13" rx="3" fill="#FDD397"/>`,
+  jumpsuit:(c1,c2)=>`
+    <path d="M50 52 L48 42 M80 52 L82 42" stroke="${c1}" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M48 53 L82 53 L86 118 Q65 125 44 118 Z" fill="${c1}"/>
+    <path d="M45 120 L40 236 H58 L64 140 L66 140 L72 236 H90 L85 120 Q65 128 45 120 Z" fill="${c2}"/>
+    <path d="M46 118 Q65 126 84 118" stroke="rgba(253,211,151,.55)" stroke-width="3" fill="none"/>
+    ${SHEEN}`
+};
+
+/* ---------- palettes (muted, luxury — no brights, no blue) ---------- */
+const PALETTES = {
+  jewel:['#8E3B5C','#A64D6D','#7A3F72','#6E3350','#5E2C48'],
+  earth:['#5E3B2E','#9C7A4F','#6E4A32','#7C5A3E','#8A6A46'],
+  cream:['#EADBC8','#D9B48F','#C9A36B','#E3C9A4','#D3B491'],
+  mauve:['#B08BA5','#7C5A70','#93688A','#84597B','#A3789A'],
+  olive:['#6B6B4E','#7C7458','#585840','#8A8264','#4E4E3A'],
+  wine :['#722F44','#5C2438','#83394F','#4A1E2E','#66293D']
+};
+function pick(rng,arr){return arr[Math.floor(rng()*arr.length)]}
+
+/* ---------- collection config ---------- */
+const COLLECTIONS = [
+  {id:'party',       name:'Party Collection',       tags:['party'],              garments:['dress','slip','gown','jumpsuit'], pools:['jewel','wine','mauve']},
+  {id:'wedding',     name:'Wedding Collection',     tags:['wedding','formal'],   garments:['gown','lehenga'],                 pools:['cream','jewel','wine']},
+  {id:'vacation',    name:'Vacation Collection',    tags:['vacation','summer'],  garments:['dress','slip','shirt','jumpsuit'],pools:['cream','earth','olive']}
+];
+const BRANDS=['Maison Aurelle','Vela Couture','Noor Atelier','Étoile Studio','Ivory & Oud','Rue Saint-Amour','Casa Firenze','Zephyr & Co.','Ambar House','La Lune Privée'];
+const ADJ={party:['Midnight','Velvet','Shimmer','After-Hours','Neon-Off','Bombay','Disco','Champagne','Encore','Vinyl'],
+wedding:['Sangeet','Vow','Pheras','Ivory','Heirloom','Baraat','Eternal','Mandap','First-Dance','Reception'],
+vacation:['Goa','Amalfi','Palolem','Santorini','Riviera','Breeze','Tide','Island','Sunset','Cabana'],
+luxury:['Privée','Opulent','Vault','Regalia','Sovereign','Gilded','Couture','Velour','Imperial','Noir'],
+traditional:['Banarasi','Jaipur','Zari','Peshwai','Meenakari','Kanjivaram','Rajwada','Phulkari','Mysore','Chikankari'],
+casual:['Sunday','Bandra','Cafe','Weekend','Drift','Easy','Studio','Metro','Off-Duty','Corner-Seat'],
+business:['Boardroom','Nariman','Merger','Keynote','Ledger','Summit','Charter','Quorum','Portfolio','Verdict'],
+winter:['Shimla','Frost','Ember','Cashmere','Solstice','Gulmarg','Hearth','Aspen','Mist','Tundra'],
+summer:['Mango','Solstice','Linen','Juhu','Citrus','Golden-Hour','Meridian','Sorbet','Lagoon','Haze'],
+designer:['Archive','Runway','Atelier','Muse','Edition','Signature','Prototype','Gallery','Icon','Finale']};
+const NOUN={gown:'Gown',dress:'Dress',slip:'Slip Dress',blazer:'Blazer',shirt:'Shirt',lehenga:'Lehenga',coat:'Trench',jumpsuit:'Jumpsuit'};
+const FABRICS=['Pure Silk','Satin Georgette','Velvet','Organza','Crepe','Chiffon','Linen Blend','Raw Silk','Tulle & Net','Cotton Silk'];
+const OCCASIONS={party:'Date nights & parties',wedding:'Weddings & sangeets',vacation:'Vacations & getaways',luxury:'Galas & premieres',traditional:'Festivals & pujas',casual:'Brunches & city days',business:'Meetings & conferences',winter:'Winter soirées',summer:'Summer outings',designer:'Editorial moments'};
+const AVAIL_KEYS=['now','now','now','week','week','month','soon','premium'];
+
+/* ---------- build item data ---------- */
+const ITEMS=[];
+COLLECTIONS.forEach(col=>{
+  for(let i=0;i<10;i++){
+    const id=`${col.id}-${i+1}`;
+    const rng=mulberry32(hash(id));
+    const g=col.garments[i%col.garments.length];
+    const pool=PALETTES[col.pools[i%col.pools.length]];
+    const c1=pick(rng,pool), c2=pick(rng,pool.filter(c=>c!==c1).length?pool.filter(c=>c!==c1):pool);
+    const sizes=['XS','S','M','L','XL'].filter(()=>rng()>.32);
+    if(!sizes.length)sizes.push('M');
+    const price=Math.round((1200+rng()*7200)/50)*50;
+    const tags=[...col.tags]; if(col.id==='casual'&&rng()>.5&&!tags.includes('streetwear'))tags.push('streetwear');
+    ITEMS.push({
+      id,collection:col.id,collectionName:col.name,
+      image:IMAGES[id]||null,
+      name:`${ADJ[col.id][i]} ${NOUN[g]}`,
+      brand:BRANDS[Math.floor(rng()*BRANDS.length)],
+      garment:g,c1,c2,sizes,tags,
+      price,deposit:Math.round(price*(2+rng())/100)*100,
+      fabric:pick(rng,FABRICS),
+      occasion:OCCASIONS[col.id],
+      rating:(4.2+rng()*0.8).toFixed(1),
+      avail:AVAIL_KEYS[Math.floor(rng()*AVAIL_KEYS.length)],
+      desc:`A ${NOUN[g].toLowerCase()} cut for presence, not a wardrobe shelf. Steamed, quality-checked and hygiene-sealed by our Curators before every rental — you wear it like it was made for you, then hand the aftercare back to us.`
+    });
+  }
+});
+
+function itemSVG(it,idAttr=''){
+  return `<svg ${idAttr} viewBox="0 0 130 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${HANGER}${GARMENTS[it.garment](it.c1,it.c2)}</svg>`;
+}
+/* Photo if mapped, illustrated garment otherwise. If a photo path is
+   broken, the img hides itself and the SVG fallback appears instead. */
+function itemFigure(it){
+  if(!it.image) return itemSVG(it);
+  return `${HANGER_ONLY}
+    <img class="cloth-img" src="${it.image}" alt="" loading="lazy"
+      onerror="this.style.display='none';this.previousElementSibling.style.display='none';this.nextElementSibling.style.display='block'">
+    <span class="svg-fallback" style="display:none">${itemSVG(it)}</span>`;
+}
+
+/* ---------- render vault ---------- */
+const vault=document.getElementById('vault');
+COLLECTIONS.forEach(col=>{
+  const sec=document.createElement('section');
+  sec.className='rod-section';sec.id=`rod-${col.id}`;sec.dataset.collection=col.id;
+  sec.innerHTML=`
+    <header class="rod-head">
+      <h2>${col.name}</h2>
+      <span class="count-label"><span class="n">10</span> pieces</span>
+    </header>
+    <div class="rod-wrap">
+      <div class="rod-bar" aria-hidden="true"></div>
+      <div class="rod-items" role="list" aria-label="${col.name}"></div>
+    </div>`;
+  const rack=sec.querySelector('.rod-items');
+  ITEMS.filter(x=>x.collection===col.id).forEach(it=>{
+    const b=document.createElement('button');
+    b.className='piece';b.setAttribute('role','listitem');
+    b.setAttribute('aria-label',`${it.name} by ${it.brand}, rent ₹${it.price.toLocaleString('en-IN')} per day. Open details`);
+    b.dataset.id=it.id;b.dataset.sizes=it.sizes.join(',');b.dataset.tags=it.tags.join(',');
+    b.dataset.avail=it.avail;b.dataset.search=`${it.name} ${it.brand} ${it.collectionName}`.toLowerCase();
+    b.innerHTML=`<span class="fig">${itemFigure(it)}</span><span class="piece-label">${it.name}</span>`;
+    rack.appendChild(b);
+  });
+  vault.appendChild(sec);
+});
+
+/* ---------- hover: lift piece, nudge neighbours ---------- */
+vault.addEventListener('pointerover',e=>{
+  const p=e.target.closest('.piece');if(!p)return;
+  if(e.relatedTarget&&p.contains(e.relatedTarget))return;
+  nudge(p,true);
+});
+vault.addEventListener('pointerout',e=>{
+  const p=e.target.closest('.piece');if(!p)return;
+  if(e.relatedTarget&&p.contains(e.relatedTarget))return;
+  nudge(p,false);
+});
+vault.addEventListener('focusin',e=>{const p=e.target.closest('.piece');if(p)nudge(p,true)});
+vault.addEventListener('focusout',e=>{const p=e.target.closest('.piece');if(p)nudge(p,false)});
+function visSibling(el,dir){let s=el[dir];while(s&&s.style.display==='none')s=s[dir];return s}
+function nudge(p,on){
+  const prev=visSibling(p,'previousElementSibling'),next=visSibling(p,'nextElementSibling');
+  if(prev&&prev.classList)prev.classList.toggle('shift-l',on);
+  if(next&&next.classList)next.classList.toggle('shift-r',on);
+}
+
+/* ---------- filters ---------- */
+const state={sizes:new Set(),cats:new Set(),availNow:false,q:''};
+function chipRow(hostId,items,set){
+  const host=document.getElementById(hostId);
+  items.forEach(([val,label])=>{
+    const c=document.createElement('button');
+    c.className='chip';c.textContent=label;c.setAttribute('aria-pressed','false');
+    c.addEventListener('click',()=>{
+      const on=!set.has(val);
+      on?set.add(val):set.delete(val);
+      c.setAttribute('aria-pressed',on);
+      applyFilters();
+    });
+    host.appendChild(c);
+  });
+}
+chipRow('sizeChips',['XS','S','M','L','XL'].map(s=>[s,s]),state.sizes);
+chipRow('catChips',[['party','Party'],['wedding','Wedding'],['vacation','Vacation']],state.cats);
+const availBtn=document.getElementById('availNowBtn');
+availBtn.addEventListener('click',()=>{
+  state.availNow=!state.availNow;
+  availBtn.setAttribute('aria-pressed',state.availNow);
+  applyFilters();
+});
+document.getElementById('clearFilters').addEventListener('click',()=>{
+  state.sizes.clear();state.cats.clear();state.availNow=false;state.q='';
+  document.getElementById('searchInput').value='';
+  document.querySelectorAll('.chip[aria-pressed="true"]').forEach(c=>c.setAttribute('aria-pressed','false'));
+  applyFilters();
+});
+
+/* ---------- filter panel toggle ---------- */
+const filterToggleBtn=document.getElementById('filterToggleBtn');
+const filtersPanel=document.getElementById('filtersPanel');
+function setFiltersOpen(open){
+  filtersPanel.classList.toggle('show',open);
+  filterToggleBtn.setAttribute('aria-expanded',open);
+  filterToggleBtn.setAttribute('aria-label',open?'Hide filters':'Show filters');
+}
+filterToggleBtn.addEventListener('click',()=>setFiltersOpen(!filtersPanel.classList.contains('show')));
+document.addEventListener('click',e=>{
+  if(!filtersPanel.classList.contains('show'))return;
+  if(filtersPanel.contains(e.target)||filterToggleBtn.contains(e.target))return;
+  setFiltersOpen(false);
+});
+let qT;document.getElementById('searchInput').addEventListener('input',e=>{
+  clearTimeout(qT);qT=setTimeout(()=>{state.q=e.target.value.trim().toLowerCase();applyFilters()},180);
+});
+function applyFilters(){
+  let anyVisible=false;
+  document.querySelectorAll('.rod-section').forEach(sec=>{
+    let n=0;
+    sec.querySelectorAll('.piece').forEach(p=>{
+      const sizes=p.dataset.sizes.split(','),tags=p.dataset.tags.split(',');
+      const ok=
+        (!state.sizes.size||sizes.some(s=>state.sizes.has(s)))&&
+        (!state.cats.size ||tags.some(t=>state.cats.has(t)))&&
+        (!state.availNow  ||p.dataset.avail==='now')&&
+        (!state.q||p.dataset.search.includes(state.q));
+      p.style.display=ok?'':'none';
+      if(ok)n++;
+    });
+    sec.style.display=n?'':'none';
+    sec.querySelector('.count-label .n').textContent=n;
+    if(n)anyVisible=true;
+  });
+  vault.classList.toggle('no-results',!anyVisible);
+}
+
+/* ---------- scroll reveal + gentle parallax ---------- */
+const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.rod-section').forEach(s=>io.observe(s));
+if(!reduceMotion){
+  const wraps=[...document.querySelectorAll('.rod-wrap')];
+  let ticking=false;
+  addEventListener('scroll',()=>{
+    if(ticking)return;ticking=true;
+    requestAnimationFrame(()=>{
+      const vh=innerHeight;
+      wraps.forEach(w=>{
+        const r=w.getBoundingClientRect();
+        if(r.bottom<0||r.top>vh)return;
+        const t=Math.max(-10,Math.min(10,(vh/2-(r.top+r.height/2))*0.035));
+        w.style.transform=`translateY(${t}px)`;
+      });
+      ticking=false;
+    });
+  },{passive:true});
+}
+
+/* ---------- ripple ---------- */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.btn');if(!b)return;
+  const r=b.getBoundingClientRect(),s=Math.max(r.width,r.height);
+  const rip=document.createElement('span');rip.className='ripple';
+  rip.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;
+  b.appendChild(rip);setTimeout(()=>rip.remove(),600);
+});
+
+/* =====================================================
+   SIDEBAR + RENTAL CALENDAR
+===================================================== */
+const overlay=document.getElementById('overlay');
+const sidebar=document.getElementById('sidebar');
+const inner=document.getElementById('sidebarInner');
+const cartItems=new Set();let openPiece=null,lastFocus=null;
+
+vault.addEventListener('click',e=>{
+  const p=e.target.closest('.piece');if(!p)return;
+  openSidebar(ITEMS.find(x=>x.id===p.dataset.id),p);
+});
+overlay.addEventListener('click',closeSidebar);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sidebar.classList.contains('show'))closeSidebar()});
+function closeSidebar(){
+  sidebar.classList.remove('show');overlay.classList.remove('show');
+  if(openPiece)openPiece.classList.remove('open');openPiece=null;
+  if(lastFocus)lastFocus.focus();
+}
+
+function openSidebar(it,pieceEl){
+  lastFocus=pieceEl;openPiece=pieceEl;pieceEl.classList.add('open');
+  const stars='★'.repeat(Math.round(it.rating))+'☆'.repeat(5-Math.round(it.rating));
+  inner.innerHTML=`
+    <button class="sidebar-close" id="sbClose" aria-label="Close details">✕</button>
+    <div class="detail-stage">${itemFigure(it)}</div>
+    <div class="detail-brand">${it.brand}</div>
+    <h2 class="detail-name">${it.name}</h2>
+    <div class="stars" aria-label="Rated ${it.rating} out of 5">${stars}&nbsp;&nbsp;<span style="color:var(--cream);font-family:'Hanken Grotesk';font-size:.8rem">${it.rating}</span></div>
+    <div class="spec" style="margin:18px 0 12px"><div class="k">Available Sizes</div>
+      <div class="sizes">${['XS','S','M','L','XL'].map(s=>it.sizes.includes(s)?`<button class="size-dot" data-size="${s}">${s}</button>`:`<span class="size-dot" style="opacity:.25;cursor:not-allowed" aria-disabled="true">${s}</span>`).join('')}</div>
+    </div>
+    <div class="spec" style="margin-bottom:4px"><div class="k">Size &amp; Fit</div>
+      <div class="v" style="font-size:.82rem;font-weight:400;line-height:1.55;margin-top:6px">Not sure which size to pick? <a href="fit-match.html" style="color:var(--gold-bright);text-decoration:underline">Try Saha Fit Match</a> for a personalised recommendation.</div>
+    </div>
+    <h3 class="section-title">Choose your dates</h3>
+    <div class="calendar" id="cal"></div>
+    <div class="price-card" id="priceCard">
+      <div class="price-row"><span class="k">Rental period</span><span class="v" id="prPeriod">Select dates above</span></div>
+      <div class="price-row"><span class="k">Return by</span><span class="v" id="prReturn">—</span></div>
+      <div class="price-row"><span class="k">Total days</span><span class="v" id="prDays">—</span></div>
+      <div class="price-row"><span class="k">Security deposit</span><span class="v">₹${it.deposit.toLocaleString('en-IN')}</span></div>
+      <div class="price-row total"><span class="k">Estimated total</span><span class="v" id="prTotal">₹0</span></div>
+    </div>
+    <div class="cta-row">
+      <button class="btn btn-ghost ${cartItems.has(it.id)?'on':''}" id="cartBtn" aria-label="Add to cart" aria-pressed="${cartItems.has(it.id)}">
+        <span class="material-symbols-outlined" style="font-size:1.15rem;display:block" aria-hidden="true">add_shopping_cart</span>
+      </button>
+      <button class="btn btn-gold" id="rentBtn" disabled>Rent Now</button>
+    </div>
+    <p style="margin-top:12px;font-size:.7rem;color:var(--cream-2);text-align:center;letter-spacing:.04em">
+      Booking confirms on WhatsApp · Hygiene-sealed by our Curators
+    </p>`;
+  sidebar.classList.add('show');overlay.classList.add('show');
+  document.getElementById('sbClose').addEventListener('click',closeSidebar);
+  document.getElementById('sbClose').focus();
+  inner.querySelectorAll('button.size-dot').forEach(d=>d.addEventListener('click',()=>{
+    inner.querySelectorAll('.size-dot.sel').forEach(x=>x.classList.remove('sel'));
+    d.classList.add('sel');
+  }));
+  const cartBtn=document.getElementById('cartBtn');
+  cartBtn.addEventListener('click',()=>{
+    const on=!cartItems.has(it.id);
+    on?cartItems.add(it.id):cartItems.delete(it.id);
+    cartBtn.classList.toggle('on',on);cartBtn.setAttribute('aria-pressed',on);
+    const c=document.getElementById('cartCount');
+    if(c){c.textContent=cartItems.size;c.classList.toggle('show',cartItems.size>0)}
+  });
+  new RentalCalendar(document.getElementById('cal'),it);
+}
+
+/* ---------- calendar (API-ready) ---------- */
+class RentalCalendar{
+  constructor(host,item){
+    this.host=host;this.item=item;
+    const now=new Date();
+    this.year=now.getFullYear();this.month=now.getMonth();
+    this.minYM=this.year*12+this.month;
+    this.start=null;this.end=null;
+    this.render();
+  }
+  async render(){
+    const days=await VaultAPI.fetchAvailability(this.item.id,this.year,this.month);
+    const first=new Date(this.year,this.month,1);
+    const label=first.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+    let html=`
+      <div class="cal-head">
+        <button class="cal-nav" data-nav="-1" aria-label="Previous month" ${this.year*12+this.month<=this.minYM?'disabled':''}>‹</button>
+        <span class="cal-title">${label}</span>
+        <button class="cal-nav" data-nav="1" aria-label="Next month">›</button>
+      </div>
+      <div class="cal-grid">${['S','M','T','W','T','F','S'].map(d=>`<span class="cal-dow">${d}</span>`).join('')}`;
+    for(let i=0;i<first.getDay();i++)html+='<span class="day pad"></span>';
+    days.forEach(d=>{
+      const t=+new Date(d.date);
+      let cls=d.status,sel='';
+      if(this.start&&this.end&&t>this.start&&t<this.end)sel=' in-range';
+      if(t===this.start||t===this.end)sel=' sel';
+      const dis=(d.status==='booked'||d.status==='blocked')?'disabled':'';
+      html+=`<button class="day ${cls}${sel}" data-t="${t}" ${dis} aria-label="${d.date}, ${d.status}">${new Date(d.date).getDate()}</button>`;
+    });
+    html+=`</div>
+      <div class="cal-legend">
+        <span class="leg"><i style="background:var(--ok)"></i>Available</span>
+        <span class="leg"><i style="background:var(--busy)"></i>Booked</span>
+        <span class="leg"><i style="background:var(--partial)"></i>Partially available</span>
+        <span class="leg"><i style="background:var(--gold)"></i>Selected</span>
+        <span class="leg"><i style="background:var(--blocked)"></i>Blocked</span>
+      </div>
+      <div class="cal-note" id="calNote" role="status"></div>`;
+    this.host.innerHTML=html;
+    this.host.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{
+      this.month+=+b.dataset.nav;
+      if(this.month<0){this.month=11;this.year--}if(this.month>11){this.month=0;this.year++}
+      this.render();
+    }));
+    this.host.querySelectorAll('.day:not(.pad):not([disabled])').forEach(b=>b.addEventListener('click',()=>this.pickDate(+b.dataset.t)));
+    this.days=days;
+  }
+  note(msg){const n=this.host.querySelector('#calNote');if(n)n.textContent=msg}
+  async pickDate(t){
+    let msg='';
+    if(this.start&&!this.end&&t>this.start){
+      const clean=await VaultAPI.isRangeFree(this.item.id,this.start,t);
+      if(!clean){this.note('That range crosses a booked date — try a shorter window.');return}
+      this.end=t;
+    }else{this.start=t;this.end=null;msg='Now pick a return date.'}
+    await this.render();
+    this.note(msg);
+    this.updatePrice();
+  }
+  updatePrice(){
+    const rentBtn=document.getElementById('rentBtn');
+    if(!(this.start&&this.end)){rentBtn.disabled=true;return}
+    const s=new Date(this.start),e=new Date(this.end);
+    const daysN=Math.round((this.end-this.start)/864e5)+1;
+    const fmt=d=>d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+    document.getElementById('prPeriod').textContent=`${fmt(s)} → ${fmt(e)}`;
+    document.getElementById('prReturn').textContent=e.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+    document.getElementById('prDays').textContent=`${daysN} day${daysN>1?'s':''}`;
+    const total=daysN*this.item.price;
+    document.getElementById('prTotal').textContent=`₹${total.toLocaleString('en-IN')}`;
+    rentBtn.disabled=false;
+    rentBtn.onclick=()=>{
+      VaultAPI.createBooking({itemId:this.item.id,name:this.item.name,start:s.toISOString().slice(0,10),end:e.toISOString().slice(0,10),days:daysN,total,deposit:this.item.deposit});
+    };
+  }
+}
+
+/* =====================================================
+   VaultAPI — swap these stubs for real endpoints later.
+   Shapes match a typical Node/Express + Razorpay backend:
+     GET  /api/items/:id/availability?year&month
+          → [{date:'YYYY-MM-DD', status:'available|booked|partial|blocked'}]
+     POST /api/bookings  → { orderId, razorpayOrderId }
+===================================================== */
+const WHATSAPP_NUMBER='919999999999'; // ← replace with Saha's business number
+const VaultAPI={
+  async fetchAvailability(itemId,year,month){
+    // return fetch(`/api/items/${itemId}/availability?year=${year}&month=${month+1}`).then(r=>r.json());
+    const rng=mulberry32(hash(itemId+'-'+year+'-'+month));
+    const nDays=new Date(year,month+1,0).getDate();
+    const today=new Date();today.setHours(0,0,0,0);
+    const out=[];
+    let booked=0;
+    for(let d=1;d<=nDays;d++){
+      const date=new Date(year,month,d);
+      let status;
+      if(date<today)status='blocked';
+      else if(booked>0){status='booked';booked--}
+      else{
+        const r=rng();
+        if(r<.10){status='booked';booked=1+Math.floor(rng()*3)}
+        else if(r<.20)status='partial';
+        else status='available';
+      }
+      out.push({date:`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,status});
+    }
+    return out;
+  },
+  async isRangeFree(itemId,startT,endT){
+    // Timestamps are UTC midnights derived from 'YYYY-MM-DD' — stay in UTC throughout.
+    for(let d=new Date(startT);+d<=endT;d.setUTCDate(d.getUTCDate()+1)){
+      const days=await this.fetchAvailability(itemId,d.getUTCFullYear(),d.getUTCMonth());
+      const key=d.toISOString().slice(0,10);
+      const hit=days.find(x=>x.date===key);
+      if(hit&&(hit.status==='booked'||hit.status==='blocked'))return false;
+    }
+    return true;
+  },
+  async createBooking(payload){
+    // Phase 2: POST /api/bookings then open Razorpay checkout with the returned order id.
+    // Phase 1 MVP: confirm on WhatsApp ↓
+    const msg=encodeURIComponent(
+      `Hi Saha's Wardrobe! I'd like to book:\n\n👗 ${payload.name}\n📅 ${payload.start} → ${payload.end} (${payload.days} days)\n💰 Est. ₹${payload.total.toLocaleString('en-IN')} + ₹${payload.deposit.toLocaleString('en-IN')} deposit\n\nPlease confirm availability!`);
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`,'_blank');
+  }
+};
+</script>
+</body>
+</html>

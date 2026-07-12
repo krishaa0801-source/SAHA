@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html class="light overflow-x-hidden" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Saha's Fit Match | Find Your Perfect Size</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Hanken+Grotesk:wght@300;400;500;700&family=Great+Vibes&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          primary: '#5A2A56',
+          'primary-container': '#7A3F72',
+          'deep-aubergine': '#3D1A3A',
+          secondary: '#C9A36B',
+          'secondary-fixed-dim': '#C9A36B',
+          'secondary-fixed': '#E8D4B0',
+          'on-secondary-fixed': '#3D1A3A',
+          'on-secondary': '#3D1A3A',
+          'soft-sand': '#F7EFE4',
+          'golden-beige': '#E3CBA8',
+          surface: '#FDF9F4',
+          'on-surface': '#2B1A29',
+          'on-surface-variant': '#705C6E',
+          'on-primary': '#FDF9F4',
+          'on-primary-container': '#F4E8EF',
+          error: '#C0455A',
+        },
+        fontFamily: {
+          aptos: ['Hanken Grotesk', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<style>
+  /* ===== Custom Hanger Cursor ===== */
+  body {
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="%23C9A36B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3m0 0a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm-9 12c0-1.5 2-3 9-3s9 1.5 9 3v1H3v-1z"/><path d="M12 5v2"/></svg>'), auto;
+  }
+
+  .font-aptos { font-family: 'Hanken Grotesk', sans-serif; }
+
+  /* ===== Logo ===== */
+  .logo-icon-container { width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; }
+  .logo-icon-img { width: 100%; height: 100%; object-fit: contain; }
+
+  /* ===== Form Styles ===== */
+  .fit-input {
+      background: transparent;
+      border: 1px solid rgba(201, 163, 107, 0.4);
+      color: #5A2A56;
+      border-radius: 0.25rem;
+      padding: 0.75rem 1rem;
+      width: 100%;
+      transition: all 0.3s ease;
+  }
+  .fit-input:focus {
+      outline: none;
+      border-color: #5A2A56;
+      box-shadow: 0 0 0 2px rgba(90, 42, 86, 0.1);
+  }
+  .fit-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #705C6E;
+      margin-bottom: 0.5rem;
+      display: block;
+  }
+  
+  /* Loading animation */
+  .loader {
+    border: 3px solid rgba(201, 163, 107, 0.3);
+    border-radius: 50%;
+    border-top: 3px solid #5A2A56;
+    width: 24px;
+    height: 24px;
+    -webkit-animation: spin 1s linear infinite; /* Safari */
+    animation: spin 1s linear infinite;
+    display: none;
+    margin: 0 auto;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+</head>
+<body class="bg-surface text-on-surface font-aptos overflow-x-hidden min-h-screen flex flex-col">
+
+<!-- Header -->
+<header class="fixed top-0 left-0 right-0 z-[60] backdrop-blur-md border-b flex justify-between items-center w-full px-6 md:px-12 py-2" style="background: rgba(61,26,56,0.92); border-color: rgba(201,163,107,0.2);">
+  <!-- Spacer for mobile layout balance -->
+  <div class="w-8 lg:hidden"></div>
+
+  <!-- Centered Logo on Mobile -->
+  <div class="h-16 flex items-center gap-3 absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0">
+    <a href="index.html" class="flex items-center gap-3">
+      <div class="logo-icon-container">
+        <img alt="Saha's Icon" class="logo-icon-img" src="assets/logo.png" onerror="this.style.display='none'"/>
+      </div>
+      <span class="font-['Playfair_Display'] text-2xl tracking-wide hidden sm:block" style="color:#C9A36B;">Saha's</span>
+    </a>
+  </div>
+  <!-- Desktop Nav -->
+  <nav class="hidden lg:flex gap-6 items-center">
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="index.html#how-it-works">How it Works<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="vault.html">Style Vault<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative font-bold text-xs uppercase tracking-widest py-1" style="color:#C9A36B;" href="fit-match.html">Fit Match<span class="absolute bottom-0 left-0 w-full h-[2px]" style="background:#C9A36B;"></span></a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="policy.html">Policy<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="contact.html">Contact<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1 flex items-center gap-1" style="color:#efe0cd;" href="account.html"><span class="material-symbols-outlined text-base">person</span><span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <button onclick="window.location.href='vault.html'" class="px-7 py-2.5 rounded-sm font-bold text-xs uppercase tracking-[0.15em] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300" style="background:#C9A36B; color:#453c2e;" onmouseover="this.style.background='#fdd397'" onmouseout="this.style.background='#C9A36B'">Rent Now</button>
+  </nav>
+  <!-- Burger Menu Button -->
+  <button class="lg:hidden relative z-[70]" style="color:#C9A36B;" onclick="toggleMenu()"><span class="material-symbols-outlined text-3xl" id="menu-icon">menu</span></button>
+</header>
+
+<!-- Mobile Menu Overlay -->
+<div id="mobile-menu" class="fixed top-20 right-6 w-56 shadow-2xl rounded-md z-[55] flex flex-col items-center gap-5 p-6 opacity-0 pointer-events-none scale-95 origin-top-right transition-all duration-300 lg:hidden" style="background:#5f2859; border:1px solid rgba(201,163,107,0.25);">
+    <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="vault.html" onclick="toggleMenu()">Style Vault</a>
+    <a class="font-bold text-sm uppercase tracking-widest" style="color:#C9A36B;" href="fit-match.html" onclick="toggleMenu()">Saha Fit Match</a>
+    <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="policy.html" onclick="toggleMenu()">Policy</a>
+    <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="contact.html" onclick="toggleMenu()">Contact Us</a>
+    <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="account.html" onclick="toggleMenu()">My Account</a>
+    <button onclick="window.location.href='vault.html'" class="px-6 py-3 w-full mt-2 rounded-sm font-bold text-xs uppercase tracking-[0.15em]" style="background:#C9A36B; color:#453c2e;">Rent Now</button>
+</div>
+
+<main class="pt-[100px] md:pt-[140px] flex-grow flex items-center justify-center pb-20 px-6">
+    <div class="w-full max-w-5xl bg-primary-container rounded-xl shadow-[0_20px_50px_-12px_rgba(61,26,58,0.25)] border border-golden-beige/20 p-8 md:p-12 relative overflow-hidden">
+        <!-- Decorative accents -->
+        <div class="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-40 h-40 bg-secondary/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2"></div>
+        
+        <div class="text-center mb-10 relative z-10">
+            <span class="text-secondary-fixed-dim font-bold text-xs uppercase tracking-[0.3em] font-aptos">Precision Sizing</span>
+            <h1 class="font-['Playfair_Display'] text-3xl md:text-5xl mt-3 text-on-primary">Saha Fit Match</h1>
+            <p class="text-on-primary-container/80 mt-4 text-sm md:text-base font-light">Enter your measurements below. Our advanced algorithm will find your perfect fit from the Saha vault.</p>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center lg:items-start relative z-10">
+            <!-- Left Side: Diagram -->
+            <div class="w-full lg:w-5/12 flex justify-center items-center order-1 pt-4 pb-8 lg:pb-0">
+                <div class="relative w-full max-w-[280px]">
+                   <svg viewBox="0 0 200 400" class="w-full h-auto drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <!-- Body Outline -->
+                      <path d="M 85 20 Q 100 5, 115 20 Q 160 25, 170 50 Q 185 90, 150 110 Q 135 150, 135 190 Q 170 240, 165 290 Q 160 350, 150 390 L 115 390 Q 100 300, 85 390 L 50 390 Q 40 350, 35 290 Q 30 240, 65 190 Q 65 150, 50 110 Q 15 90, 30 50 Q 40 25, 85 20 Z" stroke="#E3CBA8" stroke-width="2" stroke-linejoin="round" fill="rgba(227, 203, 168, 0.05)"/>
+                      
+                      <!-- Height Line -->
+                      <line x1="15" y1="20" x2="15" y2="390" stroke="#C9A36B" stroke-width="1.5" stroke-dasharray="4 4"/>
+                      <polygon points="11,26 19,26 15,16" fill="#C9A36B"/>
+                      <polygon points="11,384 19,384 15,394" fill="#C9A36B"/>
+                      
+                      <!-- Shoulder Line -->
+                      <line x1="30" y1="55" x2="170" y2="55" stroke="#C9A36B" stroke-width="1.5" stroke-dasharray="3 3"/>
+                      <circle cx="30" cy="55" r="3.5" fill="#C9A36B"/>
+                      <circle cx="170" cy="55" r="3.5" fill="#C9A36B"/>
+                      
+                      <!-- Bust Line -->
+                      <line x1="53" y1="125" x2="147" y2="125" stroke="#C9A36B" stroke-width="1.5" stroke-dasharray="3 3"/>
+                      <circle cx="53" cy="125" r="3.5" fill="#C9A36B"/>
+                      <circle cx="147" cy="125" r="3.5" fill="#C9A36B"/>
+                      
+                      <!-- Waist Line -->
+                      <line x1="65" y1="190" x2="135" y2="190" stroke="#C9A36B" stroke-width="1.5" stroke-dasharray="3 3"/>
+                      <circle cx="65" cy="190" r="3.5" fill="#C9A36B"/>
+                      <circle cx="135" cy="190" r="3.5" fill="#C9A36B"/>
+                      
+                      <!-- Hip Line -->
+                      <line x1="32" y1="265" x2="168" y2="265" stroke="#C9A36B" stroke-width="1.5" stroke-dasharray="3 3"/>
+                      <circle cx="32" cy="265" r="3.5" fill="#C9A36B"/>
+                      <circle cx="168" cy="265" r="3.5" fill="#C9A36B"/>
+                   </svg>
+                   
+                   <!-- Labels -->
+                   <div class="absolute top-[13.75%] left-[50%] -translate-x-1/2 -translate-y-1/2 bg-surface text-primary text-[9px] font-bold px-2.5 py-1 rounded-full border border-secondary-fixed-dim/30 shadow-md uppercase tracking-widest whitespace-nowrap">Shoulder</div>
+                   <div class="absolute top-[31.25%] left-[50%] -translate-x-1/2 -translate-y-1/2 bg-surface text-primary text-[9px] font-bold px-2.5 py-1 rounded-full border border-secondary-fixed-dim/30 shadow-md uppercase tracking-widest whitespace-nowrap">Bust</div>
+                   <div class="absolute top-[47.5%] left-[50%] -translate-x-1/2 -translate-y-1/2 bg-surface text-primary text-[9px] font-bold px-2.5 py-1 rounded-full border border-secondary-fixed-dim/30 shadow-md uppercase tracking-widest whitespace-nowrap">Waist</div>
+                   <div class="absolute top-[66.25%] left-[50%] -translate-x-1/2 -translate-y-1/2 bg-surface text-primary text-[9px] font-bold px-2.5 py-1 rounded-full border border-secondary-fixed-dim/30 shadow-md uppercase tracking-widest whitespace-nowrap">Hip</div>
+                   <div class="absolute top-[50%] left-[7.5%] -translate-x-1/2 -translate-y-1/2 bg-surface text-primary text-[9px] font-bold px-2.5 py-1 rounded-full border border-secondary-fixed-dim/30 shadow-md uppercase tracking-widest -rotate-90 origin-center whitespace-nowrap">Height</div>
+                </div>
+            </div>
+
+            <!-- Right Side: Form -->
+            <div class="w-full lg:w-7/12 order-2">
+                <form id="fit-match-form" class="space-y-6" onsubmit="calculateFit(event)">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="text-[10px] font-bold uppercase tracking-wider text-secondary-fixed-dim mb-1.5 block" for="height">Height (cm)</label>
+                            <input type="number" id="height" class="w-full bg-primary/40 border border-secondary-fixed-dim/30 text-on-primary rounded-sm px-4 py-3 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 transition-all placeholder:text-on-primary/30" placeholder="e.g. 165" required min="100" max="250">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase tracking-wider text-secondary-fixed-dim mb-1.5 block" for="bust">Bust (inches)</label>
+                            <input type="number" id="bust" class="w-full bg-primary/40 border border-secondary-fixed-dim/30 text-on-primary rounded-sm px-4 py-3 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 transition-all placeholder:text-on-primary/30" placeholder="e.g. 34" required step="0.5" min="20" max="60">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase tracking-wider text-secondary-fixed-dim mb-1.5 block" for="waist">Waist (inches)</label>
+                            <input type="number" id="waist" class="w-full bg-primary/40 border border-secondary-fixed-dim/30 text-on-primary rounded-sm px-4 py-3 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 transition-all placeholder:text-on-primary/30" placeholder="e.g. 28" required step="0.5" min="20" max="60">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase tracking-wider text-secondary-fixed-dim mb-1.5 block" for="hip">Hip (inches)</label>
+                            <input type="number" id="hip" class="w-full bg-primary/40 border border-secondary-fixed-dim/30 text-on-primary rounded-sm px-4 py-3 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 transition-all placeholder:text-on-primary/30" placeholder="e.g. 38" required step="0.5" min="20" max="70">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="text-[10px] font-bold uppercase tracking-wider text-secondary-fixed-dim mb-1.5 block" for="shoulder">Shoulder Width (inches)</label>
+                            <input type="number" id="shoulder" class="w-full bg-primary/40 border border-secondary-fixed-dim/30 text-on-primary rounded-sm px-4 py-3 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 transition-all placeholder:text-on-primary/30" placeholder="e.g. 15" required step="0.5" min="10" max="25">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="w-full bg-secondary-fixed text-on-secondary-fixed px-8 py-4 font-bold text-xs rounded-sm hover:bg-secondary-fixed-dim hover:shadow-[0_10px_30px_-10px_rgba(201,163,107,0.5)] hover:-translate-y-1 transition-all duration-300 tracking-[0.2em] uppercase mt-8 flex justify-center items-center gap-2 border border-secondary-fixed/50">
+                        <span>Find My Fit</span>
+                        <div id="btn-loader" class="loader !border-on-secondary-fixed/30 !border-t-on-secondary-fixed"></div>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Results Section (Hidden initially) -->
+        <div id="result-section" class="hidden mt-10 pt-8 border-t border-secondary-fixed-dim/20 text-center animate-[fadeIn_0.5s_ease-in-out] relative z-10">
+            <h2 class="font-['Playfair_Display'] text-2xl text-secondary-fixed-dim mb-2">Your Perfect Match</h2>
+            <div class="flex items-center justify-center gap-4 my-6">
+                <span class="material-symbols-outlined text-secondary-fixed text-4xl">checkroom</span>
+                <span id="size-result" class="text-5xl md:text-6xl font-bold bg-gradient-to-br from-secondary-fixed via-white to-secondary-fixed-dim bg-clip-text text-transparent drop-shadow-sm">M</span>
+                <span class="material-symbols-outlined text-secondary-fixed text-4xl" style="transform: scaleX(-1);">checkroom</span>
+            </div>
+            <p class="text-sm text-on-primary-container/80 font-aptos mb-8 font-light">Based on our algorithm, we recommend size <strong id="size-text-result" class="text-secondary-fixed font-bold tracking-wide">Medium</strong> for the most flattering fit.</p>
+            <a href="vault.html" class="inline-block bg-primary text-on-primary px-8 py-3 font-bold text-xs rounded-sm hover:-translate-y-1 hover:bg-deep-aubergine hover:shadow-xl transition-all duration-300 tracking-[0.2em] uppercase border border-primary-container/50">
+                Browse Styles in Your Size
+            </a>
+        </div>
+    </div>
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="bg-soft-sand text-primary flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4 pt-6 pb-20 md:py-6 px-6 md:px-12 w-full border-t border-golden-beige/30 text-center md:text-left mt-auto">
+  <div class="flex flex-col items-center md:items-start gap-1">
+    <div class="logo-icon-container" style="width: 48px; height: 48px;">
+      <img alt="Saha's Icon" class="logo-icon-img" src="assets/logo.png" onerror="this.style.display='none'"/>
+    </div>
+    <span class="font-['Playfair_Display'] text-xl text-primary">Saha's</span>
+    <p class="font-bold text-[10px] text-primary/60 tracking-[0.2em] uppercase mt-1 text-center md:text-left">
+      © 2024 Saha's Shared Wardrobe. Sustainable Luxury.
+    </p>
+  </div>
+  <div class="flex flex-col items-center md:items-end gap-4">
+    <nav class="flex flex-wrap justify-center gap-4 md:gap-8">
+      <a class="text-primary/70 hover:text-secondary transition-all font-bold text-xs uppercase tracking-wide" href="#">About Us</a>
+      <a class="text-primary/70 hover:text-secondary transition-all font-bold text-xs uppercase tracking-wide" href="#">FAQs</a>
+      <a class="text-primary/70 hover:text-secondary transition-all font-bold text-xs uppercase tracking-wide" href="policy.html">Policy</a>
+      <a class="text-primary/70 hover:text-secondary transition-all font-bold text-xs uppercase tracking-wide" href="contact.html">Contact Us</a>
+    </nav>
+    <div class="flex gap-4">
+      <a class="text-primary/70 hover:text-secondary transition-colors" href="#" aria-label="Instagram">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+      </a>
+      <a class="text-primary/70 hover:text-secondary transition-colors" href="#"><span class="material-symbols-outlined">share</span></a>
+      <a class="text-primary/70 hover:text-secondary transition-colors" href="#"><span class="material-symbols-outlined">mail</span></a>
+    </div>
+  </div>
+</footer>
+
+<!-- Mobile Bottom Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-soft-sand/95 backdrop-blur-md border-t border-golden-beige/30 flex justify-around items-center w-full px-2 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+  <a class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="index.html">
+    <span class="material-symbols-outlined text-2xl">home</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Home</span>
+  </a>
+  <a class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="vault.html">
+    <span class="material-symbols-outlined text-2xl">checkroom</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Vault</span>
+  </a>
+  <a class="flex flex-col items-center gap-1 text-secondary transition-colors" href="fit-match.html">
+    <span class="material-symbols-outlined text-2xl">straighten</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Fit Match</span>
+  </a>
+  <a class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="account.html">
+    <span class="material-symbols-outlined text-2xl">person</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Account</span>
+  </a>
+</nav>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<script>
+  // Mobile Menu Toggle
+  function toggleMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const icon = document.getElementById('menu-icon');
+    const isHidden = menu.classList.contains('opacity-0');
+    if(isHidden) {
+        menu.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+        menu.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
+        icon.innerText = 'close';
+    } else {
+        menu.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+        menu.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+        icon.innerText = 'menu';
+    }
+  }
+
+  // Mock API Calculation
+  function calculateFit(e) {
+      e.preventDefault();
+      
+      const btn = document.getElementById('submit-btn');
+      const loader = document.getElementById('btn-loader');
+      const btnText = btn.querySelector('span');
+      const resultSection = document.getElementById('result-section');
+      
+      // Get values
+      const waist = parseFloat(document.getElementById('waist').value);
+      const bust = parseFloat(document.getElementById('bust').value);
+      
+      // Loading state
+      btn.disabled = true;
+      btnText.style.display = 'none';
+      loader.style.display = 'block';
+      resultSection.classList.add('hidden');
+
+      // Simulate API call delay
+      setTimeout(() => {
+          let sizeLabel = 'M';
+          let fullSize = 'Medium';
+          
+          // Simple logic just for the mock
+          if (waist < 26 || bust < 32) {
+              sizeLabel = 'XS'; fullSize = 'Extra Small';
+          } else if (waist < 28 || bust < 34) {
+              sizeLabel = 'S'; fullSize = 'Small';
+          } else if (waist > 34 || bust > 40) {
+              sizeLabel = 'XL'; fullSize = 'Extra Large';
+          } else if (waist > 30 || bust > 37) {
+              sizeLabel = 'L'; fullSize = 'Large';
+          }
+
+          // Show result
+          document.getElementById('size-result').innerText = sizeLabel;
+          document.getElementById('size-text-result').innerText = fullSize;
+          
+          loader.style.display = 'none';
+          btnText.style.display = 'inline';
+          btn.disabled = false;
+          
+          resultSection.classList.remove('hidden');
+          
+          // Scroll to result
+          resultSection.scrollIntoView({ behavior: 'smooth', block: 'end' });
+          
+      }, 1500);
+  }
+</script>
+</body>
+</html>       resultSection.scrollIntoView({ behavior: 'smooth', block: 'end' });
+          
+      }, 1500);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html class="light overflow-x-hidden" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Saha's Shared Wardrobe | Policy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Hanken+Grotesk:wght@300;400;500;700&family=Great+Vibes&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          primary: '#5A2A56',
+          'primary-container': '#7A3F72',
+          'deep-aubergine': '#3D1A3A',
+          secondary: '#C9A36B',
+          'secondary-fixed-dim': '#C9A36B',
+          'secondary-fixed': '#E8D4B0',
+          'on-secondary-fixed': '#3D1A3A',
+          'on-secondary': '#3D1A3A',
+          'soft-sand': '#F7EFE4',
+          'golden-beige': '#E3CBA8',
+          surface: '#FDF9F4',
+          'on-surface': '#2B1A29',
+          'on-surface-variant': '#705C6E',
+          'on-primary': '#FDF9F4',
+          'on-primary-container': '#F4E8EF',
+          error: '#C0455A',
+        },
+        fontFamily: {
+          aptos: ['Hanken Grotesk', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<style>
+  /* ===== Custom Hanger Cursor ===== */
+  body {
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="%23C9A36B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3m0 0a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm-9 12c0-1.5 2-3 9-3s9 1.5 9 3v1H3v-1z"/><path d="M12 5v2"/></svg>'), auto;
+  }
+
+  .font-aptos { font-family: 'Hanken Grotesk', sans-serif; }
+
+  /* ===== Logo ===== */
+  .logo-icon-container { width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; }
+  .logo-icon-img { width: 100%; height: 100%; object-fit: contain; }
+
+  /* General reveal-on-scroll */
+  .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+  }
+</style>
+</head>
+<body class="bg-primary text-soft-sand font-aptos overflow-x-hidden flex flex-col min-h-screen">
+
+<!-- Header -->
+<header class="fixed top-0 left-0 right-0 z-[60] backdrop-blur-md border-b flex justify-between items-center w-full px-6 md:px-12 py-2" style="background: rgba(61,26,56,0.92); border-color: rgba(201,163,107,0.2);">
+  <!-- Spacer for mobile layout balance -->
+  <div class="w-8 lg:hidden"></div>
+
+  <!-- Centered Logo on Mobile -->
+  <div class="h-16 flex items-center gap-3 absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0">
+    <a href="index.html" class="flex items-center gap-3">
+      <div class="logo-icon-container">
+        <img alt="Saha's Icon" class="logo-icon-img" src="assets/logo.png" onerror="this.style.display='none'"/>
+      </div>
+      <span class="font-['Playfair_Display'] text-2xl tracking-wide hidden sm:block" style="color:#C9A36B;">Saha's</span>
+    </a>
+  </div>
+  <!-- Desktop Nav -->
+  <nav class="hidden lg:flex gap-6 items-center">
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="index.html#how-it-works">How it Works<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="vault.html">Style Vault<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="fit-match.html">Fit Match<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative font-bold text-xs uppercase tracking-widest py-1" style="color:#C9A36B;" href="policy.html">Policy<span class="absolute bottom-0 left-0 w-full h-[2px]" style="background:#C9A36B;"></span></a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="contact.html">Contact<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1 flex items-center gap-1" style="color:#efe0cd;" href="account.html"><span class="material-symbols-outlined text-base">person</span><span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <button onclick="window.location.href='vault.html'" class="px-7 py-2.5 rounded-sm font-bold text-xs uppercase tracking-[0.15em] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300" style="background:#C9A36B; color:#453c2e;" onmouseover="this.style.background='#fdd397'" onmouseout="this.style.background='#C9A36B'">Rent Now</button>
+  </nav>
+  <!-- Burger Menu Button -->
+  <button class="lg:hidden relative z-[70]" style="color:#C9A36B;" onclick="toggleMenu()"><span class="material-symbols-outlined text-3xl" id="menu-icon">menu</span></button>
+</header>
+
+<!-- Mobile Menu Overlay -->
+<div id="mobile-menu" class="fixed top-20 right-6 w-56 shadow-2xl rounded-md z-[55] flex flex-col items-center gap-5 p-6 opacity-0 pointer-events-none scale-95 origin-top-right transition-all duration-300 lg:hidden" style="background:#5f2859; border:1px solid rgba(201,163,107,0.25);">
+    <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="vault.html" onclick="toggleMenu()">Style Vault</a>
+    <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="fit-match.html" onclick="toggleMenu()">Saha Fit Match</a>
+    <a class="font-bold text-sm uppercase tracking-widest" style="color:#C9A36B;" href="policy.html" onclick="toggleMenu()">Policy</a>
+    <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="contact.html" onclick="toggleMenu()">Contact Us</a>
+    <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="account.html" onclick="toggleMenu()">My Account</a>
+    <button onclick="window.location.href='vault.html'" class="px-6 py-3 w-full mt-2 rounded-sm font-bold text-xs uppercase tracking-[0.15em]" style="background:#C9A36B; color:#453c2e;">Rent Now</button>
+</div>
+
+<main class="pt-[100px] md:pt-[140px] flex-grow pb-20 px-6 max-w-4xl mx-auto w-full">
+    <div class="text-center mb-12 reveal">
+      <span class="text-secondary font-bold text-xs uppercase tracking-[0.3em] font-aptos">Saha's Guidelines</span>
+      <h1 class="font-['Playfair_Display'] text-4xl md:text-5xl mt-3 text-secondary-fixed-dim">Policies</h1>
+    </div>
+
+    <!-- 1. Rental Policy -->
+    <div class="space-y-8 bg-primary-container border border-golden-beige/20 p-8 md:p-12 rounded-xl shadow-[0_20px_50px_-12px_rgba(61,26,58,0.25)] reveal relative overflow-hidden">
+      <!-- Decorative light blobs -->
+      <div class="absolute top-0 right-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+      <div>
+        <h2 class="font-['Playfair_Display'] text-2xl md:text-3xl text-secondary-fixed-dim mb-4 flex items-center gap-3">
+            <span class="flex items-center justify-center bg-secondary-fixed-dim text-on-secondary-fixed w-8 h-8 rounded-full text-lg shadow-md">1</span>
+            Rental Policy
+        </h2>
+        <p class="text-soft-sand/90 font-aptos text-sm md:text-base leading-relaxed mb-8 border-b border-golden-beige/20 pb-8">
+          At Saha's, we believe every woman deserves to look extraordinary — without buying a new outfit every time. Our rental service exists so your wardrobe has no limits.
+        </p>
+      </div>
+
+      <div class="space-y-8">
+        <!-- 1.1 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">1.1</span> Rental Period
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Your rental duration is selected at the time of booking and confirmed via WhatsApp.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">The rental period begins from the date of delivery and ends on the scheduled return date.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Outfits must be returned on or before the return date. Extensions are subject to availability and must be requested before confirmation of pick-up.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Extension charges will apply at a pro-rated daily rate based on the outfit's rental price.</li>
+          </ul>
+        </div>
+
+        <!-- 1.2 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">1.2</span> Care During Rental
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Please handle all outfits with care. Outfits are professionally cleaned and quality-checked before every delivery.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Only natural wear during the use of the apparel like light creasing will be acceptable. No marks, stains will be accepted.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Please do not alter, stitch, cut, dye, bleach, iron excessively, or modify any outfit in any way.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Do not attempt to wash, dry-clean, or treat the outfit yourself — return it as-is and our team will handle cleaning.</li>
+          </ul>
+        </div>
+
+        <!-- 1.3 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">1.3</span> General Rules
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Outfits are for personal use only and may not be sub-rented, lent, or transferred to another person.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Saha's reserves the right to refuse future rentals in cases of repeated policy violations, damage, or non-returns and also reserves the right to forfeit the deposit in such cases.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Every outfit is the property of Saha's or a registered Curator. Unauthorised use beyond the rental period is considered misuse.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Security Deposit Policy -->
+    <div class="space-y-8 bg-primary-container border border-golden-beige/20 p-8 md:p-12 rounded-xl shadow-[0_20px_50px_-12px_rgba(61,26,58,0.25)] reveal relative overflow-hidden mt-12">
+      <!-- Decorative light blobs -->
+      <div class="absolute top-0 right-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+      <div>
+        <h2 class="font-['Playfair_Display'] text-2xl md:text-3xl text-secondary-fixed-dim mb-4 flex items-center gap-3">
+            <span class="flex items-center justify-center bg-secondary-fixed-dim text-on-secondary-fixed w-8 h-8 rounded-full text-lg shadow-md">2</span>
+            Security Deposit Policy
+        </h2>
+        <p class="text-soft-sand/90 font-aptos text-sm md:text-base leading-relaxed mb-8 border-b border-golden-beige/20 pb-8">
+          A fully refundable pre-paid security deposit is mandatory for every rental booking.
+        </p>
+      </div>
+
+      <div class="space-y-8">
+        <!-- 2.1 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">2.1</span> How It Works
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">The deposit amount is the actual value of the apparel.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">The deposit amount is specific to each outfit and will be clearly displayed before booking confirmation.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">The deposit is collected at the time of booking, exclusive of the rental fee.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">After the outfit is returned, it undergoes a thorough quality inspection by the Saha's team.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Once the outfit passes inspection with no damage beyond normal wear, your deposit is refunded in full.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Refunds are processed within 3–7 working days of inspection approval.</li>
+          </ul>
+        </div>
+
+        <!-- 2.2 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">2.2</span> Deductions
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">In cases of damage, missing attached accessories, or embellishments, the deposit will be forfeited.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">In case of a late return than the stipulated rental period, the additional rental charges will be deducted from the deposit amount.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">In cases of loss or non-return, the full deposit will be forfeited.</li>
+          </ul>
+        </div>
+
+        <!-- 2.3 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">2.3</span> Curator Outfits
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">For outfits listed by Curators, the deposit is still collected and managed by Saha's. The Curator does not receive the deposit directly.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Damage Policy -->
+    <div class="space-y-8 bg-primary-container border border-golden-beige/20 p-8 md:p-12 rounded-xl shadow-[0_20px_50px_-12px_rgba(61,26,58,0.25)] reveal relative overflow-hidden mt-12">
+      <!-- Decorative light blobs -->
+      <div class="absolute top-0 right-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+      <div>
+        <h2 class="font-['Playfair_Display'] text-2xl md:text-3xl text-secondary-fixed-dim mb-4 flex items-center gap-3">
+            <span class="flex items-center justify-center bg-secondary-fixed-dim text-on-secondary-fixed w-8 h-8 rounded-full text-lg shadow-md">3</span>
+            Damage Policy
+        </h2>
+        <p class="text-soft-sand/90 font-aptos text-sm md:text-base leading-relaxed mb-8 border-b border-golden-beige/20 pb-8">
+          We trust our customers to enjoy outfits responsibly. This policy exists to protect both our community and our Curators.
+        </p>
+      </div>
+
+      <div class="space-y-8">
+        <!-- 3.1 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">3.1</span> What Counts as Normal Wear (No Charge)
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Minor wrinkles or light creasing from wear</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Small, washable surface marks</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Natural fabric movement or minor pilling on older garments</li>
+          </ul>
+        </div>
+
+        <!-- 3.2 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">3.2</span> What Counts as Chargeable Damage
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Tears, rips, or cuts — accidental or otherwise</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Burns, scorch marks, or heat damage</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Permanent stains (food, drink, makeup, oil, pen, etc.) that cannot be professionally removed</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Missing embellishments, sequins, buttons, belts, or accessories</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Broken zips, hooks, or structural damage to the garment</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Alterations, stitching, or any modification made to the outfit</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Unauthorised washing or dry-cleaning that damages fabric or finish</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Threads pulled out due to apparel getting stuck in sharp, pointed objects.</li>
+          </ul>
+        </div>
+
+        <!-- 3.3 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">3.3</span> Assessment Process
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">All outfits are photographed before dispatch and after return.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">The Saha's team will assess damage objectively using pre- and post-rental photographs.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Customers will be informed of any chargeable damage within 24 hours of return.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Customers may raise a dispute by contacting us within 24 hours of being notified.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Cancellation Policy -->
+    <div class="space-y-8 bg-primary-container border border-golden-beige/20 p-8 md:p-12 rounded-xl shadow-[0_20px_50px_-12px_rgba(61,26,58,0.25)] reveal relative overflow-hidden mt-12">
+      <!-- Decorative light blobs -->
+      <div class="absolute top-0 right-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+      <div>
+        <h2 class="font-['Playfair_Display'] text-2xl md:text-3xl text-secondary-fixed-dim mb-4 flex items-center gap-3">
+            <span class="flex items-center justify-center bg-secondary-fixed-dim text-on-secondary-fixed w-8 h-8 rounded-full text-lg shadow-md">4</span>
+            Cancellation Policy
+        </h2>
+        <p class="text-soft-sand/90 font-aptos text-sm md:text-base leading-relaxed mb-8 border-b border-golden-beige/20 pb-8">
+          We understand plans change. Here's how cancellations work at Saha's.
+        </p>
+      </div>
+
+      <div class="space-y-8">
+        <!-- 4.1 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">4.1</span> Cancellation Windows
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Cancellations are accepted upto only 4 hrs from the booking time.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Orders may be dispatched within 24 hours of booking confirmation — so please act quickly if you need to cancel.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Once dispatched, cancellations are not accepted and the rental fee is non-refundable.</li>
+          </ul>
+        </div>
+
+        <!-- 4.2 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">4.2</span> Refund on Cancellation
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">If cancelled before dispatch: full rental fee refund + full security deposit will be refund.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">If cancelled after dispatch: rental fee is non-refundable. Security deposit will be refunded after the outfit has reached the facility and inspected.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Refund timelines depend on the original payment method and are typically processed within 3–7 working days.</li>
+          </ul>
+        </div>
+
+        <!-- 4.3 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">4.3</span> No-Show / Non-Returns
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">If a customer fails to return the outfit without communication, the security deposit will be forfeited and further orders will not be accepted unless communicated to the team.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Return Policy -->
+    <div class="space-y-8 bg-primary-container border border-golden-beige/20 p-8 md:p-12 rounded-xl shadow-[0_20px_50px_-12px_rgba(61,26,58,0.25)] reveal relative overflow-hidden mt-12">
+      <!-- Decorative light blobs -->
+      <div class="absolute top-0 right-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+      <div>
+        <h2 class="font-['Playfair_Display'] text-2xl md:text-3xl text-secondary-fixed-dim mb-4 flex items-center gap-3">
+            <span class="flex items-center justify-center bg-secondary-fixed-dim text-on-secondary-fixed w-8 h-8 rounded-full text-lg shadow-md">5</span>
+            Return Policy
+        </h2>
+        <p class="text-soft-sand/90 font-aptos text-sm md:text-base leading-relaxed mb-8 border-b border-golden-beige/20 pb-8">
+          Returning your outfit is simple — here's what to do.
+        </p>
+      </div>
+
+      <div class="space-y-8">
+        <div>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Return the outfit on or before the scheduled return date confirmed at booking.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Repack the outfit in the original packaging provided wherever possible — this protects the garment in transit.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Ensure all accessories sent with the outfit (belts, dupattas, jewellery, hangers, garment bags) are returned together.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Missing accessories will be treated as damage and may incur replacement charges.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Saha's will arrange return pickup where applicable. Details will be confirmed via WhatsApp at the time of booking.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Do not return outfits via any other courier unless otherwise communicated/ suggested by Saha's.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Fit Match & AI Measurements Policy -->
+    <div class="space-y-8 bg-primary-container border border-golden-beige/20 p-8 md:p-12 rounded-xl shadow-[0_20px_50px_-12px_rgba(61,26,58,0.25)] reveal relative overflow-hidden mt-12">
+      <!-- Decorative light blobs -->
+      <div class="absolute top-0 right-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+      <div>
+        <h2 class="font-['Playfair_Display'] text-2xl md:text-3xl text-secondary-fixed-dim mb-4 flex items-center gap-3">
+            <span class="flex items-center justify-center bg-secondary-fixed-dim text-on-secondary-fixed w-8 h-8 rounded-full text-lg shadow-md">6</span>
+            Fit Match & AI Measurements Policy
+        </h2>
+        <p class="text-soft-sand/90 font-aptos text-sm md:text-base leading-relaxed mb-8 border-b border-golden-beige/20 pb-8">
+          Saha's offers a Saha Fit Match feature to help customers find outfits that align with their body measurements.
+        </p>
+      </div>
+
+      <div class="space-y-8">
+        <!-- 6.1 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">6.1</span> How It Works
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Customers may optionally enter their measurements (bust, waist, hips, height) in their Fit Passport.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Our system compares your measurements against the outfit's listed measurements and provides a fit compatibility indication.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Fit Match is a guidance tool only — it does not guarantee a perfect fit.</li>
+          </ul>
+        </div>
+
+        <!-- 6.2 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">6.2</span> Customer Responsibility
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Customers are solely responsible for the accuracy of the measurements they enter.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Saha's is not liable for fit issues arising from incorrect, incomplete, or outdated measurements provided by the customer.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Since fit preferences vary (some prefer relaxed, some prefer fitted), Saha's cannot guarantee a perfect fit for every body type and preference.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Customers are strongly encouraged to review the outfit's detailed measurements listed on the product page before booking.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">No refunds or cancellations will be accepted on the grounds of fit once the outfit has been dispatched.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Curator Policy -->
+    <div class="space-y-8 bg-primary-container border border-golden-beige/20 p-8 md:p-12 rounded-xl shadow-[0_20px_50px_-12px_rgba(61,26,58,0.25)] reveal relative overflow-hidden mt-12">
+      <!-- Decorative light blobs -->
+      <div class="absolute top-0 right-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+      <div>
+        <h2 class="font-['Playfair_Display'] text-2xl md:text-3xl text-secondary-fixed-dim mb-4 flex items-center gap-3">
+            <span class="flex items-center justify-center bg-secondary-fixed-dim text-on-secondary-fixed w-8 h-8 rounded-full text-lg shadow-md">7</span>
+            Curator Policy
+        </h2>
+        <p class="text-soft-sand/90 font-aptos text-sm md:text-base leading-relaxed mb-8 border-b border-golden-beige/20 pb-8">
+          Saha's allows registered Curators to list their personal outfits on the platform for rental by other users.
+        </p>
+      </div>
+
+      <div class="space-y-8">
+        <!-- 7.1 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">7.1</span> Becoming a Curator
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Any individual wishing to list outfits must apply through the Become a Curator section on the website.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Curators must submit outfit details including: name, description, category, measurements, fabric/material, condition, care instructions, and clear photographs (front, back, detail shots).</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Outfits are reviewed and approved by the Saha's admin team before going live. Saha's reserves the right to reject any listing that does not meet quality standards.</li>
+          </ul>
+        </div>
+
+        <!-- 7.2 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">7.2</span> Curator Responsibilities
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Curators are responsible for ensuring their outfit is in the condition described at the time of listing.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Any misrepresentation of outfit condition or measurements may result in the Curator's account being suspended.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Curators must keep their listings updated and flag any changes in outfit condition immediately.</li>
+          </ul>
+        </div>
+
+        <!-- 7.3 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">7.3</span> Quality Checks
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Before a Curator's outfit is dispatched to a renter, the Saha's team will conduct a quality check. Outfits that do not meet standards will be withheld from dispatch and the Curator will be notified.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">After return, the outfit undergoes a second quality check before being re-listed or returned to the Curator.</li>
+          </ul>
+        </div>
+
+        <!-- 7.4 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">7.4</span> Earnings & Payouts
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Curators earn a percentage of the rental fee for each successful booking, as agreed at the time of onboarding.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Payouts are processed after the return inspection is complete and within the agreed timeline.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. Hygiene Promise -->
+    <div class="space-y-8 bg-primary-container border border-golden-beige/20 p-8 md:p-12 rounded-xl shadow-[0_20px_50px_-12px_rgba(61,26,58,0.25)] reveal relative overflow-hidden mt-12">
+      <!-- Decorative light blobs -->
+      <div class="absolute top-0 right-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+      <div>
+        <h2 class="font-['Playfair_Display'] text-2xl md:text-3xl text-secondary-fixed-dim mb-4 flex items-center gap-3">
+            <span class="flex items-center justify-center bg-secondary-fixed-dim text-on-secondary-fixed w-8 h-8 rounded-full text-lg shadow-md">8</span>
+            Hygiene Promise
+        </h2>
+        <p class="text-soft-sand/90 font-aptos text-sm md:text-base leading-relaxed mb-8 border-b border-golden-beige/20 pb-8">
+          Every outfit you receive from Saha's — whether owned by us or listed by a Curator — goes through our standard hygiene process before delivery:
+        </p>
+      </div>
+
+      <div class="space-y-6">
+        <div>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Professional dry-cleaning or laundering as appropriate for the fabric</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Quality inspection for damage, condition, and completeness</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Fresh packaging in a clean garment bag</li>
+          </ul>
+        </div>
+        <p class="text-soft-sand/90 font-aptos text-sm md:text-base leading-relaxed">
+          Your hygiene and safety are not negotiable. If you ever receive an outfit that does not meet these standards, please contact us immediately via WhatsApp and we will resolve it.
+        </p>
+      </div>
+    </div>
+
+    <!-- 9. Liability -->
+    <div class="space-y-8 bg-primary-container border border-golden-beige/20 p-8 md:p-12 rounded-xl shadow-[0_20px_50px_-12px_rgba(61,26,58,0.25)] reveal relative overflow-hidden mt-12">
+      <!-- Decorative light blobs -->
+      <div class="absolute top-0 right-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+      <div>
+        <h2 class="font-['Playfair_Display'] text-2xl md:text-3xl text-secondary-fixed-dim mb-4 flex items-center gap-3">
+            <span class="flex items-center justify-center bg-secondary-fixed-dim text-on-secondary-fixed w-8 h-8 rounded-full text-lg shadow-md">9</span>
+            Liability
+        </h2>
+        <p class="text-soft-sand/90 font-aptos text-sm md:text-base leading-relaxed mb-8 border-b border-golden-beige/20 pb-8">
+          Saha's provides outfits strictly on a rental basis.
+        </p>
+      </div>
+
+      <div class="space-y-8">
+        <div>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Saha's is not liable for indirect losses, consequential damages, or event-related dissatisfaction arising from outfit fit, style preference, or delivery delays caused by circumstances beyond our control (weather, courier delays, etc.).</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Saha's is not responsible for personal injury or damage to personal property caused by use of a rented outfit.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Liability, if any, is limited to the rental fee paid for that specific booking.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. Privacy Policy -->
+    <div class="space-y-8 bg-primary-container border border-golden-beige/20 p-8 md:p-12 rounded-xl shadow-[0_20px_50px_-12px_rgba(61,26,58,0.25)] reveal relative overflow-hidden mt-12">
+      <!-- Decorative light blobs -->
+      <div class="absolute top-0 right-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+      <div>
+        <h2 class="font-['Playfair_Display'] text-2xl md:text-3xl text-secondary-fixed-dim mb-4 flex items-center gap-3">
+            <span class="flex items-center justify-center bg-secondary-fixed-dim text-on-secondary-fixed w-8 h-8 rounded-full text-lg shadow-md">10</span>
+            Privacy Policy
+        </h2>
+        <p class="text-soft-sand/90 font-aptos text-sm md:text-base leading-relaxed mb-8 border-b border-golden-beige/20 pb-8">
+          Saha's collects only the information necessary to process your bookings, personalise your experience, and improve our service.
+        </p>
+      </div>
+
+      <div class="space-y-8">
+        <!-- 10.1 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">10.1</span> What We Collect
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Name, contact number, and delivery address</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Body measurements (if voluntarily entered for Fit Match)</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Booking history and outfit preferences</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">Payment transaction references (we do not store card details)</li>
+          </ul>
+        </div>
+
+        <!-- 10.2 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">10.2</span> How We Use It
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">To process and confirm your bookings</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">To provide customer support</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">To improve our platform, catalogue, and recommendations</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">To send booking updates and service communications via WhatsApp</li>
+          </ul>
+        </div>
+
+        <!-- 10.3 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">10.3</span> What We Don't Do
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">We do not share your personal information to third parties</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">We do not share your data with advertisers</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">We do not use your measurements for any purpose outside of Fit Match and service improvement</li>
+          </ul>
+        </div>
+
+        <!-- 10.4 -->
+        <div>
+          <h3 class="font-bold text-base md:text-lg text-secondary-fixed mb-3 flex items-center gap-2">
+             <span class="text-primary-container bg-secondary-fixed-dim px-2 py-0.5 rounded font-bold text-sm tracking-wide">10.4</span> Your Rights
+          </h3>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">You may request access to, correction of, or deletion of your personal data at any time by contacting us via WhatsApp or email.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. Terms of Use -->
+    <div class="space-y-8 bg-primary-container border border-golden-beige/20 p-8 md:p-12 rounded-xl shadow-[0_20px_50px_-12px_rgba(61,26,58,0.25)] reveal relative overflow-hidden mt-12">
+      <!-- Decorative light blobs -->
+      <div class="absolute top-0 right-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+      <div>
+        <h2 class="font-['Playfair_Display'] text-2xl md:text-3xl text-secondary-fixed-dim mb-4 flex items-center gap-3">
+            <span class="flex items-center justify-center bg-secondary-fixed-dim text-on-secondary-fixed w-8 h-8 rounded-full text-lg shadow-md">11</span>
+            Terms of Use
+        </h2>
+        <p class="text-soft-sand/90 font-aptos text-sm md:text-base leading-relaxed mb-8 border-b border-golden-beige/20 pb-8">
+          By placing a booking with Saha's, you agree to the following:
+        </p>
+      </div>
+
+      <div class="space-y-6">
+        <div>
+          <ul class="list-none space-y-2.5 text-soft-sand/80 font-aptos text-sm md:text-base ml-4 relative">
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">You will provide accurate personal and measurement information.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">You will use rented outfits responsibly and for personal use only.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">You will return outfits on time, in the condition received, with all accessories.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">You will follow all rental, damage, and return guidelines outlined in these policies.</li>
+            <li class="relative pl-5 before:content-[''] before:w-1.5 before:h-1.5 before:rounded-full before:bg-secondary before:absolute before:left-0 before:top-2">You understand that violation of these terms may result in additional charges or suspension from the platform.</li>
+          </ul>
+        </div>
+        <p class="text-soft-sand/90 font-aptos text-sm md:text-base leading-relaxed">
+          Saha's reserves the right to update these policies at any time. Customers will be notified of material changes via WhatsApp or the website.
+        </p>
+      </div>
+    </div>
+
+    <!-- Our Promise -->
+    <div class="mt-20 bg-gradient-to-b from-primary-container/20 to-primary-container border border-secondary/30 p-10 md:p-16 rounded-[2rem] shadow-[0_20px_50px_-12px_rgba(201,163,107,0.15)] reveal relative overflow-hidden text-center">
+      <!-- Decorative light blobs -->
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-secondary/5 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 max-w-2xl mx-auto flex flex-col items-center">
+        <span class="material-symbols-outlined text-secondary text-4xl mb-4">stars</span>
+        <h2 class="font-['Playfair_Display'] text-4xl md:text-5xl text-secondary-fixed mb-6">
+            Our Promise
+        </h2>
+        <h3 class="font-['Playfair_Display'] text-xl md:text-2xl italic text-secondary mb-6">
+          "Why buy when you can rent?"
+        </h3>
+        <p class="text-soft-sand/90 font-aptos text-base md:text-lg leading-relaxed">
+          Wear something new for every occasion. Save money, reduce fashion waste, and enjoy a wardrobe that has no limits — <span class="text-secondary-fixed font-semibold">because it belongs to all of us.</span>
+        </p>
+      </div>
+    </div>
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="bg-soft-sand text-primary flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4 pt-6 pb-20 md:py-6 px-6 md:px-12 w-full border-t border-golden-beige/30 text-center md:text-left mt-auto">
+  <div class="flex flex-col items-center md:items-start gap-1">
+    <div class="logo-icon-container" style="width: 48px; height: 48px;">
+      <img alt="Saha's Icon" class="logo-icon-img" src="assets/logo.png" onerror="this.style.display='none'"/>
+    </div>
+    <span class="font-['Playfair_Display'] text-xl text-primary">Saha's</span>
+    <p class="font-bold text-[10px] text-primary/60 tracking-[0.2em] uppercase mt-1 text-center md:text-left">
+      © 2024 Saha's Shared Wardrobe. Sustainable Luxury.
+    </p>
+  </div>
+  <div class="flex flex-col items-center md:items-end gap-4">
+    <nav class="flex flex-wrap justify-center gap-4 md:gap-8">
+      <a class="text-primary/70 hover:text-secondary transition-all font-bold text-xs uppercase tracking-wide" href="#">About Us</a>
+      <a class="text-primary/70 hover:text-secondary transition-all font-bold text-xs uppercase tracking-wide" href="#">FAQs</a>
+      <a class="text-primary/70 hover:text-secondary transition-all font-bold text-xs uppercase tracking-wide" href="policy.html">Policy</a>
+      <a class="text-primary/70 hover:text-secondary transition-all font-bold text-xs uppercase tracking-wide" href="contact.html">Contact Us</a>
+    </nav>
+    <div class="flex gap-4">
+      <a class="text-primary/70 hover:text-secondary transition-colors" href="#" aria-label="Instagram">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+      </a>
+      <a class="text-primary/70 hover:text-secondary transition-colors" href="#"><span class="material-symbols-outlined">share</span></a>
+      <a class="text-primary/70 hover:text-secondary transition-colors" href="#"><span class="material-symbols-outlined">mail</span></a>
+    </div>
+  </div>
+</footer>
+
+<!-- Mobile Bottom Nav -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-soft-sand/95 backdrop-blur-md border-t border-golden-beige/30 flex justify-around items-center w-full px-2 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+  <a class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="index.html">
+    <span class="material-symbols-outlined text-2xl">home</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Home</span>
+  </a>
+  <a class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="vault.html">
+    <span class="material-symbols-outlined text-2xl">checkroom</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Vault</span>
+  </a>
+  <a class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="fit-match.html">
+    <span class="material-symbols-outlined text-2xl">straighten</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Fit Match</span>
+  </a>
+  <a class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="account.html">
+    <span class="material-symbols-outlined text-2xl">person</span>
+    <span class="text-[9px] font-bold uppercase tracking-wider">Account</span>
+  </a>
+</nav>
+
+<script>
+  // Mobile Menu Toggle
+  function toggleMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const icon = document.getElementById('menu-icon');
+    const isHidden = menu.classList.contains('opacity-0');
+    if(isHidden) {
+        menu.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+        menu.classList.add('opacity-100', 'pointer-events-auto', 'scale-100');
+        icon.innerText = 'close';
+    } else {
+        menu.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+        menu.classList.remove('opacity-100', 'pointer-events-auto', 'scale-100');
+        icon.innerText = 'menu';
+    }
+  }
+
+  // Reveal-on-scroll
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+</script>
+</body>
+</html>
