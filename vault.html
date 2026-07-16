@@ -33,6 +33,7 @@
   --glass:rgba(133,73,125,.35);
   --glass-strong:rgba(133,73,125,.55);
   --gold:#C9A36B;
+  --gold-light:#D3B486;
   --gold-bright:#FDD397;
   --cream:#EFE0CD;
   --cream-2:#EADBC8;
@@ -79,7 +80,7 @@ img,svg{display:block}
 .hero-search{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;padding:0 16px;margin-top:0}
 .search{
   display:flex;align-items:center;gap:12px;
-  background:var(--cream);
+  background:var(--gold-light);
   border:1px solid rgba(201,163,107,.4);
   border-radius:999px;
   padding:13px 22px;
@@ -115,14 +116,14 @@ img,svg{display:block}
 .filter-toggle{
   display:grid;place-items:center;flex:none;
   width:48px;height:48px;border-radius:999px;
-  background:var(--cream);border:1px solid rgba(201,163,107,.4);
+  background:var(--gold-light);border:1px solid rgba(201,163,107,.4);
   color:var(--btn-text);box-shadow:0 10px 30px rgba(0,0,0,.28);
   transition:background .25s,transform .25s var(--ease-spring),box-shadow .25s,color .25s,border-color .25s;
 }
 .filter-toggle .material-symbols-outlined{font-size:1.35rem}
-.filter-toggle:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(0,0,0,.32)}
+.filter-toggle:hover{background:var(--gold-bright);transform:translateY(-2px);box-shadow:0 14px 34px rgba(0,0,0,.32)}
 .filter-toggle[aria-expanded="true"]{
-  background:var(--gold);border-color:var(--gold);color:var(--btn-text);
+  background:var(--gold-bright);border-color:var(--gold-bright);color:var(--btn-text);
   box-shadow:0 0 22px rgba(253,211,151,.4);
 }
 
@@ -186,10 +187,6 @@ img,svg{display:block}
 .rod-section:last-of-type::after{display:none}
 .rod-head{display:flex;align-items:baseline;gap:18px;padding:0 8px 14px}
 .rod-head h2{font-size:clamp(1.4rem,2.6vw,2rem)}
-.rod-head .count-label{
-  color:var(--gold-bright);font-size:.65rem;font-weight:700;
-  letter-spacing:.3em;text-transform:uppercase;
-}
 .rod-wrap{position:relative;will-change:transform}
 .rod-bar{
   position:absolute;left:6px;right:6px;top:50px;height:6px;
@@ -254,7 +251,6 @@ img,svg{display:block}
   padding:5px 12px;border-radius:999px;
   opacity:0;transition:opacity .25s,transform .25s var(--ease-soft);
 }
-.piece:hover .piece-label,.piece:focus-visible .piece-label{opacity:1;transform:translateX(-50%) translateY(0)}
 .empty-state{
   display:none;text-align:center;padding:90px 20px;color:var(--cream);
 }
@@ -407,6 +403,12 @@ h3.section-title{
 @media (max-width:900px){
   .filter-label{width:100%}
   .piece{width:126px;margin-left:-44px}
+  .hero-search{flex-wrap:nowrap}
+  .search{width:auto;flex:1 1 auto;min-width:0;padding:9px 16px}
+  .search:focus-within{width:auto}
+  .search input{font-size:.88rem}
+  .filter-toggle{width:40px;height:40px;flex:none}
+  .filter-toggle .material-symbols-outlined{font-size:1.15rem}
 }
 @media (max-width:600px){
   .sidebar{width:100vw;border-radius:0;border-left:none}
@@ -711,7 +713,6 @@ COLLECTIONS.forEach(col=>{
   sec.innerHTML=`
     <header class="rod-head">
       <h2>${col.name}</h2>
-      <span class="count-label"><span class="n">10</span> pieces</span>
     </header>
     <div class="rod-wrap">
       <div class="rod-bar" aria-hidden="true"></div>
@@ -813,7 +814,6 @@ function applyFilters(){
       if(ok)n++;
     });
     sec.style.display=n?'':'none';
-    sec.querySelector('.count-label .n').textContent=n;
     if(n)anyVisible=true;
   });
   vault.classList.toggle('no-results',!anyVisible);
@@ -891,7 +891,6 @@ function openSidebar(it,pieceEl){
       <div class="price-row"><span class="k">Rental period</span><span class="v" id="prPeriod">Select dates above</span></div>
       <div class="price-row"><span class="k">Return by</span><span class="v" id="prReturn">—</span></div>
       <div class="price-row"><span class="k">Total days</span><span class="v" id="prDays">—</span></div>
-      <div class="price-row"><span class="k">Security deposit</span><span class="v">₹${it.deposit.toLocaleString('en-IN')}</span></div>
       <div class="price-row total"><span class="k">Estimated total</span><span class="v" id="prTotal">₹0</span></div>
     </div>
     <div class="cta-row">
@@ -899,10 +898,7 @@ function openSidebar(it,pieceEl){
         <span class="material-symbols-outlined" style="font-size:1.15rem;display:block" aria-hidden="true">add_shopping_cart</span>
       </button>
       <button class="btn btn-gold" id="rentBtn" disabled>Rent Now</button>
-    </div>
-    <p style="margin-top:12px;font-size:.7rem;color:var(--cream-2);text-align:center;letter-spacing:.04em">
-      Booking confirms on WhatsApp · Hygiene-sealed by our Curators
-    </p>`;
+    </div>`;
   sidebar.classList.add('show');overlay.classList.add('show');
   document.getElementById('sbClose').addEventListener('click',closeSidebar);
   document.getElementById('sbClose').focus();
@@ -1006,7 +1002,6 @@ class RentalCalendar{
           → [{date:'YYYY-MM-DD', status:'available|booked|partial|blocked'}]
      POST /api/bookings  → { orderId, razorpayOrderId }
 ===================================================== */
-const WHATSAPP_NUMBER='919999999999'; // ← replace with Saha's business number
 const VaultAPI={
   async fetchAvailability(itemId,year,month){
     // return fetch(`/api/items/${itemId}/availability?year=${year}&month=${month+1}`).then(r=>r.json());
@@ -1041,11 +1036,7 @@ const VaultAPI={
     return true;
   },
   async createBooking(payload){
-    // Phase 2: POST /api/bookings then open Razorpay checkout with the returned order id.
-    // Phase 1 MVP: confirm on WhatsApp ↓
-    const msg=encodeURIComponent(
-      `Hi Saha's Wardrobe! I'd like to book:\n\n👗 ${payload.name}\n📅 ${payload.start} → ${payload.end} (${payload.days} days)\n💰 Est. ₹${payload.total.toLocaleString('en-IN')} + ₹${payload.deposit.toLocaleString('en-IN')} deposit\n\nPlease confirm availability!`);
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`,'_blank');
+    // TODO: send to checkout page — POST /api/bookings then redirect to checkout.
   }
 };
 </script>
