@@ -117,7 +117,7 @@
     <span class="material-symbols-outlined text-base">arrow_back</span>Back to Vault
   </a>
   <a href="index.html" class="font-['Playfair_Display'] text-xl tracking-wide" style="color:#C9A36B;">Saha's</a>
-  <a href="account.html" class="flex items-center gap-1 text-xs font-bold uppercase tracking-widest transition-colors" style="color:rgba(239,224,205,0.6);" onmouseover="this.style.color='#C9A36B'" onmouseout="this.style.color='rgba(239,224,205,0.6)'">
+  <a id="nav-account-simple" href="account.html" class="flex items-center gap-1 text-xs font-bold uppercase tracking-widest transition-colors" style="color:rgba(239,224,205,0.6);" onmouseover="this.style.color='#C9A36B'" onmouseout="this.style.color='rgba(239,224,205,0.6)'">
     <span class="material-symbols-outlined text-base">person</span>
   </a>
 </header>
@@ -469,7 +469,7 @@ function selectPayment(method) {
   document.querySelector(`input[value="${method}"]`).checked = true;
 }
 
-function confirmRental() {
+async function confirmRental() {
   if (!selectedSize) { alert('Please select a size before confirming.'); return; }
   if (!rentalFrom || !rentalTo) { alert('Please select your rental dates before confirming.'); return; }
 
@@ -478,28 +478,52 @@ function confirmRental() {
   const days    = Math.round((rentalTo - rentalFrom) / 86400000) + 1;
   const total   = days * product.price + 500;
 
-  // Save order to localStorage
-  const orders = JSON.parse(localStorage.getItem('sahas_orders') || '[]');
-  orders.unshift({
-    id:        Date.now(),
-    productId: product.id,
-    name:      product.name,
-    category:  product.category,
-    size:      selectedSize,
-    from:      fromStr,
-    to:        toStr,
-    days,
-    total,
-    status:    'confirmed',
-    orderedAt: new Date().toISOString()
+  // Save order server-side, tied to the signed-in user's session.
+  // (Payment itself is still a demo flow — see the disclaimer below —
+  // Razorpay integration is a separate, later step.)
+  const res = await fetch('/api/orders', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      productId: product.id,
+      name: product.name,
+      category: product.category,
+      size: selectedSize,
+      from: fromStr,
+      to: toStr,
+      days,
+      total,
+    }),
   });
-  localStorage.setItem('sahas_orders', JSON.stringify(orders));
+
+  if (!res.ok) {
+    if (res.status === 401) {
+      alert('Please sign in to confirm your rental.');
+      window.location.href = '/login';
+      return;
+    }
+    alert('Something went wrong confirming your rental. Please try again.');
+    return;
+  }
 
   // Show success
   document.getElementById('success-item-name').textContent = product.name + ' — Size ' + selectedSize;
   document.getElementById('success-dates').textContent     = `${fmtDateDisplay(fromStr)} → ${fmtDateDisplay(toStr)}`;
   document.getElementById('success-overlay').classList.remove('hidden');
 }
+</script>
+<script>
+  // Auth-aware nav: show "Login" (→ /login) when signed out.
+  (function () {
+    let loggedIn = false;
+    try {
+      const auth = JSON.parse(localStorage.getItem('sahas_auth') || 'null');
+      loggedIn = Boolean(auth && auth.loggedIn);
+    } catch (e) {}
+    if (loggedIn) return;
+    const simple = document.getElementById('nav-account-simple');
+    if (simple) { simple.href = '/login'; simple.insertAdjacentHTML('beforeend', '<span>Login</span>'); }
+  })();
 </script>
 </body>
 </html>

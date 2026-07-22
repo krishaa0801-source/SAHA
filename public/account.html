@@ -33,25 +33,20 @@
   /* ── Card ── */
   .card { background:#5f2859; border:1px solid rgba(201,163,107,0.2); border-radius:14px; padding:1.5rem; }
 
-  /* ── Field ── */
+  /* ── Field (same treatment as the /login and /signup pages) ──
+     input.field-input (element+class) is used instead of a bare class so this
+     reliably outweighs the Tailwind "forms" plugin's own [type="text"] etc.
+     reset, which the CDN script injects after this block and otherwise wins
+     on equal specificity, leaving inputs plain white. ── */
   .field-label { font-size:0.65rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#C9A36B; display:block; margin-bottom:0.4rem; }
-  .field-input {
-    width:100%; background:transparent; border:none;
-    border-bottom:1px solid rgba(201,163,107,0.3); color:#efe0cd;
+  input.field-input {
+    width:100%; background:rgba(61,26,56,0.35); border:1px solid rgba(201,163,107,0.25);
+    border-radius:8px; color:#efe0cd;
     font-family:'Hanken Grotesk',sans-serif; font-size:0.95rem;
-    padding:0.45rem 0; outline:none; transition:border-color 0.2s;
+    padding:0.7rem 0.85rem; outline:none; transition:border-color 0.2s, box-shadow 0.2s;
   }
-  .field-input:focus { border-bottom-color:#C9A36B; }
-  .field-input::placeholder { color:rgba(239,224,205,0.35); }
-
-  /* ── Auth toggle ── */
-  .auth-tab {
-    flex:1; padding:0.75rem; font-size:0.7rem; font-weight:700; letter-spacing:0.1em;
-    text-transform:uppercase; border:none; background:transparent;
-    color:rgba(239,224,205,0.5); cursor:pointer; border-bottom:2px solid transparent;
-    transition:all 0.2s;
-  }
-  .auth-tab.active { color:#C9A36B; border-bottom-color:#C9A36B; }
+  input.field-input:focus { border-color:#C9A36B; box-shadow:0 0 0 3px rgba(201,163,107,0.15); }
+  input.field-input::placeholder { color:rgba(239,224,205,0.35); }
 
   /* ── Dashboard tab ── */
   .dash-tab {
@@ -72,12 +67,6 @@
   .status-confirmed { background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(74,222,128,0.3); }
   .status-completed { background:rgba(201,163,107,0.15); color:#C9A36B; border:1px solid rgba(201,163,107,0.3); }
   .status-cancelled { background:rgba(192,69,90,0.15); color:#f87171; border:1px solid rgba(248,113,113,0.3); }
-
-  /* ── Alert ── */
-  .alert { border-radius:8px; padding:0.75rem 1rem; font-size:0.85rem; margin-top:0.75rem; display:none; }
-  .alert.show { display:block; }
-  .alert.error { background:rgba(192,69,90,0.15); border:1px solid rgba(192,69,90,0.3); color:#fca5a5; }
-  .alert.success { background:rgba(34,197,94,0.12); border:1px solid rgba(74,222,128,0.3); color:#86efac; }
 
   /* ── Divider ── */
   .divider { border:none; border-top:1px solid rgba(201,163,107,0.18); margin:1rem 0; }
@@ -125,76 +114,7 @@
 <main class="pt-[72px] pb-24 px-4 md:px-8">
   <div class="max-w-2xl mx-auto py-10">
 
-    <!-- ════════ AUTH SECTION (shown when not logged in) ════════ -->
-    <div id="auth-section">
-      <div class="text-center mb-8">
-        <h1 class="font-['Playfair_Display'] text-4xl mb-2" style="color:#C9A36B;">Welcome to Saha's</h1>
-        <p class="text-sm" style="color:rgba(239,224,205,0.6);">Sign in to track your rentals and manage your profile.</p>
-      </div>
-
-      <div class="card">
-        <!-- Tab toggle -->
-        <div class="flex border-b mb-6" style="border-color:rgba(201,163,107,0.2);">
-          <button class="auth-tab active" id="tab-login"  onclick="showAuthTab('login')">Sign In</button>
-          <button class="auth-tab"        id="tab-signup" onclick="showAuthTab('signup')">Create Account</button>
-        </div>
-
-        <!-- ── Login Form ── -->
-        <div id="login-form">
-          <div class="mb-4">
-            <label class="field-label">Email</label>
-            <input type="email" class="field-input" id="login-email" placeholder="your@email.com">
-          </div>
-          <div class="mb-4">
-            <label class="field-label">Password</label>
-            <input type="password" class="field-input" id="login-password" placeholder="••••••••">
-          </div>
-          <div id="login-alert" class="alert error"></div>
-          <button onclick="handleLogin()"
-            class="w-full mt-5 py-3.5 rounded-sm font-bold text-xs uppercase tracking-[0.15em] transition-all"
-            style="background:#C9A36B;color:#453c2e;"
-            onmouseover="this.style.background='#fdd397'" onmouseout="this.style.background='#C9A36B'">
-            Sign In
-          </button>
-          <p class="text-xs text-center mt-4" style="color:rgba(239,224,205,0.4);">Demo: any email + password works to log in.</p>
-        </div>
-
-        <!-- ── Signup Form ── -->
-        <div id="signup-form" class="hidden">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label class="field-label">First Name</label>
-              <input type="text" class="field-input" id="signup-fname" placeholder="Aria">
-            </div>
-            <div>
-              <label class="field-label">Last Name</label>
-              <input type="text" class="field-input" id="signup-lname" placeholder="Sharma">
-            </div>
-          </div>
-          <div class="mb-4">
-            <label class="field-label">Email</label>
-            <input type="email" class="field-input" id="signup-email" placeholder="your@email.com">
-          </div>
-          <div class="mb-4">
-            <label class="field-label">Phone</label>
-            <input type="tel" class="field-input" id="signup-phone" placeholder="+91 98765 43210">
-          </div>
-          <div class="mb-4">
-            <label class="field-label">Password</label>
-            <input type="password" class="field-input" id="signup-password" placeholder="Min. 6 characters">
-          </div>
-          <div id="signup-alert" class="alert error"></div>
-          <button onclick="handleSignup()"
-            class="w-full mt-5 py-3.5 rounded-sm font-bold text-xs uppercase tracking-[0.15em] transition-all"
-            style="background:#C9A36B;color:#453c2e;"
-            onmouseover="this.style.background='#fdd397'" onmouseout="this.style.background='#C9A36B'">
-            Create Account
-          </button>
-        </div>
-      </div>
-    </div><!-- /auth-section -->
-
-    <!-- ════════ DASHBOARD (shown when logged in) ════════ -->
+    <!-- ════════ DASHBOARD (auth is handled by /login — see init script below) ════════ -->
     <div id="dashboard-section" class="hidden">
 
       <!-- User greeting -->
@@ -237,7 +157,7 @@
         </div>
         <div class="mb-5">
           <label class="field-label">Email</label>
-          <input type="email" class="field-input" id="prof-email" placeholder="your@email.com">
+          <input type="email" class="field-input" id="prof-email" placeholder="your@email.com" readonly style="opacity:0.6;cursor:not-allowed;">
         </div>
         <div class="mb-5">
           <label class="field-label">Phone</label>
@@ -327,14 +247,6 @@ function toggleMenu() {
   icon.innerText = hidden ? 'close' : 'menu';
 }
 
-// ── Auth Tab toggle ──
-function showAuthTab(tab) {
-  document.getElementById('login-form').classList.toggle('hidden',  tab !== 'login');
-  document.getElementById('signup-form').classList.toggle('hidden', tab !== 'signup');
-  document.getElementById('tab-login').classList.toggle('active',  tab === 'login');
-  document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
-}
-
 // ── Dashboard Tab toggle ──
 function showTab(tab) {
   document.getElementById('tab-profile').classList.toggle('hidden',  tab !== 'profile');
@@ -343,59 +255,16 @@ function showTab(tab) {
   if (tab === 'rentals') renderRentals();
 }
 
-// ── Login ──
-function handleLogin() {
-  const email    = document.getElementById('login-email').value.trim();
-  const password = document.getElementById('login-password').value;
-  const alert    = document.getElementById('login-alert');
-
-  if (!email || !password) {
-    showAlert(alert, 'Please enter your email and password.');
-    return;
-  }
-  // Demo: accept any valid email + password ≥ 4 chars
-  if (password.length < 4) {
-    showAlert(alert, 'Password must be at least 4 characters.');
-    return;
-  }
-
-  const existing = JSON.parse(localStorage.getItem('sahas_user_data') || 'null');
-  const user = existing && existing.email === email ? existing : { fname: email.split('@')[0], lname: '', email, phone: '', address: '', city: '', pin: '' };
-
-  localStorage.setItem('sahas_auth',      JSON.stringify({ loggedIn:true, email }));
-  localStorage.setItem('sahas_user_data', JSON.stringify(user));
-  showDashboard(user);
-}
-
-// ── Signup ──
-function handleSignup() {
-  const fname    = document.getElementById('signup-fname').value.trim();
-  const lname    = document.getElementById('signup-lname').value.trim();
-  const email    = document.getElementById('signup-email').value.trim();
-  const phone    = document.getElementById('signup-phone').value.trim();
-  const password = document.getElementById('signup-password').value;
-  const alert    = document.getElementById('signup-alert');
-
-  if (!fname || !email || !password) { showAlert(alert, 'Name, email and password are required.'); return; }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showAlert(alert, 'Please enter a valid email address.'); return; }
-  if (password.length < 6) { showAlert(alert, 'Password must be at least 6 characters.'); return; }
-
-  const user = { fname, lname, email, phone, address:'', city:'', pin:'' };
-  localStorage.setItem('sahas_auth',      JSON.stringify({ loggedIn:true, email }));
-  localStorage.setItem('sahas_user_data', JSON.stringify(user));
-  showDashboard(user);
-}
-
 // ── Logout ──
-function handleLogout() {
+async function handleLogout() {
+  try { await fetch('/api/auth/logout', { method: 'POST' }); } catch (e) {}
   localStorage.removeItem('sahas_auth');
-  document.getElementById('dashboard-section').classList.add('hidden');
-  document.getElementById('auth-section').classList.remove('hidden');
+  localStorage.removeItem('sahas_user_data');
+  window.location.href = '/login';
 }
 
 // ── Show Dashboard ──
 function showDashboard(user) {
-  document.getElementById('auth-section').classList.add('hidden');
   document.getElementById('dashboard-section').classList.remove('hidden');
   document.getElementById('greeting-name').textContent = user.fname + (user.lname ? ' ' + user.lname : '');
 
@@ -407,23 +276,36 @@ function showDashboard(user) {
   document.getElementById('prof-address').value = user.address || '';
   document.getElementById('prof-city').value    = user.city    || '';
   document.getElementById('prof-pin').value     = user.pin     || '';
+
+  // Keep the localStorage cache in sync for nav "Login"/"Account" state on other pages.
+  localStorage.setItem('sahas_auth', JSON.stringify({ loggedIn: true, email: user.email }));
+  localStorage.setItem('sahas_user_data', JSON.stringify(user));
 }
 
 // ── Save Profile ──
-function saveProfile() {
-  const auth = JSON.parse(localStorage.getItem('sahas_auth') || 'null');
-  if (!auth) return;
+async function saveProfile() {
   const user = {
     fname:   document.getElementById('prof-fname').value.trim(),
     lname:   document.getElementById('prof-lname').value.trim(),
-    email:   document.getElementById('prof-email').value.trim(),
     phone:   document.getElementById('prof-phone').value.trim(),
     address: document.getElementById('prof-address').value.trim(),
     city:    document.getElementById('prof-city').value.trim(),
     pin:     document.getElementById('prof-pin').value.trim(),
   };
-  localStorage.setItem('sahas_user_data', JSON.stringify(user));
-  document.getElementById('greeting-name').textContent = user.fname + (user.lname ? ' ' + user.lname : '');
+
+  const res = await fetch('/api/auth/me', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(user),
+  });
+  if (!res.ok) {
+    if (res.status === 401) { window.location.href = '/login'; return; }
+    alert('Could not save your profile. Please try again.');
+    return;
+  }
+  const data = await res.json();
+  localStorage.setItem('sahas_user_data', JSON.stringify(data.user));
+  document.getElementById('greeting-name').textContent = data.user.fname + (data.user.lname ? ' ' + data.user.lname : '');
 
   const msg = document.getElementById('profile-save-msg');
   msg.textContent = '✓ Profile saved successfully';
@@ -435,10 +317,19 @@ function saveProfile() {
 }
 
 // ── Render Rentals ──
-function renderRentals() {
-  const orders = JSON.parse(localStorage.getItem('sahas_orders') || '[]');
+async function renderRentals() {
   const list   = document.getElementById('rentals-list');
   const empty  = document.getElementById('no-rentals');
+
+  const res = await fetch('/api/orders');
+  if (!res.ok) {
+    if (res.status === 401) { window.location.href = '/login'; return; }
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  const data = await res.json();
+  const orders = data.orders || [];
 
   if (!orders.length) {
     list.innerHTML = '';
@@ -468,20 +359,17 @@ function renderRentals() {
   }).join('');
 }
 
-// ── Alert helper ──
-function showAlert(el, msg) {
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 4000);
-}
-
-// ── Init ──
-document.addEventListener('DOMContentLoaded', () => {
-  const auth = JSON.parse(localStorage.getItem('sahas_auth') || 'null');
-  if (auth && auth.loggedIn) {
-    const user = JSON.parse(localStorage.getItem('sahas_user_data') || '{}');
-    showDashboard(user);
+// ── Init: session is verified against the server, not just localStorage ──
+document.addEventListener('DOMContentLoaded', async () => {
+  const res = await fetch('/api/auth/me');
+  if (!res.ok) {
+    localStorage.removeItem('sahas_auth');
+    localStorage.removeItem('sahas_user_data');
+    window.location.href = '/login';
+    return;
   }
+  const data = await res.json();
+  showDashboard(data.user);
 });
 </script>
 </body>

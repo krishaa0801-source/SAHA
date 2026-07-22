@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html class="overflow-x-hidden" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Your Cart — Saha's Wardrobe</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Hanken+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          primary: '#5f2859', 'primary-container': '#7A3F72', 'deep-aubergine': '#3D1A38',
+          secondary: '#C9A36B', 'secondary-fixed': '#efe0cd', 'on-secondary-fixed': '#453c2e',
+          'soft-sand': '#efe0cd', 'golden-beige': '#fdd397',
+          surface: '#3D1A38', 'on-surface': '#efe0cd', 'on-surface-variant': '#EADBC8',
+          'on-primary': '#efe0cd', error: '#C0455A',
+        },
+        fontFamily: { aptos: ['Hanken Grotesk', 'sans-serif'] }
+      }
+    }
+  }
+</script>
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root{ --ease-soft:cubic-bezier(.22,.61,.36,1); --ease-spring:cubic-bezier(.34,1.45,.5,1); }
+  body {
+    background:#3D1A38; color:#efe0cd; font-family:'Hanken Grotesk',sans-serif;
+  }
+
+  /* ── Section card (Primary Cards) ── */
+  .card {
+    background:#5f2859; border:1px solid rgba(201,163,107,0.2);
+    border-radius:14px; padding:1.5rem;
+  }
+
+  /* ── Glass card (Secondary Cards, with transparency) ── */
+  .glass-card{
+    background:rgba(133,73,125,.4);
+    border:1px solid rgba(201,163,107,0.28);
+    border-radius:18px; padding:1.5rem;
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    box-shadow:0 18px 40px rgba(0,0,0,.35);
+  }
+
+  /* ── Field ── */
+  .field-label { font-size:0.65rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#C9A36B; display:block; margin-bottom:0.4rem; }
+  .field-input {
+    width:100%; background:rgba(61,26,56,0.4); border:1px solid rgba(201,163,107,0.25);
+    border-radius:8px; color:#efe0cd;
+    font-family:'Hanken Grotesk',sans-serif; font-size:0.9rem;
+    padding:0.6rem 0.75rem; outline:none; transition:border-color 0.2s;
+  }
+  .field-input:focus { border-color:#C9A36B; }
+  .field-input::placeholder { color:rgba(239,224,205,0.35); }
+  .field-input:disabled{ opacity:.6; }
+
+  /* ── Size chip ── */
+  .sz-chip {
+    font-size:0.7rem; font-weight:700; padding:5px 12px; border-radius:6px;
+    border:1px solid rgba(201,163,107,0.3); color:rgba(239,224,205,0.5);
+    background:transparent; cursor:pointer; transition:all 0.18s;
+  }
+  .sz-chip.avail { color:#C9A36B; border-color:rgba(201,163,107,0.45); cursor:pointer; }
+  .sz-chip.avail:hover { background:rgba(201,163,107,0.1); }
+  .sz-chip.selected { background:#C9A36B; color:#453c2e; border-color:#C9A36B; }
+
+  /* ── Divider ── */
+  .divider { border:none; border-top:1px solid rgba(201,163,107,0.18); margin:0.9rem 0; }
+
+  /* ── Img placeholder ── */
+  .img-ph {
+    width:100%; height:100%; aspect-ratio:4/5;
+    background:linear-gradient(140deg,#4a2045 0%,#2d1029 100%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+    border-radius:12px;
+  }
+
+  /* ── Cart item card ── */
+  .cart-item{
+    display:grid; grid-template-columns:1fr; gap:1rem;
+    position:relative; opacity:0; transform:translateY(14px);
+    animation:itemIn .5s var(--ease-soft) forwards;
+  }
+  @media (min-width:768px){ .cart-item{ grid-template-columns:150px 1fr; gap:1.1rem; } }
+  @keyframes itemIn{ to{ opacity:1; transform:none; } }
+  .cart-item.removing{ animation:itemOut .35s var(--ease-soft) forwards; }
+  @keyframes itemOut{ to{ opacity:0; transform:translateX(24px) scale(.97); max-height:0; margin:0; padding:0; border-width:0; } }
+
+  .cart-item-img{ position:relative; border-radius:12px; overflow:hidden; width:100%; aspect-ratio:4/5; max-height:280px; }
+  .cart-item-img img{ width:100%; height:100%; object-fit:cover; border-radius:12px; }
+  @media (min-width:768px){ .cart-item-img{ aspect-ratio:auto; max-height:none; } }
+
+  .remove-btn{
+    position:absolute; top:.9rem; right:.9rem; z-index:2;
+    width:34px; height:34px; border-radius:999px; display:grid; place-items:center;
+    background:rgba(61,26,56,.55); border:1px solid rgba(201,163,107,0.25);
+    color:rgba(239,224,205,0.7); transition:all .2s var(--ease-soft);
+  }
+  .remove-btn:hover{ background:#C0455A; border-color:#C0455A; color:#fff; transform:rotate(8deg) scale(1.05); }
+
+  .edit-link{
+    display:inline-flex; align-items:center; gap:4px;
+    font-size:.7rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+    color:#C9A36B; background:none; border:none; padding:2px 0; transition:color .2s;
+  }
+  .edit-link:hover{ color:#fdd397; }
+
+  .qty-stepper{
+    display:inline-flex; align-items:center; gap:0; border:1px solid rgba(201,163,107,0.35);
+    border-radius:999px; overflow:hidden;
+  }
+  .qty-stepper button{
+    width:30px; height:30px; display:grid; place-items:center; color:#C9A36B;
+    background:rgba(201,163,107,0.08); font-size:1rem; font-weight:700; transition:background .2s;
+  }
+  .qty-stepper button:hover{ background:rgba(201,163,107,0.22); }
+  .qty-stepper button:disabled{ opacity:.35; cursor:not-allowed; }
+  .qty-stepper span{ width:34px; text-align:center; font-size:.85rem; font-weight:700; color:#efe0cd; }
+
+  .cart-cal-wrap{
+    max-height:0; overflow:hidden; opacity:0; margin-top:0;
+    transition:max-height .4s var(--ease-soft), opacity .3s, margin-top .4s var(--ease-soft);
+  }
+  .cart-cal-wrap.show{ max-height:420px; opacity:1; margin-top:1rem; }
+  .cart-cal-wrap .card{ padding:1rem; }
+
+  /* ── Flatpickr overrides ── */
+  .flatpickr-calendar { background:#5f2859 !important; border:1px solid rgba(201,163,107,0.3) !important; box-shadow:none !important; border-radius:10px !important; width:100% !important; }
+  .flatpickr-day { color:#efe0cd !important; border-radius:6px !important; }
+  .flatpickr-day.selected,.flatpickr-day.startRange,.flatpickr-day.endRange { background:#C9A36B !important; border-color:#C9A36B !important; color:#453c2e !important; font-weight:700 !important; }
+  .flatpickr-day.inRange { background:rgba(201,163,107,0.18) !important; border-color:transparent !important; box-shadow:none !important; }
+  .flatpickr-day:hover:not(.flatpickr-disabled):not(.selected):not(.inRange) { background:rgba(201,163,107,0.12) !important; }
+  .flatpickr-months,.flatpickr-month { background:transparent !important; }
+  .flatpickr-current-month,.numInputWrapper,.numInput,.cur-month { color:#C9A36B !important; }
+  .flatpickr-weekday { color:rgba(239,224,205,0.45) !important; font-size:0.6rem !important; }
+  .flatpickr-prev-month svg,.flatpickr-next-month svg { fill:#C9A36B !important; }
+  .flatpickr-innerContainer { border:none !important; }
+  .flatpickr-rContainer,.flatpickr-days,.dayContainer { width:100% !important; min-width:100% !important; max-width:100% !important; }
+
+  /* ── Summary rows ── */
+  .summary-row{ display:flex; justify-content:space-between; align-items:center; font-size:.88rem; padding:.32rem 0; color:rgba(239,224,205,0.75); }
+  .summary-row .v{ color:#efe0cd; font-weight:600; }
+  .summary-row.discount .v{ color:#7FA86B; font-weight:600; }
+  .summary-row.total{ padding-top:.2rem; }
+  .summary-row.total .k{ font-weight:700; font-size:.75rem; text-transform:uppercase; letter-spacing:.12em; color:#C9A36B; }
+  .summary-row.total .v{ font-family:'Playfair Display',serif; font-size:1.6rem; color:#fdd397; }
+
+  .checkout-btn{
+    width:100%; padding:1rem; margin-top:.75rem; border-radius:8px;
+    font-weight:700; font-size:.82rem; text-transform:uppercase; letter-spacing:.14em;
+    background:#C9A36B; color:#453c2e; display:flex; align-items:center; justify-content:center; gap:8px;
+    transition:all .25s var(--ease-soft);
+  }
+  .checkout-btn:hover{ background:#fdd397; transform:translateY(-2px); box-shadow:0 10px 26px rgba(253,211,151,.3); }
+
+  .coupon-row{ display:flex; gap:8px; }
+  .coupon-btn{
+    flex:none; padding:0 1.1rem; border-radius:8px; font-size:.72rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:.08em; border:1px solid rgba(201,163,107,0.45);
+    color:#C9A36B; background:rgba(201,163,107,0.08); transition:all .2s;
+  }
+  .coupon-btn:hover{ background:#C9A36B; color:#453c2e; }
+  .coupon-msg{ font-size:.72rem; margin-top:.5rem; }
+  .coupon-msg.ok{ color:#7FA86B; }
+  .coupon-msg.err{ color:#C0455A; }
+
+  /* ── Mobile fixed checkout bar ── */
+  .mobile-checkout-bar{
+    position:fixed; left:0; right:0; bottom:0; z-index:80;
+    display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    padding:.85rem 1.1rem calc(.85rem + env(safe-area-inset-bottom));
+    background:rgba(61,26,56,0.97); backdrop-filter:blur(14px);
+    border-top:1px solid rgba(201,163,107,0.25);
+    box-shadow:0 -10px 30px rgba(0,0,0,.35);
+  }
+  .mobile-checkout-bar .checkout-btn{ width:auto; margin:0; padding:.85rem 1.6rem; }
+  .mcb-label{ display:block; font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(239,224,205,0.55); }
+  .mcb-total{ display:block; font-family:'Playfair Display',serif; font-size:1.3rem; color:#fdd397; }
+
+  /* ── Empty cart ── */
+  .empty-illustration{ animation:breathe 3.4s ease-in-out infinite; }
+  @keyframes breathe{ 0%,100%{ transform:scale(1); opacity:.9;} 50%{ transform:scale(1.035); opacity:1;} }
+
+  @media (prefers-reduced-motion:reduce){
+    .cart-item, .empty-illustration, .cart-item.removing{ animation:none !important; opacity:1 !important; transform:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════ HEADER ════════════════ -->
+<header class="fixed top-0 left-0 right-0 z-[60] backdrop-blur-md border-b flex items-center justify-between w-full px-6 md:px-12 py-3" style="background:rgba(61,26,56,0.95);border-color:rgba(201,163,107,0.2);">
+  <a href="vault.html" class="flex items-center gap-1.5 font-bold text-xs uppercase tracking-widest transition-colors" style="color:#C9A36B;" onmouseover="this.style.color='#fdd397'" onmouseout="this.style.color='#C9A36B'">
+    <span class="material-symbols-outlined text-base">arrow_back</span>Back to Vault
+  </a>
+  <a href="index.html" class="font-['Playfair_Display'] text-xl tracking-wide" style="color:#C9A36B;">Saha's</a>
+  <a id="nav-account-simple" href="account.html" class="flex items-center gap-1 text-xs font-bold uppercase tracking-widest transition-colors" style="color:rgba(239,224,205,0.6);" onmouseover="this.style.color='#C9A36B'" onmouseout="this.style.color='rgba(239,224,205,0.6)'">
+    <span class="material-symbols-outlined text-base">person</span>
+  </a>
+</header>
+
+<main class="pt-[68px] pb-28 lg:pb-16">
+  <div class="max-w-6xl mx-auto px-4 md:px-8 py-8" id="cart-root"></div>
+</main>
+
+<!-- Mobile fixed checkout bar (injected by JS when cart has items) -->
+<div id="mobile-checkout-bar-slot"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+/* =====================================================
+   CartStore — shared cart persistence (localStorage).
+   Same key/shape used by vault.html's "Add to Cart".
+===================================================== */
+const CartStore = {
+  KEY: 'sahas_cart',
+  getAll(){ try{ return JSON.parse(localStorage.getItem(this.KEY)) || []; }catch(e){ return []; } },
+  save(list){ localStorage.setItem(this.KEY, JSON.stringify(list)); },
+  update(cartId, patch){
+    const list = this.getAll().map(e => e.cartId === cartId ? { ...e, ...patch } : e);
+    this.save(list);
+    return list;
+  },
+  remove(cartId){
+    const list = this.getAll().filter(e => e.cartId !== cartId);
+    this.save(list);
+    return list;
+  }
+};
+
+function fmtRs(n){ return '₹' + Math.round(n).toLocaleString('en-IN'); }
+function diffDays(from,to){
+  if(!from || !to) return 1;
+  return Math.max(Math.round((new Date(to+'T00:00:00') - new Date(from+'T00:00:00'))/86400000) + 1, 1);
+}
+function fmtDateDisplay(str){
+  if(!str) return null;
+  return new Date(str+'T00:00:00').toLocaleDateString('en-IN',{ day:'numeric', month:'short', year:'numeric' });
+}
+
+/* ---------- UI-only state (which card has its editors open) ---------- */
+let openDatesFor = null;
+let openSizeFor  = null;
+let couponError  = '';
+const COUPON_KEY = 'sahas_cart_coupon';
+const COUPONS = { 'SAHA10': { type:'pct', value:0.10, label:'10% off' }, 'WELCOME200': { type:'flat', value:200, label:'₹200 off' } };
+
+function getCoupon(){ return localStorage.getItem(COUPON_KEY) || ''; }
+function setCoupon(code){ if(code) localStorage.setItem(COUPON_KEY, code); else localStorage.removeItem(COUPON_KEY); }
+
+function computeTotals(cart, couponCode){
+  let subtotal = 0, rentalCharges = 0;
+  cart.forEach(it => {
+    const days = diffDays(it.from, it.to);
+    subtotal += it.price * it.qty;
+    rentalCharges += it.price * it.qty * Math.max(days - 1, 0);
+  });
+  const platformFee = cart.length ? 99 : 0;
+  const base = subtotal + rentalCharges;
+  let discount = 0;
+  const coupon = COUPONS[couponCode];
+  if(coupon){
+    discount = coupon.type === 'pct' ? Math.round(base * coupon.value) : Math.min(coupon.value, base);
+  }
+  const total = Math.max(base + platformFee - discount, 0);
+  return { subtotal, rentalCharges, platformFee, discount, total };
+}
+
+/* =====================================================
+   Components (render functions)
+===================================================== */
+function EmptyCart(){
+  return `
+  <div class="flex flex-col items-center text-center py-20 px-6">
+    <svg class="empty-illustration mb-8" width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g stroke="#C9A36B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85">
+        <path d="M90 34v-8a9 9 0 1 1 9 9"/>
+        <path d="M90 34 40 66h100z"/>
+      </g>
+      <path d="M62 66 58 150q32 14 64 0l-4-84" stroke="#FDD397" stroke-width="1.6" stroke-dasharray="5 6" fill="none" opacity="0.7"/>
+      <circle cx="90" cy="150" r="3" fill="#FDD397" opacity="0.8"/>
+    </svg>
+    <h2 class="font-['Playfair_Display'] text-3xl md:text-4xl mb-3" style="color:#C9A36B;">Your wardrobe is waiting.</h2>
+    <p class="text-sm mb-8 max-w-xs" style="color:rgba(239,224,205,0.65);">You haven't added any rental pieces yet.</p>
+    <a href="vault.html" class="px-9 py-3.5 rounded-sm font-bold text-xs uppercase tracking-[0.15em] transition-all"
+      style="background:#C9A36B;color:#453c2e;"
+      onmouseover="this.style.background='#fdd397'" onmouseout="this.style.background='#C9A36B'">
+      Browse Collection
+    </a>
+  </div>`;
+}
+
+function CartItem(entry){
+  const days = diffDays(entry.from, entry.to);
+  const lineTotal = entry.price * entry.qty * days;
+  const sizes = (entry.sizes && entry.sizes.length) ? entry.sizes : [entry.size];
+  const datesOpen = openDatesFor === entry.cartId;
+  const sizeOpen  = openSizeFor === entry.cartId;
+  const fromDisp = fmtDateDisplay(entry.from);
+  const toDisp   = fmtDateDisplay(entry.to);
+
+  return `
+  <div class="card cart-item" data-cart-id="${entry.cartId}" style="animation-delay:0ms;">
+    <button class="remove-btn" data-action="remove" data-cart-id="${entry.cartId}" aria-label="Remove ${entry.name} from cart">
+      <span class="material-symbols-outlined" style="font-size:1.1rem;">delete_outline</span>
+    </button>
+    <div class="cart-item-img">
+      ${entry.image
+        ? `<img src="${entry.image}" alt="${entry.name}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'img-ph',innerHTML:'<span class=\\'material-symbols-outlined\\' style=\\'font-size:2rem;color:rgba(201,163,107,0.3);\\'>checkroom</span>'}))">`
+        : `<div class="img-ph"><span class="material-symbols-outlined" style="font-size:2.2rem;color:rgba(201,163,107,0.3);">checkroom</span></div>`}
+    </div>
+    <div class="min-w-0 flex flex-col">
+      <span class="text-[0.65rem] font-bold uppercase tracking-widest" style="color:rgba(201,163,107,0.65);">${entry.brand || 'Saha\'s Wardrobe'}</span>
+      <h3 class="font-['Playfair_Display'] text-xl md:text-2xl mt-0.5 mb-2 pr-8" style="color:#efe0cd;">${entry.name}</h3>
+
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mb-1">
+        <div>
+          <span class="field-label" style="margin-bottom:2px;">Size</span>
+          <span class="text-sm font-semibold" style="color:#efe0cd;">${entry.size}</span>
+          <button class="edit-link ml-2" data-action="toggle-size" data-cart-id="${entry.cartId}">
+            <span class="material-symbols-outlined" style="font-size:0.9rem;">swap_horiz</span>${sizeOpen ? 'Close' : 'Change'}
+          </button>
+        </div>
+        <div>
+          <span class="field-label" style="margin-bottom:2px;">Rental Price</span>
+          <span class="text-sm font-semibold" style="color:#fdd397;">${fmtRs(entry.price)}<span class="text-[0.65rem]" style="color:rgba(239,224,205,0.4);">/day</span></span>
+        </div>
+        <div>
+          <span class="field-label" style="margin-bottom:2px;">Quantity</span>
+          <div class="qty-stepper">
+            <button data-action="qty-dec" data-cart-id="${entry.cartId}" ${entry.qty<=1?'disabled':''} aria-label="Decrease quantity">−</button>
+            <span>${entry.qty}</span>
+            <button data-action="qty-inc" data-cart-id="${entry.cartId}" ${entry.qty>=5?'disabled':''} aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+      </div>
+
+      ${sizeOpen ? `
+      <div class="flex flex-wrap gap-2 mt-2 mb-1">
+        ${sizes.map(s => `<button class="sz-chip avail ${s===entry.size?'selected':''}" data-action="set-size" data-cart-id="${entry.cartId}" data-size="${s}">${s}</button>`).join('')}
+      </div>` : ''}
+
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-1 mt-2">
+        <div>
+          <span class="field-label" style="margin-bottom:2px;">Rental Start</span>
+          <span class="text-sm font-medium" style="color:#efe0cd;">${fromDisp || '—'}</span>
+        </div>
+        <div>
+          <span class="field-label" style="margin-bottom:2px;">Rental End</span>
+          <span class="text-sm font-medium" style="color:#efe0cd;">${toDisp || '—'}</span>
+        </div>
+        <div>
+          <span class="field-label" style="margin-bottom:2px;">Duration</span>
+          <span class="text-sm font-medium" style="color:#efe0cd;">${entry.from && entry.to ? days+' day'+(days>1?'s':'') : '—'}</span>
+        </div>
+        <button class="edit-link" data-action="toggle-dates" data-cart-id="${entry.cartId}">
+          <span class="material-symbols-outlined" style="font-size:0.9rem;">edit_calendar</span>${entry.from && entry.to ? (datesOpen?'Close':'Edit dates') : (datesOpen?'Close':'Select dates')}
+        </button>
+      </div>
+
+      <div class="cart-cal-wrap ${datesOpen?'show':''}" data-cal-wrap="${entry.cartId}">
+        <div class="card">
+          <div class="cal-host" data-cal-host="${entry.cartId}"></div>
+        </div>
+      </div>
+
+      <div class="flex-1"></div>
+      <div class="mt-3 pt-3 flex justify-between items-baseline" style="border-top:1px dashed rgba(201,163,107,0.2);">
+        <span class="text-xs" style="color:rgba(239,224,205,0.5);">${entry.qty} × ${days} day${days>1?'s':''}</span>
+        <span class="font-bold text-lg font-['Playfair_Display']" style="color:#fdd397;">${fmtRs(lineTotal)}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function CouponInput(couponCode){
+  const applied = COUPONS[couponCode];
+  return `
+  <div>
+    <label class="field-label">Coupon Code</label>
+    <div class="coupon-row">
+      <input type="text" class="field-input" id="coupon-input" placeholder="Try SAHA10 or WELCOME200"
+        value="${applied ? couponCode : ''}" ${applied ? 'disabled' : ''} maxlength="20" style="text-transform:uppercase;">
+      ${applied
+        ? `<button class="coupon-btn" data-action="remove-coupon">Remove</button>`
+        : `<button class="coupon-btn" data-action="apply-coupon">Apply</button>`}
+    </div>
+    ${applied ? `<p class="coupon-msg ok">"${couponCode}" applied — ${applied.label}.</p>` : ''}
+    ${!applied && couponError ? `<p class="coupon-msg err">${couponError}</p>` : ''}
+  </div>`;
+}
+
+function CartSummary(cart, couponCode){
+  const t = computeTotals(cart, couponCode);
+  return `
+  <div class="glass-card lg:sticky lg:top-[86px]">
+    <h3 class="font-['Playfair_Display'] text-lg mb-4" style="color:#efe0cd;">Order Summary</h3>
+
+    <div class="summary-row"><span class="k">Subtotal</span><span class="v">${fmtRs(t.subtotal)}</span></div>
+    <div class="summary-row"><span class="k">Rental Charges</span><span class="v">${fmtRs(t.rentalCharges)}</span></div>
+    <div class="summary-row"><span class="k">Platform Fee</span><span class="v">${fmtRs(t.platformFee)}</span></div>
+    <div class="summary-row discount"><span class="k">Discount</span><span class="v">${t.discount ? '−'+fmtRs(t.discount) : '—'}</span></div>
+
+    <hr class="divider">
+    ${CouponInput(couponCode)}
+    <hr class="divider">
+
+    <div class="summary-row total"><span class="k">Estimated Total</span><span class="v">${fmtRs(t.total)}</span></div>
+    <button class="checkout-btn" id="checkout-btn-desktop">
+      <span class="material-symbols-outlined text-base">lock</span>Proceed to Checkout
+    </button>
+    <p class="text-[10px] mt-3 text-center" style="color:rgba(239,224,205,0.35);">Security deposits are refunded after the pieces are returned in good condition.</p>
+  </div>`;
+}
+
+/* =====================================================
+   Render + wiring
+===================================================== */
+const root = document.getElementById('cart-root');
+const mobileBarSlot = document.getElementById('mobile-checkout-bar-slot');
+
+function render(){
+  const cart = CartStore.getAll();
+  const coupon = getCoupon();
+
+  if(!cart.length){
+    root.innerHTML = EmptyCart();
+    mobileBarSlot.innerHTML = '';
+    return;
+  }
+
+  root.innerHTML = `
+    <div class="mb-7">
+      <h1 class="font-['Playfair_Display'] text-3xl md:text-4xl" style="color:#C9A36B;">Your Rental Bag</h1>
+      <p class="text-xs mt-1" style="color:rgba(239,224,205,0.5);">${cart.length} piece${cart.length>1?'s':''} selected</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 md:gap-8 items-start">
+      <div class="flex flex-col gap-5" id="cart-items">
+        ${cart.map(CartItem).join('')}
+      </div>
+      <div id="summary-slot">${CartSummary(cart, coupon)}</div>
+    </div>`;
+
+  mobileBarSlot.innerHTML = `
+    <div class="mobile-checkout-bar lg:hidden">
+      <div><span class="mcb-label">Estimated Total</span><span class="mcb-total">${fmtRs(computeTotals(cart,coupon).total)}</span></div>
+      <button class="checkout-btn" id="checkout-btn-mobile">Checkout</button>
+    </div>`;
+
+  // init any open calendar
+  if(openDatesFor){
+    const entry = cart.find(e => e.cartId === openDatesFor);
+    const host = root.querySelector(`[data-cal-host="${openDatesFor}"]`);
+    if(entry && host) initCalendar(host, entry);
+  }
+}
+
+function initCalendar(host, entry){
+  flatpickr(host, {
+    mode:'range', inline:true, minDate:'today', dateFormat:'Y-m-d',
+    defaultDate: entry.from && entry.to ? [entry.from, entry.to] : undefined,
+    onChange(dates){
+      if(dates.length === 2){
+        const from = dates[0].toISOString().slice(0,10);
+        const to   = dates[1].toISOString().slice(0,10);
+        CartStore.update(entry.cartId, { from, to });
+        render();
+      }
+    }
+  });
+}
+
+/* ---------- event delegation ---------- */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-action]');
+  if(btn){
+    const action = btn.dataset.action;
+    const cartId = btn.dataset.cartId;
+
+    if(action === 'remove'){
+      const card = root.querySelector(`.cart-item[data-cart-id="${cartId}"]`);
+      if(card){
+        card.classList.add('removing');
+        setTimeout(() => { CartStore.remove(cartId); render(); }, 340);
+      } else {
+        CartStore.remove(cartId); render();
+      }
+      return;
+    }
+    if(action === 'qty-inc'){
+      const entry = CartStore.getAll().find(x=>x.cartId===cartId);
+      if(entry) CartStore.update(cartId, { qty: Math.min(entry.qty+1, 5) });
+      render(); return;
+    }
+    if(action === 'qty-dec'){
+      const entry = CartStore.getAll().find(x=>x.cartId===cartId);
+      if(entry) CartStore.update(cartId, { qty: Math.max(entry.qty-1, 1) });
+      render(); return;
+    }
+    if(action === 'toggle-dates'){
+      openDatesFor = openDatesFor === cartId ? null : cartId;
+      openSizeFor = null;
+      render(); return;
+    }
+    if(action === 'toggle-size'){
+      openSizeFor = openSizeFor === cartId ? null : cartId;
+      openDatesFor = null;
+      render(); return;
+    }
+    if(action === 'set-size'){
+      CartStore.update(cartId, { size: btn.dataset.size });
+      openSizeFor = null;
+      render(); return;
+    }
+    if(action === 'apply-coupon'){
+      const input = document.getElementById('coupon-input');
+      const code = (input.value || '').trim().toUpperCase();
+      if(COUPONS[code]){ setCoupon(code); couponError=''; }
+      else { couponError = 'That code isn\'t valid or has expired.'; }
+      render(); return;
+    }
+    if(action === 'remove-coupon'){
+      setCoupon(''); couponError=''; render(); return;
+    }
+  }
+  if(e.target.id === 'checkout-btn-desktop' || e.target.closest('#checkout-btn-desktop') || e.target.id === 'checkout-btn-mobile' || e.target.closest('#checkout-btn-mobile')){
+    handleCheckout(e.target.closest('button'));
+  }
+});
+
+/* ---------- checkout: persist each cart item as a real order, tied to the signed-in session ---------- */
+async function handleCheckout(btn){
+  const cart = CartStore.getAll();
+  if(!cart.length) return;
+
+  const incomplete = cart.find(it => !it.size || !it.from || !it.to);
+  if(incomplete){
+    alert('Please choose a size and rental dates for every piece before checking out.');
+    return;
+  }
+
+  if(btn) btn.disabled = true;
+  try {
+    for(const it of cart){
+      const days = diffDays(it.from, it.to);
+      const total = it.price * it.qty * days;
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: it.itemId, name: it.name, category: it.brand || '',
+          size: it.size, from: it.from, to: it.to, days, total,
+        }),
+      });
+      if(!res.ok){
+        if(res.status === 401){
+          alert('Please sign in to complete your rental.');
+          window.location.href = '/login';
+          return;
+        }
+        alert('Something went wrong confirming your rental. Please try again.');
+        return;
+      }
+    }
+    CartStore.save([]);
+    setCoupon('');
+    window.location.href = 'account.html';
+  } finally {
+    if(btn) btn.disabled = false;
+  }
+}
+
+render();
+</script>
+<script>
+  // Auth-aware nav: show "Login" (→ /login) when signed out.
+  (function () {
+    let loggedIn = false;
+    try {
+      const auth = JSON.parse(localStorage.getItem('sahas_auth') || 'null');
+      loggedIn = Boolean(auth && auth.loggedIn);
+    } catch (e) {}
+    if (loggedIn) return;
+    const simple = document.getElementById('nav-account-simple');
+    if (simple) { simple.href = '/login'; simple.insertAdjacentHTML('beforeend', '<span>Login</span>'); }
+  })();
+</script>
+</body>
+</html>

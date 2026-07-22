@@ -441,12 +441,12 @@ h3.section-title{
     <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="fit-match.html">Fit Match<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
     <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="policy.html">Policy<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
     <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="contact.html">Contact<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
-    <a class="relative flex items-center gap-1.5 font-bold text-xs uppercase tracking-widest" style="color:#efe0cd;" href="checkout.html" aria-label="My Cart">
+    <a class="relative flex items-center gap-1.5 font-bold text-xs uppercase tracking-widest" style="color:#efe0cd;" href="cart.html" aria-label="My Cart">
       <span class="material-symbols-outlined text-xl">shopping_bag</span>
       <span class="hidden xl:inline">My Cart</span>
       <span id="cartCount" class="nav-badge"></span>
     </a>
-    <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1 flex items-center gap-1" style="color:#efe0cd;" href="account.html"><span class="material-symbols-outlined text-base">person</span><span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a id="nav-account-desktop" class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1 flex items-center gap-1" style="color:#efe0cd;" href="account.html"><span class="material-symbols-outlined text-base">person</span><span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
     <button onclick="document.getElementById('vault').scrollIntoView({behavior:'smooth'})" class="px-7 py-2.5 rounded-sm font-bold text-xs uppercase tracking-[0.15em] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300" style="background:#C9A36B;color:#453c2e;" onmouseover="this.style.background='#fdd397'" onmouseout="this.style.background='#C9A36B'">Rent Now</button>
   </nav>
   <button class="lg:hidden relative z-[70]" style="color:#C9A36B;" onclick="toggleMenu()"><span class="material-symbols-outlined text-3xl" id="menu-icon">menu</span></button>
@@ -458,8 +458,8 @@ h3.section-title{
   <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="fit-match.html" onclick="toggleMenu()">Saha Fit Match</a>
   <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="policy.html" onclick="toggleMenu()">Policy</a>
   <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="contact.html" onclick="toggleMenu()">Contact Us</a>
-  <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="account.html" onclick="toggleMenu()">My Account</a>
-  <a class="font-bold text-sm uppercase tracking-widest flex items-center gap-1.5" style="color:#efe0cd;" href="checkout.html" onclick="toggleMenu()"><span class="material-symbols-outlined text-base">shopping_bag</span>My Cart</a>
+  <a id="nav-account-mobile" class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="account.html" onclick="toggleMenu()">My Account</a>
+  <a class="font-bold text-sm uppercase tracking-widest flex items-center gap-1.5" style="color:#efe0cd;" href="cart.html" onclick="toggleMenu()"><span class="material-symbols-outlined text-base">shopping_bag</span>My Cart</a>
   <button onclick="toggleMenu();document.getElementById('vault').scrollIntoView({behavior:'smooth'})" class="px-6 py-3 w-full mt-2 rounded-sm font-bold text-xs uppercase tracking-[0.15em]" style="background:#C9A36B;color:#453c2e;">Rent Now</button>
 </div>
 
@@ -522,7 +522,7 @@ h3.section-title{
     <span class="material-symbols-outlined text-2xl">straighten</span>
     <span class="text-[9px] font-bold uppercase tracking-wider">Fit Match</span>
   </a>
-  <a class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="account.html">
+  <a id="nav-account-bottom" class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="account.html">
     <span class="material-symbols-outlined text-2xl">person</span>
     <span class="text-[9px] font-bold uppercase tracking-wider">Account</span>
   </a>
@@ -856,7 +856,29 @@ document.addEventListener('click',e=>{
 const overlay=document.getElementById('overlay');
 const sidebar=document.getElementById('sidebar');
 const inner=document.getElementById('sidebarInner');
-const cartItems=new Set();let openPiece=null,lastFocus=null;
+/* ---------- shared cart persistence (also read/written by cart.html) ---------- */
+const CartStore={
+  KEY:'sahas_cart',
+  getAll(){try{return JSON.parse(localStorage.getItem(this.KEY))||[]}catch(e){return[]}},
+  save(list){localStorage.setItem(this.KEY,JSON.stringify(list))},
+  hasItem(itemId){return this.getAll().some(e=>e.itemId===itemId)},
+  addOrUpdate(entry){
+    const list=this.getAll();
+    const i=list.findIndex(e=>e.itemId===entry.itemId&&e.size===entry.size);
+    if(i>-1)list[i]={...list[i],...entry,qty:list[i].qty+1};
+    else list.push({cartId:`${entry.itemId}-${entry.size}-${Date.now()}`,qty:1,...entry});
+    this.save(list);
+  },
+  removeByItemId(itemId){this.save(this.getAll().filter(e=>e.itemId!==itemId))}
+};
+function updateCartBadge(){
+  const c=document.getElementById('cartCount');
+  if(!c)return;
+  const n=CartStore.getAll().length;
+  c.textContent=n;c.classList.toggle('show',n>0);
+}
+updateCartBadge();
+let openPiece=null,lastFocus=null;
 
 vault.addEventListener('click',e=>{
   const p=e.target.closest('.piece');if(!p)return;
@@ -894,7 +916,7 @@ function openSidebar(it,pieceEl){
       <div class="price-row total"><span class="k">Estimated total</span><span class="v" id="prTotal">₹0</span></div>
     </div>
     <div class="cta-row">
-      <button class="btn btn-ghost ${cartItems.has(it.id)?'on':''}" id="cartBtn" aria-label="Add to cart" aria-pressed="${cartItems.has(it.id)}">
+      <button class="btn btn-ghost ${CartStore.hasItem(it.id)?'on':''}" id="cartBtn" aria-label="Add to cart" aria-pressed="${CartStore.hasItem(it.id)}">
         <span class="material-symbols-outlined" style="font-size:1.15rem;display:block" aria-hidden="true">add_shopping_cart</span>
       </button>
       <button class="btn btn-gold" id="rentBtn" disabled>Rent Now</button>
@@ -902,19 +924,30 @@ function openSidebar(it,pieceEl){
   sidebar.classList.add('show');overlay.classList.add('show');
   document.getElementById('sbClose').addEventListener('click',closeSidebar);
   document.getElementById('sbClose').focus();
+  let selectedSize=null;
   inner.querySelectorAll('button.size-dot').forEach(d=>d.addEventListener('click',()=>{
     inner.querySelectorAll('.size-dot.sel').forEach(x=>x.classList.remove('sel'));
     d.classList.add('sel');
+    selectedSize=d.textContent.trim();
   }));
   const cartBtn=document.getElementById('cartBtn');
+  const cal=new RentalCalendar(document.getElementById('cal'),it);
   cartBtn.addEventListener('click',()=>{
-    const on=!cartItems.has(it.id);
-    on?cartItems.add(it.id):cartItems.delete(it.id);
-    cartBtn.classList.toggle('on',on);cartBtn.setAttribute('aria-pressed',on);
-    const c=document.getElementById('cartCount');
-    if(c){c.textContent=cartItems.size;c.classList.toggle('show',cartItems.size>0)}
+    const turningOn=!CartStore.hasItem(it.id);
+    if(turningOn){
+      if(!selectedSize){alert('Please select a size to add this piece to your cart.');return}
+      const tsToStr=t=>new Date(t).toISOString().slice(0,10);
+      CartStore.addOrUpdate({
+        itemId:it.id,name:it.name,brand:it.brand,image:it.image||null,
+        price:it.price,deposit:it.deposit,sizes:it.sizes,size:selectedSize,
+        from:cal.start?tsToStr(cal.start):null,to:cal.end?tsToStr(cal.end):null
+      });
+    }else{
+      CartStore.removeByItemId(it.id);
+    }
+    cartBtn.classList.toggle('on',turningOn);cartBtn.setAttribute('aria-pressed',turningOn);
+    updateCartBadge();
   });
-  new RentalCalendar(document.getElementById('cal'),it);
 }
 
 /* ---------- calendar (API-ready) ---------- */
@@ -990,7 +1023,14 @@ class RentalCalendar{
     document.getElementById('prTotal').textContent=`₹${total.toLocaleString('en-IN')}`;
     rentBtn.disabled=false;
     rentBtn.onclick=()=>{
-      VaultAPI.createBooking({itemId:this.item.id,name:this.item.name,start:s.toISOString().slice(0,10),end:e.toISOString().slice(0,10),days:daysN,total,deposit:this.item.deposit});
+      const sizeEl=inner.querySelector('.size-dot.sel');
+      const size=sizeEl?sizeEl.textContent.trim():null;
+      if(!size){alert('Please select a size to continue.');return}
+      VaultAPI.createBooking({
+        itemId:this.item.id,name:this.item.name,brand:this.item.brand,image:this.item.image||null,
+        price:this.item.price,deposit:this.item.deposit,sizes:this.item.sizes,size,
+        start:s.toISOString().slice(0,10),end:e.toISOString().slice(0,10),days:daysN,total
+      });
     };
   }
 }
@@ -1036,9 +1076,41 @@ const VaultAPI={
     return true;
   },
   async createBooking(payload){
-    // TODO: send to checkout page — POST /api/bookings then redirect to checkout.
+    // Adds the picked size + dates to the cart (same store "Add to Cart" uses)
+    // and goes straight to the cart page to review and check out.
+    CartStore.addOrUpdate({
+      itemId: payload.itemId, name: payload.name, brand: payload.brand, image: payload.image,
+      price: payload.price, deposit: payload.deposit, sizes: payload.sizes, size: payload.size,
+      from: payload.start, to: payload.end
+    });
+    window.location.href = 'cart.html';
   }
 };
+</script>
+<script>
+  // Auth-aware nav: show "Login" (→ /login) when signed out, leave the
+  // person icon pointing at account.html as-is when a session exists.
+  (function () {
+    let loggedIn = false;
+    try {
+      const auth = JSON.parse(localStorage.getItem('sahas_auth') || 'null');
+      loggedIn = Boolean(auth && auth.loggedIn);
+    } catch (e) {}
+    if (loggedIn) return;
+
+    const desktop = document.getElementById('nav-account-desktop');
+    if (desktop) { desktop.href = '/login'; desktop.insertAdjacentHTML('beforeend', '<span>Login</span>'); }
+
+    const mobile = document.getElementById('nav-account-mobile');
+    if (mobile) { mobile.href = '/login'; mobile.textContent = 'Login'; }
+
+    const bottom = document.getElementById('nav-account-bottom');
+    if (bottom) {
+      bottom.href = '/login';
+      const label = bottom.querySelector('span:last-child');
+      if (label) label.textContent = 'Login';
+    }
+  })();
 </script>
 </body>
 </html>
