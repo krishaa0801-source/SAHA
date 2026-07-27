@@ -12,6 +12,12 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    // Lets the admin panel import vault-react/src/HangingGarment.jsx (+
+    // Hanger.jsx) directly as source, so its hanger preview is the exact
+    // same component the live site renders — no separate implementation
+    // to keep in sync. checkJs is intentionally left off: these files
+    // stay untyped JS, they just need to be resolvable by tsc.
+    "allowJs": true,
 
     "strict": true,
     "noUnusedLocals": true,

@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from '../components/AuthLayout';
 import FormField from '../components/FormField';
 import PasswordInput from '../components/PasswordInput';
@@ -20,6 +20,7 @@ type Errors = {
 };
 
 export default function SignupPage() {
+  const navigate = useNavigate();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -62,7 +63,7 @@ export default function SignupPage() {
       await signupRequest({ fullName: fullName.trim(), email: email.trim(), phone: phone.trim(), password });
       setSuccess(true);
       setTimeout(() => {
-        window.location.href = '/account.html';
+        navigate('/account.html');
       }, 900);
     } finally {
       setSubmitting(false);

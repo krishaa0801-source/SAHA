@@ -47,17 +47,52 @@
       background: radial-gradient(circle at 50% 0%, rgba(201, 163, 107, 0.18) 0%, rgba(90, 42, 86, 0) 70%);
   }
 
+  /* Hero backdrop: a single continuous gradient wash instead of a flat
+     fill. It starts close to the navbar's own tone (so there's no hard
+     seam under the header), holds a soft darkening through the text
+     for readability, then eases toward transparent so it hands off to
+     the video's own fade with no visible edge in between. */
+  .hero-gradient {
+      background: linear-gradient(
+          to bottom,
+          rgba(61, 26, 58, 0.95) 0%,
+          rgba(90, 42, 86, 0.85) 30%,
+          rgba(90, 42, 86, 0.5) 65%,
+          rgba(90, 42, 86, 0) 100%
+      );
+  }
+
   .hero-gif-container {
       position: relative;
       overflow: hidden;
-      background: #5A2A56;
   }
   .hero-gif-mask {
       mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
       -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
   }
+  /* Soft multi-stop fade (not a hard on/off) so the video eases in and
+     out of the surrounding gradient rather than meeting a flat edge. */
   .hero-blend-overlay {
-      background: linear-gradient(to bottom, #5A2A56 0%, transparent 25%, transparent 75%, #5A2A56 100%);
+      background: linear-gradient(
+          to bottom,
+          rgba(90, 42, 86, 1) 0%,
+          rgba(90, 42, 86, 0.6) 15%,
+          rgba(90, 42, 86, 0) 30%,
+          rgba(90, 42, 86, 0) 70%,
+          rgba(90, 42, 86, 0.6) 85%,
+          rgba(90, 42, 86, 1) 100%
+      );
+  }
+
+  /* Responsive hero media: the existing GIF keeps running on
+     desktop/tablet; a dedicated video takes over on mobile.
+     Pure CSS swap (no resize listeners) so there's no flicker. */
+  .hero-video-desktop { display: block; }
+  .hero-video-mobile { display: none; }
+
+  @media (max-width: 768px) {
+      .hero-video-desktop { display: none; }
+      .hero-video-mobile { display: block; }
   }
 
   /* Floating fabric-swatch accents in hero */
@@ -187,27 +222,60 @@
 <main class="pt-[72px]">
 
   <!-- ===================== HERO ===================== -->
-  <section class="relative flex flex-col items-center justify-start text-center bg-primary">
+  <section class="relative flex flex-col items-center hero-gradient">
     <div class="absolute inset-0 spotlight pointer-events-none"></div>
 
-    <div class="relative z-20 space-y-3 md:space-y-5 max-w-6xl mt-14 mb-4 md:-mb-32 px-6">
-      <span class="inline-block font-bold text-[11px] md:text-xs uppercase tracking-[0.3em] text-secondary-fixed-dim/80 font-aptos">Designer Rentals · Worn &amp; Returned</span>
-      <h1 class="font-['Great_Vibes'] text-4xl sm:text-5xl md:text-8xl text-secondary-fixed-dim leading-tight px-2 drop-shadow-lg">
+    <!-- Hero copy.
+         Mobile/tablet-portrait (<768px): unchanged auto-height behavior —
+         this range never had the overlap bug, so it just keeps its
+         original mt-14/mb-4 rhythm with the tagline's slot freed up.
+         Desktop/tablet-landscape (>=768px): the video's start position is
+         driven by this box's total HEIGHT (mt-14 + this box's height +
+         the original -128px overlap margin still sitting on the video
+         container below). To guarantee the video never starts any later
+         than the original design, this box is pinned to 224px — the
+         SAME height the original box already had at wide desktop widths
+         — instead of letting it grow with content. Heading/subtitle are
+         then top-aligned and sized to fit inside that fixed 224px so
+         they never reach into the video's territory. -->
+    <div class="relative z-20 flex flex-col items-center justify-center md:justify-start gap-3 md:gap-2 w-full max-w-6xl mx-auto px-6 mt-14 mb-4 md:-mb-32 md:h-56 text-center overflow-hidden">
+      <h1 class="font-['Great_Vibes'] text-4xl sm:text-5xl md:text-5xl text-secondary-fixed-dim leading-tight px-2 drop-shadow-lg">
         More iconic the outfit, less you wear it
       </h1>
-      <p class="font-aptos text-sm sm:text-base md:text-2xl text-on-primary-container/90 mx-auto max-w-sm md:max-w-xl px-4 md:px-0 tracking-wide font-light drop-shadow-md">
+      <p class="font-aptos text-sm sm:text-base md:text-sm text-on-primary-container/90 mx-auto max-w-sm md:max-w-md px-4 md:px-0 tracking-wide font-light drop-shadow-md">
         Why buy new outfits for every event, when u can rent &amp; slay?
       </p>
     </div>
 
-    <!-- Hero visual -->
+    <!-- Hero visual: desktop/tablet GIF and mobile video swap
+         automatically via the .hero-video-desktop / .hero-video-mobile
+         CSS media query defined above. -->
     <div class="relative w-full overflow-hidden hero-gif-container">
       <div class="swatch w-72 h-72 bg-secondary-fixed-dim top-10 -left-16" style="animation: drift 14s ease-in-out infinite;"></div>
       <div class="swatch w-96 h-96 bg-primary-container right-[-6rem] top-1/3" style="animation: drift 18s ease-in-out infinite reverse;"></div>
 
-      <div class="hero-gif-mask w-full">
+      <!-- Desktop / Tablet: existing hero GIF, unchanged -->
+      <div class="hero-gif-mask hero-video-desktop w-full">
         <img alt="Saha's Fashion Transition" class="w-full object-cover min-h-[400px] md:min-h-[600px] scale-105" src="assets/hero-ramp-walk.gif" onerror="this.style.opacity=0"/>
       </div>
+
+      <!-- ============================================================
+           MOBILE HERO VIDEO — replace the src below with your mobile
+           video file (e.g. assets/hero-mobile.mp4). Shown only at
+           768px and below; desktop GIF is hidden at that width.
+           ============================================================ -->
+      <div class="hero-gif-mask hero-video-mobile w-full">
+        <video
+          class="w-full h-full min-h-[400px] object-cover scale-105"
+          src="assets/hero-mobile.mp4"
+          autoplay
+          muted
+          loop
+          playsinline
+          onerror="this.style.opacity=0"
+        ></video>
+      </div>
+
       <div class="absolute inset-0 hero-blend-overlay pointer-events-none"></div>
 
       <div class="absolute bottom-16 left-1/2 -translate-x-1/2 z-20">

@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema(
     city: { type: String, default: '', trim: true },
     pin: { type: String, default: '', trim: true },
     passwordHash: { type: String, required: true },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
   },
   { timestamps: true }
 );

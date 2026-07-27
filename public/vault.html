@@ -110,7 +110,7 @@ img,svg{display:block}
 }
 
 /* ============ HERO ============ */
-.hero{text-align:center;padding:44px 20px 24px}
+.hero{text-align:center;padding:44px 20px 8px}
 
 /* ============ FILTER TOGGLE ============ */
 .filter-toggle{
@@ -173,12 +173,13 @@ img,svg{display:block}
 .avail-toggle[aria-pressed="true"] i{background:var(--btn-text);box-shadow:none}
 
 /* ============ VAULT / RODS ============ */
-.vault{max-width:1280px;margin:0 auto;padding:20px clamp(12px,3vw,32px) 120px}
+.vault{max-width:1280px;margin:0 auto;padding:8px clamp(12px,3vw,32px) 120px}
 .rod-section{
   margin-top:64px;
   opacity:0;transform:translateY(40px);
   transition:opacity .8s var(--ease-soft),transform .8s var(--ease-soft);
 }
+.rod-section:first-of-type{margin-top:24px}
 .rod-section.in{opacity:1;transform:none}
 .rod-section::after{
   content:"";display:block;height:1px;max-width:920px;margin:72px auto 0;
@@ -224,25 +225,62 @@ img,svg{display:block}
   filter:drop-shadow(0 16px 18px rgba(0,0,0,.4)) drop-shadow(0 5px 7px rgba(0,0,0,.28));
 }
 .piece svg{width:100%;height:auto;overflow:visible}
-/* real outfit photos hanging on the rod */
-.piece .fig .hang{width:100%;height:auto;overflow:visible}
-.piece .fig .cloth-img{
-  display:block;width:88%;margin:-8px auto 0;
-  max-height:240px;object-fit:contain;object-position:top center;
+.piece .fig img{width:100%;height:auto;display:block;border-radius:10px;overflow:visible}
+
+/* ============ <HangingGarment/> React island (rack cards only) ============
+   Rendered by vault-react/ (compiled to vault-react.bundle.js) — this file
+   only styles the generic shell (layering, hover/nudge, responsiveness,
+   where the hook reaches up to). The component decides its own size,
+   category-aware hanger shape, and the hanger's position (including
+   centering on the garment's OWN measured neckline, not blindly on 50%)
+   from the loaded photo; nothing here is per-product or per-category.
+   Applying the SAME hover/lift/nudge rules that used to target .fig to
+   .hanging-garment is what makes "transforms apply to the whole
+   component" true — the illustrated-SVG cards (.fig) keep working
+   unchanged below. The product detail sidebar shows a plain .garment-photo
+   instead (see further down) — no hanger there at all.
+
+   Layer order is deliberately garment-over-arms: z-index 30 hook (always
+   fully visible, straddling the rod), z-index 20 the garment photo,
+   z-index 10 the neck+arms — so fabric naturally covers the arms wherever
+   it's opaque, the way clothing actually sits on a hanger, instead of
+   wireframe lines drawn on top of it. --rod-offset is the ONE page-layout
+   fact the component needs: how far the rod bar sits below this card's top
+   edge (rod-bar top:50px − rod-items padding-top:30px = 20px here). The
+   component positions both hanger layers at that rod line and pads the
+   garment down below it, so the hook meets the rod, the neck bridges the
+   gap, and the arm tips land at the shoulders — all derived, no magic
+   per-item offsets. */
+.piece .hanging-garment{
+  display:block;position:relative;width:100%;overflow:visible;
+  transition:transform .25s var(--ease-spring),filter .25s var(--ease-soft);
+  transform-origin:50% 6%;
+  filter:drop-shadow(0 16px 18px rgba(0,0,0,.4)) drop-shadow(0 5px 7px rgba(0,0,0,.28));
 }
-.detail-stage .hang{width:150px;height:auto}
-.detail-stage .cloth-img{
-  display:block;width:200px;margin-top:-10px;
-  max-height:320px;object-fit:contain;
-  filter:drop-shadow(0 20px 26px rgba(0,0,0,.5));
-}
+.rod-items .hanging-garment{--rod-offset:20px}
+/* Render each hanger layer at the intrinsic px size its width/height
+   attributes specify — the component sizes them exactly. (Overrides the
+   generic `.piece svg{width:100%}` rule above, which is only meant for the
+   illustrated-SVG garment cards and would otherwise stretch these to the
+   full card width and blow up their geometry.) */
+.piece .hg-layer{position:absolute;width:auto;height:auto;color:var(--gold-bright)}
+.hg-hook-layer{z-index:30}
+.hg-arms-layer{z-index:10}
+.hanging-garment-img{position:relative;z-index:20;display:block;width:100%;height:auto}
+
+/* Product detail sidebar: garment photo only, no hanger. Sizing inside
+   .detail-stage (object-fit, height) lives with the rest of the sidebar
+   rules further down, since it's a layout concern of that container. */
+.garment-photo{display:block;width:100%;height:auto}
+
 .piece:hover,.piece:focus-visible,.piece.open{z-index:40}
-.piece:hover .fig,.piece:focus-visible .fig,.piece.open .fig{
+.piece:hover .fig,.piece:focus-visible .fig,.piece.open .fig,
+.piece:hover .hanging-garment,.piece:focus-visible .hanging-garment,.piece.open .hanging-garment{
   transform:translateY(-18px) scale(1.12) rotate(.6deg);
   filter:drop-shadow(0 32px 34px rgba(0,0,0,.55)) drop-shadow(0 10px 12px rgba(0,0,0,.35)) drop-shadow(0 0 18px rgba(253,211,151,.18));
 }
-.piece.shift-l .fig{transform:translateX(-16px) rotate(-1.2deg)}
-.piece.shift-r .fig{transform:translateX(16px) rotate(1.2deg)}
+.piece.shift-l .fig,.piece.shift-l .hanging-garment{transform:translateX(-16px) rotate(-1.2deg)}
+.piece.shift-r .fig,.piece.shift-r .hanging-garment{transform:translateX(16px) rotate(1.2deg)}
 .piece-label{
   position:absolute;left:50%;bottom:-6px;transform:translateX(-50%) translateY(6px);
   white-space:nowrap;pointer-events:none;
@@ -288,12 +326,25 @@ img,svg{display:block}
   transition:background .25s,transform .25s;
 }
 .sidebar-close:hover{background:var(--glass-strong);transform:rotate(90deg)}
+/* Product image is the focal point of the sidebar: ~60-70% of the
+   modal's own height (clamped so it stays sane on very short/tall
+   viewports), full width, everything inside sized with object-fit so
+   portrait AND landscape photos scale up to fill that space without
+   ever stretching off their real aspect ratio. */
 .detail-stage{
-  margin:6px 0 18px;padding:18px 10px 6px;
+  margin:6px 0 18px;padding:14px;
   background:var(--glass);border:1px solid rgba(201,163,107,.22);
   border-radius:22px;display:grid;place-items:center;
+  height:clamp(320px,66dvh,640px);
+  overflow:hidden;
 }
-.detail-stage svg{width:190px;height:auto;filter:drop-shadow(0 20px 26px rgba(0,0,0,.5))}
+.detail-stage>svg,.detail-stage .svg-fallback svg,
+.detail-stage .garment-photo{
+  width:100%;height:100%;
+  max-width:100%;max-height:100%;
+  object-fit:contain;object-position:center;
+  filter:drop-shadow(0 20px 26px rgba(0,0,0,.5));
+}
 .detail-brand{color:var(--gold-bright);font-size:.66rem;font-weight:700;letter-spacing:.32em;text-transform:uppercase}
 .detail-name{font-size:1.55rem;line-height:1.25;margin:6px 0 4px}
 .spec{
@@ -528,6 +579,13 @@ h3.section-title{
   </a>
 </nav>
 
+<!-- <HangingGarment/> React island (rack cards + the sidebar detail view).
+     Source: vault-react/src/. Rebuild with `npm run build:vault` after
+     editing. Exposes window.VaultReact.{mountRack,mountDetail} — see the
+     main script below for the two places that call them. Every product
+     shown on this page comes from MongoDB via /api/products and
+     /api/categories — there is no local/hardcoded catalog anymore. -->
+<script src="vault-react.bundle.js"></script>
 <script>
 /* ---------- mobile menu (site header) ---------- */
 function toggleMenu() {
@@ -547,189 +605,80 @@ function toggleMenu() {
 
 /* =====================================================
    SAHA'S STYLE VAULT — data, rendering & interactions
-   All availability flows through VaultAPI (bottom) so a
-   real backend can be plugged in without touching UI.
+   All availability flows through VaultAPI (bottom), backed by the real
+   MongoDB booking system (server/services/booking.js).
 ===================================================== */
 
-/* ---------- seeded rng (deterministic per item) ---------- */
-function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
-function hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+/* ---------- catalog bootstrap ----------
+   Every product on this page comes from MongoDB — GET /api/products and
+   GET /api/categories (server/routes/products.js, server/routes/categories.js)
+   — there is no local/hardcoded catalog anymore. Rods are grouped by
+   admin-managed Category (server/models/Category.js): one rod per
+   category that currently has at least one visible product. Every
+   product always has a real hanger image (required at creation time —
+   see server/routes/admin/products.js), so every item renders through
+   the <HangingGarment/> React island (window.VaultReact, from
+   vault-react.bundle.js) — there's no illustrated-SVG fallback path. */
+let ITEMS = [];
+let CATEGORIES = [];
 
-/* ---------- garment SVG library ---------- */
-const HANGER = `
-  <g stroke="#FDD397" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M65 34 v-7 a7.5 7.5 0 1 1 7.5 -7.5"/>
-    <path d="M65 34 L27 57 H103 Z"/>
-  </g>`;
-const SHEEN = `<path d="M52 70 Q58 130 54 190" stroke="rgba(255,255,255,.14)" stroke-width="5" fill="none" stroke-linecap="round"/>`;
-
-/* ---------- YOUR REAL OUTFIT PHOTOS ----------
-   Drop transparent PNGs into an /images folder next to this file,
-   then map them by item id below. Any item WITHOUT an entry keeps
-   its illustrated SVG, so you can migrate one photo at a time.
-   Item ids run party-1 … party-10, wedding-1 … designer-10.     */
-const IMAGES = {
-  // 'party-1'  : 'images/party-1.png',
-  // 'wedding-3': 'images/wedding-3.png',
-  // 'luxury-7' : 'images/velvet-gown.png',
-};
-const HANGER_ONLY = `<svg class="hang" viewBox="0 0 130 62" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${HANGER}</svg>`;
-
-const GARMENTS = {
-  gown:(c1,c2)=>`
-    <path d="M49 52 L46 40 M81 52 L84 40" stroke="${c1}" stroke-width="3.5" stroke-linecap="round"/>
-    <path d="M46 52 Q65 66 84 52 L88 96 Q65 105 42 96 Z" fill="${c1}"/>
-    <path d="M42 96 Q65 105 88 96 L113 266 Q65 290 17 266 Z" fill="${c2}"/>
-    <path d="M55 105 Q52 190 40 262 M75 105 Q78 190 90 262" stroke="rgba(0,0,0,.14)" stroke-width="2.5" fill="none"/>
-    ${SHEEN}`,
-  dress:(c1,c2)=>`
-    <path d="M50 52 L48 42 M80 52 L82 42" stroke="${c1}" stroke-width="3.5" stroke-linecap="round"/>
-    <path d="M47 53 L83 53 L89 112 Q65 121 41 112 Z" fill="${c1}"/>
-    <path d="M41 112 Q65 121 89 112 L101 196 Q65 210 29 196 Z" fill="${c2}"/>
-    <path d="M41 114 Q65 123 89 114" stroke="rgba(253,211,151,.5)" stroke-width="2.5" fill="none"/>
-    ${SHEEN}`,
-  slip:(c1)=>`
-    <path d="M53 52 L51 42 M77 52 L79 42" stroke="${c1}" stroke-width="2.4" stroke-linecap="round"/>
-    <path d="M51 53 Q65 62 79 53 L88 224 Q65 238 42 224 Z" fill="${c1}"/>
-    <path d="M51 53 Q65 70 79 53" stroke="rgba(0,0,0,.15)" stroke-width="2" fill="none"/>
-    ${SHEEN}`,
-  blazer:(c1,c2)=>`
-    <path d="M42 56 Q65 47 88 56 L94 186 Q65 195 36 186 Z" fill="${c1}"/>
-    <path d="M42 56 L28 168 L42 172 L50 70 Z" fill="${c1}"/>
-    <path d="M88 56 L102 168 L88 172 L80 70 Z" fill="${c1}"/>
-    <path d="M65 60 L49 57 L59 108 L65 82 L71 108 L81 57 Z" fill="${c2}"/>
-    <path d="M65 84 L64 186" stroke="rgba(0,0,0,.22)" stroke-width="2"/>
-    <circle cx="69" cy="122" r="2.6" fill="#FDD397"/><circle cx="69" cy="140" r="2.6" fill="#FDD397"/>`,
-  shirt:(c1,c2)=>`
-    <path d="M44 56 Q65 48 86 56 L91 162 Q65 170 39 162 Z" fill="${c1}"/>
-    <path d="M44 56 L31 130 L43 134 L50 68 Z" fill="${c1}"/>
-    <path d="M86 56 L99 130 L87 134 L80 68 Z" fill="${c1}"/>
-    <path d="M57 54 L65 66 L73 54 L69 50 L65 55 L61 50 Z" fill="${c2}"/>
-    <path d="M65 66 L65 162" stroke="rgba(0,0,0,.18)" stroke-width="2"/>
-    <circle cx="65" cy="86" r="2" fill="#FDD397"/><circle cx="65" cy="106" r="2" fill="#FDD397"/><circle cx="65" cy="126" r="2" fill="#FDD397"/>`,
-  lehenga:(c1,c2)=>`
-    <path d="M50 52 L48 42 M80 52 L82 42" stroke="${c1}" stroke-width="3.5" stroke-linecap="round"/>
-    <path d="M48 53 L82 53 L86 98 Q65 106 44 98 Z" fill="${c1}"/>
-    <path d="M44 106 Q65 114 86 106 L86 98 Q65 106 44 98 Z" fill="#C9A36B"/>
-    <path d="M43 108 Q65 116 87 108 L116 262 Q65 286 14 262 Z" fill="${c2}"/>
-    <path d="M52 114 Q44 200 26 256 M65 116 L65 268 M78 114 Q86 200 104 256" stroke="rgba(0,0,0,.16)" stroke-width="2.5" fill="none"/>
-    <path d="M18 260 Q65 282 112 260" stroke="#FDD397" stroke-width="3" fill="none" opacity=".8"/>`,
-  coat:(c1,c2)=>`
-    <path d="M41 56 Q65 47 89 56 L97 244 Q65 254 33 244 Z" fill="${c1}"/>
-    <path d="M41 56 L27 176 L40 180 L49 70 Z" fill="${c1}"/>
-    <path d="M89 56 L103 176 L90 180 L81 70 Z" fill="${c1}"/>
-    <path d="M65 62 L51 58 L60 100 L65 80 L70 100 L79 58 Z" fill="${c2}"/>
-    <path d="M65 82 L64 244" stroke="rgba(0,0,0,.22)" stroke-width="2"/>
-    <rect x="44" y="130" width="42" height="9" rx="4.5" fill="${c2}"/>
-    <rect x="58" y="128" width="14" height="13" rx="3" fill="#FDD397"/>`,
-  jumpsuit:(c1,c2)=>`
-    <path d="M50 52 L48 42 M80 52 L82 42" stroke="${c1}" stroke-width="3.5" stroke-linecap="round"/>
-    <path d="M48 53 L82 53 L86 118 Q65 125 44 118 Z" fill="${c1}"/>
-    <path d="M45 120 L40 236 H58 L64 140 L66 140 L72 236 H90 L85 120 Q65 128 45 120 Z" fill="${c2}"/>
-    <path d="M46 118 Q65 126 84 118" stroke="rgba(253,211,151,.55)" stroke-width="3" fill="none"/>
-    ${SHEEN}`
-};
-
-/* ---------- palettes (muted, luxury — no brights, no blue) ---------- */
-const PALETTES = {
-  jewel:['#8E3B5C','#A64D6D','#7A3F72','#6E3350','#5E2C48'],
-  earth:['#5E3B2E','#9C7A4F','#6E4A32','#7C5A3E','#8A6A46'],
-  cream:['#EADBC8','#D9B48F','#C9A36B','#E3C9A4','#D3B491'],
-  mauve:['#B08BA5','#7C5A70','#93688A','#84597B','#A3789A'],
-  olive:['#6B6B4E','#7C7458','#585840','#8A8264','#4E4E3A'],
-  wine :['#722F44','#5C2438','#83394F','#4A1E2E','#66293D']
-};
-function pick(rng,arr){return arr[Math.floor(rng()*arr.length)]}
-
-/* ---------- collection config ---------- */
-const COLLECTIONS = [
-  {id:'party',       name:'Party Collection',       tags:['party'],              garments:['dress','slip','gown','jumpsuit'], pools:['jewel','wine','mauve']},
-  {id:'wedding',     name:'Wedding Collection',     tags:['wedding','formal'],   garments:['gown','lehenga'],                 pools:['cream','jewel','wine']},
-  {id:'vacation',    name:'Vacation Collection',    tags:['vacation','summer'],  garments:['dress','slip','shirt','jumpsuit'],pools:['cream','earth','olive']}
-];
-const BRANDS=['Maison Aurelle','Vela Couture','Noor Atelier','Étoile Studio','Ivory & Oud','Rue Saint-Amour','Casa Firenze','Zephyr & Co.','Ambar House','La Lune Privée'];
-const ADJ={party:['Midnight','Velvet','Shimmer','After-Hours','Neon-Off','Bombay','Disco','Champagne','Encore','Vinyl'],
-wedding:['Sangeet','Vow','Pheras','Ivory','Heirloom','Baraat','Eternal','Mandap','First-Dance','Reception'],
-vacation:['Goa','Amalfi','Palolem','Santorini','Riviera','Breeze','Tide','Island','Sunset','Cabana'],
-luxury:['Privée','Opulent','Vault','Regalia','Sovereign','Gilded','Couture','Velour','Imperial','Noir'],
-traditional:['Banarasi','Jaipur','Zari','Peshwai','Meenakari','Kanjivaram','Rajwada','Phulkari','Mysore','Chikankari'],
-casual:['Sunday','Bandra','Cafe','Weekend','Drift','Easy','Studio','Metro','Off-Duty','Corner-Seat'],
-business:['Boardroom','Nariman','Merger','Keynote','Ledger','Summit','Charter','Quorum','Portfolio','Verdict'],
-winter:['Shimla','Frost','Ember','Cashmere','Solstice','Gulmarg','Hearth','Aspen','Mist','Tundra'],
-summer:['Mango','Solstice','Linen','Juhu','Citrus','Golden-Hour','Meridian','Sorbet','Lagoon','Haze'],
-designer:['Archive','Runway','Atelier','Muse','Edition','Signature','Prototype','Gallery','Icon','Finale']};
-const NOUN={gown:'Gown',dress:'Dress',slip:'Slip Dress',blazer:'Blazer',shirt:'Shirt',lehenga:'Lehenga',coat:'Trench',jumpsuit:'Jumpsuit'};
-const FABRICS=['Pure Silk','Satin Georgette','Velvet','Organza','Crepe','Chiffon','Linen Blend','Raw Silk','Tulle & Net','Cotton Silk'];
-const OCCASIONS={party:'Date nights & parties',wedding:'Weddings & sangeets',vacation:'Vacations & getaways',luxury:'Galas & premieres',traditional:'Festivals & pujas',casual:'Brunches & city days',business:'Meetings & conferences',winter:'Winter soirées',summer:'Summer outings',designer:'Editorial moments'};
-const AVAIL_KEYS=['now','now','now','week','week','month','soon','premium'];
-
-/* ---------- build item data ---------- */
-const ITEMS=[];
-COLLECTIONS.forEach(col=>{
-  for(let i=0;i<10;i++){
-    const id=`${col.id}-${i+1}`;
-    const rng=mulberry32(hash(id));
-    const g=col.garments[i%col.garments.length];
-    const pool=PALETTES[col.pools[i%col.pools.length]];
-    const c1=pick(rng,pool), c2=pick(rng,pool.filter(c=>c!==c1).length?pool.filter(c=>c!==c1):pool);
-    const sizes=['XS','S','M','L','XL'].filter(()=>rng()>.32);
-    if(!sizes.length)sizes.push('M');
-    const price=Math.round((1200+rng()*7200)/50)*50;
-    const tags=[...col.tags]; if(col.id==='casual'&&rng()>.5&&!tags.includes('streetwear'))tags.push('streetwear');
-    ITEMS.push({
-      id,collection:col.id,collectionName:col.name,
-      image:IMAGES[id]||null,
-      name:`${ADJ[col.id][i]} ${NOUN[g]}`,
-      brand:BRANDS[Math.floor(rng()*BRANDS.length)],
-      garment:g,c1,c2,sizes,tags,
-      price,deposit:Math.round(price*(2+rng())/100)*100,
-      fabric:pick(rng,FABRICS),
-      occasion:OCCASIONS[col.id],
-      rating:(4.2+rng()*0.8).toFixed(1),
-      avail:AVAIL_KEYS[Math.floor(rng()*AVAIL_KEYS.length)],
-      desc:`A ${NOUN[g].toLowerCase()} cut for presence, not a wardrobe shelf. Steamed, quality-checked and hygiene-sealed by our Curators before every rental — you wear it like it was made for you, then hand the aftercare back to us.`
-    });
-  }
-});
-
-function itemSVG(it,idAttr=''){
-  return `<svg ${idAttr} viewBox="0 0 130 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${HANGER}${GARMENTS[it.garment](it.c1,it.c2)}</svg>`;
-}
-/* Photo if mapped, illustrated garment otherwise. If a photo path is
-   broken, the img hides itself and the SVG fallback appears instead. */
-function itemFigure(it){
-  if(!it.image) return itemSVG(it);
-  return `${HANGER_ONLY}
-    <img class="cloth-img" src="${it.image}" alt="" loading="lazy"
-      onerror="this.style.display='none';this.previousElementSibling.style.display='none';this.nextElementSibling.style.display='block'">
-    <span class="svg-fallback" style="display:none">${itemSVG(it)}</span>`;
+// Shapes a /api/products item into exactly what Card.jsx/HangingGarment.jsx
+// already expect (id, name, brand, image, sizes, price, tags, avail,
+// collectionName) — so vault-react itself needs no changes at all.
+function toVaultItem(p, categoryNameBySlug) {
+  return {
+    id: p.id,
+    name: p.name,
+    brand: p.brand,
+    image: p.image,
+    detailImage: p.detailImage,
+    description: p.description,
+    category: p.category,
+    collectionName: categoryNameBySlug.get(p.category) || p.category,
+    price: p.price,
+    sizes: p.sizes.filter((s) => s.available).map((s) => s.size),
+    tags: [p.category],
+    avail: p.status === 'available' ? 'now' : 'unavailable',
+  };
 }
 
-/* ---------- render vault ---------- */
-const vault=document.getElementById('vault');
-COLLECTIONS.forEach(col=>{
-  const sec=document.createElement('section');
-  sec.className='rod-section';sec.id=`rod-${col.id}`;sec.dataset.collection=col.id;
-  sec.innerHTML=`
-    <header class="rod-head">
-      <h2>${col.name}</h2>
-    </header>
-    <div class="rod-wrap">
-      <div class="rod-bar" aria-hidden="true"></div>
-      <div class="rod-items" role="list" aria-label="${col.name}"></div>
-    </div>`;
-  const rack=sec.querySelector('.rod-items');
-  ITEMS.filter(x=>x.collection===col.id).forEach(it=>{
-    const b=document.createElement('button');
-    b.className='piece';b.setAttribute('role','listitem');
-    b.setAttribute('aria-label',`${it.name} by ${it.brand}, rent ₹${it.price.toLocaleString('en-IN')} per day. Open details`);
-    b.dataset.id=it.id;b.dataset.sizes=it.sizes.join(',');b.dataset.tags=it.tags.join(',');
-    b.dataset.avail=it.avail;b.dataset.search=`${it.name} ${it.brand} ${it.collectionName}`.toLowerCase();
-    b.innerHTML=`<span class="fig">${itemFigure(it)}</span><span class="piece-label">${it.name}</span>`;
-    rack.appendChild(b);
+async function loadCatalog() {
+  const [categoriesRes, productsRes] = await Promise.all([
+    fetch('/api/categories'),
+    fetch('/api/products?sort=newest'),
+  ]);
+  const categoriesData = categoriesRes.ok ? await categoriesRes.json() : { categories: [] };
+  const productsData = productsRes.ok ? await productsRes.json() : { products: [] };
+  CATEGORIES = categoriesData.categories || [];
+  const categoryNameBySlug = new Map(CATEGORIES.map((c) => [c.slug, c.name]));
+  ITEMS = (productsData.products || []).map((p) => toVaultItem(p, categoryNameBySlug));
+}
+
+function renderVault() {
+  CATEGORIES.forEach((cat) => {
+    const colItems = ITEMS.filter((x) => x.category === cat.slug);
+    if (!colItems.length) return;
+    const sec = document.createElement('section');
+    sec.className = 'rod-section';
+    sec.id = `rod-${cat.slug}`;
+    sec.dataset.collection = cat.slug;
+    sec.innerHTML = `
+      <header class="rod-head">
+        <h2>${cat.name}</h2>
+      </header>
+      <div class="rod-wrap">
+        <div class="rod-bar" aria-hidden="true"></div>
+        <div class="rod-items" role="list" aria-label="${cat.name}"></div>
+      </div>`;
+    const rack = sec.querySelector('.rod-items');
+    if (window.VaultReact) {
+      window.VaultReact.mountRack(rack, colItems);
+    }
+    vault.appendChild(sec);
   });
-  vault.appendChild(sec);
-});
+}
+
+const vault=document.getElementById('vault');
 
 /* ---------- hover: lift piece, nudge neighbours ---------- */
 vault.addEventListener('pointerover',e=>{
@@ -767,8 +716,7 @@ function chipRow(hostId,items,set){
     host.appendChild(c);
   });
 }
-chipRow('sizeChips',['XS','S','M','L','XL'].map(s=>[s,s]),state.sizes);
-chipRow('catChips',[['party','Party'],['wedding','Wedding'],['vacation','Vacation']],state.cats);
+chipRow('sizeChips',['XS','S','M','L','XL','XXL'].map(s=>[s,s]),state.sizes);
 const availBtn=document.getElementById('availNowBtn');
 availBtn.addEventListener('click',()=>{
   state.availNow=!state.availNow;
@@ -871,6 +819,25 @@ const CartStore={
   },
   removeByItemId(itemId){this.save(this.getAll().filter(e=>e.itemId!==itemId))}
 };
+/* ---------- best-effort DB sync: when logged in, mirror cart writes to the
+   real per-account cart so it's there on any device. localStorage stays the
+   source of truth for this page's own UI (badge, hasItem) either way, and
+   guest additions are merged into the DB cart automatically on login. ---------- */
+function isLoggedIn(){
+  try{ const a=JSON.parse(localStorage.getItem('sahas_auth')||'null'); return Boolean(a&&a.loggedIn); }catch(e){ return false; }
+}
+function syncCartAdd(entry){
+  if(!isLoggedIn())return;
+  // Only itemId/size/from/to travel to the server — price, name, image
+  // etc. are display data for this page's own UI and are never trusted
+  // by the backend; it re-fetches and re-validates the product itself.
+  const payload={itemId:entry.itemId,size:entry.size,from:entry.from,to:entry.to};
+  fetch('/api/cart/items',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)}).catch(()=>{});
+}
+function syncCartRemove(itemId){
+  if(!isLoggedIn())return;
+  fetch('/api/cart/items/item/'+encodeURIComponent(itemId),{method:'DELETE',credentials:'include'}).catch(()=>{});
+}
 function updateCartBadge(){
   const c=document.getElementById('cartCount');
   if(!c)return;
@@ -894,15 +861,14 @@ function closeSidebar(){
 
 function openSidebar(it,pieceEl){
   lastFocus=pieceEl;openPiece=pieceEl;pieceEl.classList.add('open');
-  const stars='★'.repeat(Math.round(it.rating))+'☆'.repeat(5-Math.round(it.rating));
   inner.innerHTML=`
     <button class="sidebar-close" id="sbClose" aria-label="Close details">✕</button>
-    <div class="detail-stage">${itemFigure(it)}</div>
+    <div class="detail-stage" id="detailStage"></div>
     <div class="detail-brand">${it.brand}</div>
     <h2 class="detail-name">${it.name}</h2>
-    <div class="stars" aria-label="Rated ${it.rating} out of 5">${stars}&nbsp;&nbsp;<span style="color:var(--cream);font-family:'Hanken Grotesk';font-size:.8rem">${it.rating}</span></div>
+    ${it.description?`<p style="font-size:.85rem;line-height:1.6;color:var(--cream-2);margin-top:8px">${it.description}</p>`:''}
     <div class="spec" style="margin:18px 0 12px"><div class="k">Available Sizes</div>
-      <div class="sizes">${['XS','S','M','L','XL'].map(s=>it.sizes.includes(s)?`<button class="size-dot" data-size="${s}">${s}</button>`:`<span class="size-dot" style="opacity:.25;cursor:not-allowed" aria-disabled="true">${s}</span>`).join('')}</div>
+      <div class="sizes">${['XS','S','M','L','XL','XXL'].map(s=>it.sizes.includes(s)?`<button class="size-dot" data-size="${s}">${s}</button>`:`<span class="size-dot" style="opacity:.25;cursor:not-allowed" aria-disabled="true">${s}</span>`).join('')}</div>
     </div>
     <div class="spec" style="margin-bottom:4px"><div class="k">Size &amp; Fit</div>
       <div class="v" style="font-size:.82rem;font-weight:400;line-height:1.55;margin-top:6px">Not sure which size to pick? <a href="fit-match.html" style="color:var(--gold-bright);text-decoration:underline">Try Saha Fit Match</a> for a personalised recommendation.</div>
@@ -921,6 +887,9 @@ function openSidebar(it,pieceEl){
       </button>
       <button class="btn btn-gold" id="rentBtn" disabled>Rent Now</button>
     </div>`;
+  if(window.VaultReact){
+    window.VaultReact.mountDetail(document.getElementById('detailStage'),it);
+  }
   sidebar.classList.add('show');overlay.classList.add('show');
   document.getElementById('sbClose').addEventListener('click',closeSidebar);
   document.getElementById('sbClose').focus();
@@ -937,13 +906,16 @@ function openSidebar(it,pieceEl){
     if(turningOn){
       if(!selectedSize){alert('Please select a size to add this piece to your cart.');return}
       const tsToStr=t=>new Date(t).toISOString().slice(0,10);
-      CartStore.addOrUpdate({
+      const entry={
         itemId:it.id,name:it.name,brand:it.brand,image:it.image||null,
-        price:it.price,deposit:it.deposit,sizes:it.sizes,size:selectedSize,
+        price:it.price,sizes:it.sizes,size:selectedSize,
         from:cal.start?tsToStr(cal.start):null,to:cal.end?tsToStr(cal.end):null
-      });
+      };
+      CartStore.addOrUpdate(entry);
+      syncCartAdd(entry);
     }else{
       CartStore.removeByItemId(it.id);
+      syncCartRemove(it.id);
     }
     cartBtn.classList.toggle('on',turningOn);cartBtn.setAttribute('aria-pressed',turningOn);
     updateCartBadge();
@@ -972,19 +944,22 @@ class RentalCalendar{
       </div>
       <div class="cal-grid">${['S','M','T','W','T','F','S'].map(d=>`<span class="cal-dow">${d}</span>`).join('')}`;
     for(let i=0;i<first.getDay();i++)html+='<span class="day pad"></span>';
+    const today=new Date();today.setHours(0,0,0,0);
     days.forEach(d=>{
       const t=+new Date(d.date);
-      let cls=d.status,sel='';
+      // "booked"/"available" come from the real MongoDB availability API
+      // (see VaultAPI.fetchAvailability below); "blocked" (past dates)
+      // is a pure UI concern computed here, not an inventory state.
+      let cls=t<+today?'blocked':d.status,sel='';
       if(this.start&&this.end&&t>this.start&&t<this.end)sel=' in-range';
       if(t===this.start||t===this.end)sel=' sel';
-      const dis=(d.status==='booked'||d.status==='blocked')?'disabled':'';
-      html+=`<button class="day ${cls}${sel}" data-t="${t}" ${dis} aria-label="${d.date}, ${d.status}">${new Date(d.date).getDate()}</button>`;
+      const dis=(cls==='booked'||cls==='blocked')?'disabled':'';
+      html+=`<button class="day ${cls}${sel}" data-t="${t}" ${dis} aria-label="${d.date}, ${cls}">${new Date(d.date).getDate()}</button>`;
     });
     html+=`</div>
       <div class="cal-legend">
         <span class="leg"><i style="background:var(--ok)"></i>Available</span>
         <span class="leg"><i style="background:var(--busy)"></i>Booked</span>
-        <span class="leg"><i style="background:var(--partial)"></i>Partially available</span>
         <span class="leg"><i style="background:var(--gold)"></i>Selected</span>
         <span class="leg"><i style="background:var(--blocked)"></i>Blocked</span>
       </div>
@@ -1028,7 +1003,7 @@ class RentalCalendar{
       if(!size){alert('Please select a size to continue.');return}
       VaultAPI.createBooking({
         itemId:this.item.id,name:this.item.name,brand:this.item.brand,image:this.item.image||null,
-        price:this.item.price,deposit:this.item.deposit,sizes:this.item.sizes,size,
+        price:this.item.price,sizes:this.item.sizes,size,
         start:s.toISOString().slice(0,10),end:e.toISOString().slice(0,10),days:daysN,total
       });
     };
@@ -1036,56 +1011,62 @@ class RentalCalendar{
 }
 
 /* =====================================================
-   VaultAPI — swap these stubs for real endpoints later.
-   Shapes match a typical Node/Express + Razorpay backend:
-     GET  /api/items/:id/availability?year&month
-          → [{date:'YYYY-MM-DD', status:'available|booked|partial|blocked'}]
-     POST /api/bookings  → { orderId, razorpayOrderId }
+   VaultAPI — backed by the real MongoDB booking system
+   (server/models/Booking.js, server/models/BookedDate.js,
+   server/services/booking.js):
+     GET /api/products/:id/availability?year&month(1-12)
+         → { days: [{date:'YYYY-MM-DD', status:'available'|'booked'}] }
+   The actual reject-overlapping-bookings + race-condition guard lives
+   server-side (reserveBooking() in services/booking.js, used inside
+   verify-payment's transaction) — this calendar just reflects it.
 ===================================================== */
 const VaultAPI={
   async fetchAvailability(itemId,year,month){
-    // return fetch(`/api/items/${itemId}/availability?year=${year}&month=${month+1}`).then(r=>r.json());
-    const rng=mulberry32(hash(itemId+'-'+year+'-'+month));
-    const nDays=new Date(year,month+1,0).getDate();
-    const today=new Date();today.setHours(0,0,0,0);
-    const out=[];
-    let booked=0;
-    for(let d=1;d<=nDays;d++){
-      const date=new Date(year,month,d);
-      let status;
-      if(date<today)status='blocked';
-      else if(booked>0){status='booked';booked--}
-      else{
-        const r=rng();
-        if(r<.10){status='booked';booked=1+Math.floor(rng()*3)}
-        else if(r<.20)status='partial';
-        else status='available';
-      }
-      out.push({date:`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,status});
-    }
-    return out;
+    const res=await fetch(`/api/products/${encodeURIComponent(itemId)}/availability?year=${year}&month=${month+1}`);
+    if(!res.ok)return [];
+    const data=await res.json();
+    return data.days||[];
   },
   async isRangeFree(itemId,startT,endT){
     // Timestamps are UTC midnights derived from 'YYYY-MM-DD' — stay in UTC throughout.
     for(let d=new Date(startT);+d<=endT;d.setUTCDate(d.getUTCDate()+1)){
       const days=await this.fetchAvailability(itemId,d.getUTCFullYear(),d.getUTCMonth());
-      const key=d.toISOString().slice(0,10);
-      const hit=days.find(x=>x.date===key);
-      if(hit&&(hit.status==='booked'||hit.status==='blocked'))return false;
+      const dateKey=d.toISOString().slice(0,10);
+      const hit=days.find(x=>x.date===dateKey);
+      if(hit&&hit.status==='booked')return false;
     }
     return true;
   },
   async createBooking(payload){
     // Adds the picked size + dates to the cart (same store "Add to Cart" uses)
     // and goes straight to the cart page to review and check out.
-    CartStore.addOrUpdate({
+    const entry={
       itemId: payload.itemId, name: payload.name, brand: payload.brand, image: payload.image,
-      price: payload.price, deposit: payload.deposit, sizes: payload.sizes, size: payload.size,
+      price: payload.price, sizes: payload.sizes, size: payload.size,
       from: payload.start, to: payload.end
-    });
+    };
+    CartStore.addOrUpdate(entry);
+    syncCartAdd(entry);
     window.location.href = 'cart.html';
   }
 };
+
+/* ---------- initial load ----------
+   Fetches the real catalog from MongoDB, renders the rods, populates the
+   category filter chips, then (if the admin's "View" action linked here
+   with ?product=<id>) opens that product's sidebar automatically. */
+(async function bootstrap(){
+  await loadCatalog();
+  renderVault();
+  chipRow('catChips', CATEGORIES.map((c) => [c.slug, c.name]), state.cats);
+
+  const requestedId = new URLSearchParams(location.search).get('product');
+  if (requestedId) {
+    const item = ITEMS.find((x) => x.id === requestedId);
+    const pieceEl = vault.querySelector(`.piece[data-id="${CSS.escape(requestedId)}"]`);
+    if (item && pieceEl) openSidebar(item, pieceEl);
+  }
+})();
 </script>
 <script>
   // Auth-aware nav: show "Login" (→ /login) when signed out, leave the

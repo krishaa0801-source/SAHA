@@ -1,0 +1,110 @@
+// Single source of truth for every rupee this app charges. Nothing here
+// ever accepts a price or total from the client — every number is
+// derived from a Product document fetched from MongoDB plus the dates/
+// qty/coupon the client asked for.
+//
+// TAX_RATE is a placeholder until the business defines real policy — it's
+// conservative (0% never overcharges a customer) and is a one-line change
+// once you have a real number. The old frontend math never charged tax
+// either, so this doesn't change what anyone pays today.
+//
+// There is no security deposit anywhere in this module — it was removed
+// (calculation, storage, and display) at the business's request.
+
+const DELIVERY_CHARGE = 99; // flat per order when the cart isn't empty — was called "platform fee" client-side before this redesign; same amount, clearer name.
+const TAX_RATE = 0; // e.g. 0.05 for 5% GST — ask the business before enabling.
+
+const COUPONS = {
+  SAHA10: { type: 'pct', value: 0.1, label: '10% off' },
+  WELCOME200: { type: 'flat', value: 200, label: '₹200 off' },
+};
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+// Returns the inclusive day count for a rental, or null if the range is
+// missing, malformed, or backwards — callers must treat null as a reject.
+function diffDays(from, to) {
+  if (typeof from !== 'string' || typeof to !== 'string') return null;
+  if (!DATE_RE.test(from) || !DATE_RE.test(to)) return null;
+  const start = new Date(`${from}T00:00:00Z`);
+  const end = new Date(`${to}T00:00:00Z`);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return null;
+  if (end < start) return null;
+  return Math.round((end - start) / 86400000) + 1;
+}
+
+// Validates one cart line against its authoritative Product document.
+// Returns a priced line, or { error } if the request can't be honored —
+// callers decide whether that's a 400 (new item) or a silent drop
+// (existing cart item whose product/size became unavailable).
+function priceLine({ product, size, qty, from, to }) {
+  if (!product || product.status === 'hidden') {
+    return { error: 'That item is no longer available.' };
+  }
+  const safeQty = Math.max(1, Math.min(5, Number(qty) || 1));
+  // product.sizes is [{size, quantity}]. quantity does NOT make booking
+  // multi-unit-aware (see models/Product.js) — the date-range exclusivity
+  // in services/booking.js is unchanged — but a size with quantity 0 is
+  // simply not offered at all, so it's excluded here too (this is what
+  // makes an unavailable size actually disabled, not just visually
+  // greyed out on the frontend). `sizeNames` — what's sent back to the
+  // client — stays a plain string[] of the sizes that ARE offered (see
+  // client/src/lib/cart.ts CartItem.sizes).
+  const sizeNames = product.sizes.filter((s) => s.quantity > 0).map((s) => s.size);
+  if (!size || !sizeNames.includes(size)) {
+    return { error: `Size "${size}" isn't available for ${product.name}.` };
+  }
+  const days = diffDays(from, to);
+  if (days === null) {
+    return { error: 'Choose a valid rental start and end date.' };
+  }
+
+  const lineSubtotal = product.price * safeQty; // first day
+  const lineRentalCharge = product.price * safeQty * Math.max(days - 1, 0); // additional days
+
+  return {
+    productId: product._id,
+    name: product.name,
+    brand: product.brand,
+    category: product.category,
+    image: product.image,
+    sizes: sizeNames,
+    size,
+    qty: safeQty,
+    from,
+    to,
+    days,
+    unitPrice: product.price,
+    lineSubtotal,
+    lineRentalCharge,
+    lineTotal: lineSubtotal + lineRentalCharge,
+  };
+}
+
+// Aggregates already-priced lines (from priceLine) into the order summary.
+// `total` is the exact amount charged via Razorpay.
+function calculateTotals(lines, couponCode) {
+  let subtotal = 0;
+  let rentalCharges = 0;
+  lines.forEach((l) => {
+    subtotal += l.lineSubtotal;
+    rentalCharges += l.lineRentalCharge;
+  });
+
+  const deliveryCharge = lines.length ? DELIVERY_CHARGE : 0;
+  const base = subtotal + rentalCharges;
+
+  let discount = 0;
+  const coupon = couponCode ? COUPONS[couponCode] : null;
+  if (coupon) {
+    discount = coupon.type === 'pct' ? Math.round(base * coupon.value) : Math.min(coupon.value, base);
+  }
+
+  const taxableBase = Math.max(base + deliveryCharge - discount, 0);
+  const tax = Math.round(taxableBase * TAX_RATE);
+  const total = taxableBase + tax;
+
+  return { subtotal, rentalCharges, deliveryCharge, discount, tax, total };
+}
+
+module.exports = { DELIVERY_CHARGE, TAX_RATE, COUPONS, diffDays, priceLine, calculateTotals };

@@ -2,3 +2,7 @@ node_modules/
 auth-dist/
 .env
 .env.local
+
+# Admin-uploaded product images (server/services/imageProcessor.js) —
+# runtime content generated per-deployment from MongoDB, not source.
+public/uploads/

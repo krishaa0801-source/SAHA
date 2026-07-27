@@ -9,6 +9,13 @@ const MongoStore = require('connect-mongo');
 const connectDB = require('./server/db');
 const authRoutes = require('./server/routes/auth');
 const orderRoutes = require('./server/routes/orders');
+const paymentRoutes = require('./server/routes/payments');
+const cartRoutes = require('./server/routes/cart');
+const productRoutes = require('./server/routes/products');
+const categoryRoutes = require('./server/routes/categories');
+const adminRoutes = require('./server/routes/admin');
+const requireAuth = require('./server/middleware/requireAuth');
+const requireAdmin = require('./server/middleware/requireAdmin');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,7 +30,15 @@ app.set('trust proxy', 1);
 // CSP is left off on purpose: the plain HTML pages load Tailwind's Play CDN,
 // Google Fonts, and jsdelivr (flatpickr) from several external hosts. Add a
 // real CSP allowlist once those are self-hosted post-launch.
-app.use(helmet({ contentSecurityPolicy: false }));
+//
+// COOP is relaxed to same-origin-allow-popups: Helmet's default
+// "same-origin" severs window.opener for any popup we open, which breaks
+// Razorpay's card 3D-Secure/OTP popup (it needs window.opener to hand
+// control back to the parent) — the popup renders as about:blank#blocked.
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
+}));
 
 app.use(express.json());
 
@@ -45,17 +60,22 @@ app.use(
 // Real backend API
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/admin', requireAuth, requireAdmin, adminRoutes);
 
 // Static site: only files under public/ are servable (fixes the previous
 // bug where the whole project root — including server.js and package.json
 // source — was downloadable).
 app.use(express.static(PUBLIC_DIR));
 
-// React (Vite) auth app: serves the built JS/CSS bundle for the
-// /login and /signup pages under its own /auth prefix so it never
-// collides with the existing /assets static folder.
+// React (Vite) app: serves the built JS/CSS bundle for the
+// /login, /signup, /account, and /cart pages under its own /auth prefix so
+// it never collides with the existing /assets static folder.
 app.use('/auth', express.static(AUTH_DIST_DIR));
-app.get(['/login', '/signup'], (req, res) => {
+app.get(['/login', '/signup', '/account', '/account.html', '/cart', '/cart.html', '/admin', '/admin/*'], (req, res) => {
   res.sendFile(path.join(AUTH_DIST_DIR, 'index.html'));
 });
 

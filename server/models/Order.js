@@ -12,6 +12,8 @@ const orderSchema = new mongoose.Schema(
     days: { type: Number, required: true },
     total: { type: Number, required: true },
     status: { type: String, enum: ['confirmed', 'completed', 'cancelled'], default: 'confirmed' },
+    razorpayOrderId: { type: String, default: '' },
+    razorpayPaymentId: { type: String, default: '' },
   },
   { timestamps: true }
 );

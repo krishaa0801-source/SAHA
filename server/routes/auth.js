@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const requireAuth = require('../middleware/requireAuth');
+const { loginLimiter, signupLimiter } = require('../middleware/rateLimiters');
 
 const router = express.Router();
 
@@ -14,10 +15,11 @@ function toPublicUser(user) {
     address: user.address,
     city: user.city,
     pin: user.pin,
+    role: user.role,
   };
 }
 
-router.post('/signup', async (req, res) => {
+router.post('/signup', signupLimiter, async (req, res) => {
   try {
     const { fullName, email, phone, password } = req.body || {};
     if (!fullName || !email || !password || String(password).length < 6) {
@@ -46,7 +48,7 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body || {};
     if (!email || !password) {

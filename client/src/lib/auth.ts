@@ -2,6 +2,8 @@
 // session itself lives in an httpOnly cookie set by the server; the
 // localStorage copies below are just a UI cache (greeting name, "Login"
 // vs "Account" nav state) — they are never the source of truth for access.
+import { mergeGuestCartIfAny } from './cart';
+
 const USER_KEY = 'sahas_user_data';
 const REMEMBER_KEY = 'sahas_remember_email';
 
@@ -13,6 +15,7 @@ export type StoredUser = {
   address: string;
   city: string;
   pin: string;
+  role: 'user' | 'admin';
 };
 
 async function parseJsonResponse(res: Response): Promise<any> {
@@ -54,6 +57,7 @@ export async function loginRequest(email: string, password: string, remember: bo
   const data = await parseJsonResponse(res);
   if (!res.ok) throw new Error(data?.error || 'Incorrect email or password.');
   cacheUser(data.user, remember);
+  await mergeGuestCartIfAny();
   return data.user;
 }
 
@@ -74,20 +78,42 @@ export async function signupRequest(input: SignupInput): Promise<StoredUser> {
   const data = await parseJsonResponse(res);
   if (!res.ok) throw new Error(data?.error || 'Could not create your account. Please try again.');
   cacheUser(data.user, true);
+  await mergeGuestCartIfAny();
   return data.user;
 }
 
-export function loginWithGoogle(): Promise<void> {
-  // TODO: replace with real Google OAuth (e.g. Google Identity Services).
-  return new Promise((resolve) => setTimeout(resolve, 700));
+export type ProfileInput = {
+  fname: string;
+  lname: string;
+  phone: string;
+  address: string;
+  city: string;
+  pin: string;
+};
+
+export async function updateProfile(input: ProfileInput): Promise<StoredUser> {
+  const res = await fetch('/api/auth/me', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(input),
+  });
+  const data = await parseJsonResponse(res);
+  if (!res.ok) {
+    const err: any = new Error(data?.error || 'Could not save your profile. Please try again.');
+    err.status = res.status;
+    throw err;
+  }
+  cacheUser(data.user, Boolean(getRememberedEmail()));
+  return data.user;
 }
 
-export function loginWithApple(): Promise<void> {
-  // TODO: replace with real Sign in with Apple.
-  return new Promise((resolve) => setTimeout(resolve, 700));
-}
-
-export function requestPasswordReset(_email: string): Promise<void> {
-  // TODO: replace with a real password-reset email dispatch.
-  return new Promise((resolve) => setTimeout(resolve, 800));
+export async function logoutRequest(): Promise<void> {
+  try {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+  } catch {
+    // best-effort — still clear local cache below
+  }
+  localStorage.removeItem('sahas_auth');
+  localStorage.removeItem(USER_KEY);
 }
