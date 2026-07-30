@@ -14,10 +14,8 @@
 const DELIVERY_CHARGE = 99; // flat per order when the cart isn't empty — was called "platform fee" client-side before this redesign; same amount, clearer name.
 const TAX_RATE = 0; // e.g. 0.05 for 5% GST — ask the business before enabling.
 
-const COUPONS = {
-  SAHA10: { type: 'pct', value: 0.1, label: '10% off' },
-  WELCOME200: { type: 'flat', value: 200, label: '₹200 off' },
-};
+const { computeDiscount } = require('./couponService');
+const { getDetailImage } = require('../utils/productImage');
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -67,7 +65,7 @@ function priceLine({ product, size, qty, from, to }) {
     name: product.name,
     brand: product.brand,
     category: product.category,
-    image: product.image,
+    image: getDetailImage(product), // detail/gallery photo, never the hanger listing image (see GarmentPhoto.jsx)
     sizes: sizeNames,
     size,
     qty: safeQty,
@@ -82,8 +80,11 @@ function priceLine({ product, size, qty, from, to }) {
 }
 
 // Aggregates already-priced lines (from priceLine) into the order summary.
-// `total` is the exact amount charged via Razorpay.
-function calculateTotals(lines, couponCode) {
+// `total` is the exact amount charged via Razorpay. `coupon` must already
+// be a *validated* Coupon document (or null) — see services/couponService.js
+// findValidCoupon(); this function never looks anything up itself, it only
+// applies a discount it's handed.
+function calculateTotals(lines, coupon) {
   let subtotal = 0;
   let rentalCharges = 0;
   lines.forEach((l) => {
@@ -93,12 +94,7 @@ function calculateTotals(lines, couponCode) {
 
   const deliveryCharge = lines.length ? DELIVERY_CHARGE : 0;
   const base = subtotal + rentalCharges;
-
-  let discount = 0;
-  const coupon = couponCode ? COUPONS[couponCode] : null;
-  if (coupon) {
-    discount = coupon.type === 'pct' ? Math.round(base * coupon.value) : Math.min(coupon.value, base);
-  }
+  const discount = computeDiscount(coupon, base);
 
   const taxableBase = Math.max(base + deliveryCharge - discount, 0);
   const tax = Math.round(taxableBase * TAX_RATE);
@@ -107,4 +103,4 @@ function calculateTotals(lines, couponCode) {
   return { subtotal, rentalCharges, deliveryCharge, discount, tax, total };
 }
 
-module.exports = { DELIVERY_CHARGE, TAX_RATE, COUPONS, diffDays, priceLine, calculateTotals };
+module.exports = { DELIVERY_CHARGE, TAX_RATE, diffDays, priceLine, calculateTotals };

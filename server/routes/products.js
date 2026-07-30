@@ -1,7 +1,9 @@
 const express = require('express');
 const Product = require('../models/Product');
+const Review = require('../models/Review');
 const { getMonthAvailability } = require('../services/booking');
 const { buildProductFilter, buildProductSort } = require('../services/productQuery');
+const { getDetailImage } = require('../utils/productImage');
 
 const router = express.Router();
 
@@ -21,9 +23,10 @@ function toPublicProduct(product) {
     price: product.price,
     sizes: product.sizes.map((s) => ({ size: s.size, available: s.quantity > 0 })),
     image: product.image,
-    detailImage: gallery[0]?.url || product.image,
+    detailImage: getDetailImage(product),
     galleryImages: gallery.map((g) => ({ url: g.url, thumbnailUrl: g.thumbnailUrl })),
     status: product.status,
+    rating: product.rating || { average: 0, count: 0 },
     createdAt: product.createdAt,
   };
 }
@@ -34,7 +37,10 @@ router.get('/', async (req, res) => {
   try {
     const filter = buildProductFilter(req.query, { includeHidden: false });
     const sort = buildProductSort(req.query.sort);
-    const products = await Product.find(filter).sort(sort).lean();
+    // Defensive cap, not real pagination — the Style Vault groups every
+    // result into rods client-side in one pass, so this is a safety net
+    // against unbounded growth rather than a UX with "load more".
+    const products = await Product.find(filter).sort(sort).limit(500).lean();
     res.json({ products: products.map((p) => toPublicProduct(p)) });
   } catch (err) {
     res.status(500).json({ error: 'Could not load products. Please try again.' });
@@ -50,6 +56,32 @@ router.get('/:id', async (req, res) => {
     res.json({ product: toPublicProduct(product) });
   } catch (err) {
     res.status(500).json({ error: 'Could not load this product. Please try again.' });
+  }
+});
+
+// Public — every published review for one product, featured first, then
+// newest. Powers the star rating + review list on the product sidebar
+// (public/vault.html openSidebar()).
+router.get('/:id/reviews', async (req, res) => {
+  try {
+    const reviews = await Review.find({ product: req.params.id, published: true })
+      .sort({ featured: -1, reviewDate: -1 })
+      .lean();
+    res.json({
+      reviews: reviews.map((r) => ({
+        id: r._id,
+        customerName: r.customerName,
+        customerImage: r.customerImage,
+        rating: r.rating,
+        title: r.title,
+        text: r.text,
+        reviewDate: r.reviewDate,
+        verified: r.verified,
+        featured: r.featured,
+      })),
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Could not load reviews. Please try again.' });
   }
 });
 

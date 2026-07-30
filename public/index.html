@@ -4,6 +4,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Saha's Shared Wardrobe | Sustainable Luxury</title>
+<meta name="description" content="Rent designer outfits for parties, weddings, and vacations at Saha's Shared Wardrobe — sustainable luxury fashion without the closet clutter."/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Hanken+Grotesk:wght@300;400;500;700&family=Great+Vibes&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -42,24 +43,22 @@
       cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="%23C9A36B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3m0 0a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm-9 12c0-1.5 2-3 9-3s9 1.5 9 3v1H3v-1z"/><path d="M12 5v2"/></svg>'), auto;
   }
 
-  /* ===== Hero ===== */
-  .spotlight {
-      background: radial-gradient(circle at 50% 0%, rgba(201, 163, 107, 0.18) 0%, rgba(90, 42, 86, 0) 70%);
+  /* ===== Header cart badge (matches vault.html's .nav-badge) ===== */
+  .nav-badge{
+    display:none;position:absolute;top:-6px;right:-10px;min-width:16px;height:16px;padding:0 4px;
+    border-radius:999px;background:#C9A36B;color:#453C2E;
+    font-size:.6rem;font-weight:800;line-height:16px;text-align:center;
   }
+  .nav-badge.show{display:inline-block}
 
-  /* Hero backdrop: a single continuous gradient wash instead of a flat
-     fill. It starts close to the navbar's own tone (so there's no hard
-     seam under the header), holds a soft darkening through the text
-     for readability, then eases toward transparent so it hands off to
-     the video's own fade with no visible edge in between. */
+  /* ===== Hero ===== */
+  /* Flat solid fill only — no gradient, tint, blur, or overlay behind the
+     hero heading/subheading. This is the section's actual background, so
+     it's edge-to-edge by construction; the video below has its own
+     separate mask/blend-overlay (untouched) that still handles its own
+     fade, so there's still no seam where the two meet. */
   .hero-gradient {
-      background: linear-gradient(
-          to bottom,
-          rgba(61, 26, 58, 0.95) 0%,
-          rgba(90, 42, 86, 0.85) 30%,
-          rgba(90, 42, 86, 0.5) 65%,
-          rgba(90, 42, 86, 0) 100%
-      );
+      background: #5A2B55;
   }
 
   .hero-gif-container {
@@ -179,10 +178,10 @@
   .lift-on-hover:hover { transform: translateY(-6px); }
 </style>
 </head>
-<body class="bg-surface text-on-surface font-aptos overflow-x-hidden">
+<body class="bg-deep-aubergine text-on-surface font-aptos overflow-x-hidden">
 
 <!-- Header -->
-<header class="fixed top-0 left-0 right-0 z-[60] backdrop-blur-md border-b flex justify-between items-center w-full px-6 md:px-12 py-2" style="background: rgba(61,26,56,0.92); border-color: rgba(201,163,107,0.2);">
+<header class="fixed top-0 left-0 right-0 z-[60] backdrop-blur-md border-b flex justify-between items-center w-full px-6 md:px-12 py-2 min-h-[72px]" style="background: rgba(61,26,56,0.92); border-color: rgba(201,163,107,0.2);">
   <!-- Spacer for mobile layout balance -->
   <div class="w-8 lg:hidden"></div>
 
@@ -202,6 +201,12 @@
     <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="fit-match.html">Fit Match<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
     <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="policy.html">Policy<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
     <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="contact.html">Contact<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative flex items-center gap-1.5 font-bold text-xs uppercase tracking-widest" style="color:#efe0cd;" href="cart.html" aria-label="My Cart">
+      <span class="material-symbols-outlined text-xl">shopping_bag</span>
+      <span class="hidden xl:inline">My Cart</span>
+      <span id="cartCount" class="nav-badge"></span>
+    </a>
+    <a id="nav-admin-desktop" class="relative font-bold text-xs uppercase tracking-widest py-1" style="display:none;color:#C9A36B;" href="/admin">Admin</a>
     <a id="nav-account-desktop" class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1 flex items-center gap-1" style="color:#efe0cd;" href="account.html"><span class="material-symbols-outlined text-base">person</span><span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
     <button onclick="window.location.href='vault.html'" class="px-7 py-2.5 rounded-sm font-bold text-xs uppercase tracking-[0.15em] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300" style="background:#C9A36B; color:#453c2e;" onmouseover="this.style.background='#fdd397'" onmouseout="this.style.background='#C9A36B'">Rent Now</button>
   </nav>
@@ -215,7 +220,9 @@
     <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="fit-match.html" onclick="toggleMenu()">Saha Fit Match</a>
     <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="policy.html" onclick="toggleMenu()">Policy</a>
     <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="contact.html" onclick="toggleMenu()">Contact Us</a>
+    <a id="nav-admin-mobile" class="font-bold text-sm uppercase tracking-widest" style="display:none;color:#C9A36B;" href="/admin" onclick="toggleMenu()">Admin Panel</a>
     <a id="nav-account-mobile" class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="account.html" onclick="toggleMenu()">My Account</a>
+    <a class="font-bold text-sm uppercase tracking-widest flex items-center gap-1.5" style="color:#efe0cd;" href="cart.html" onclick="toggleMenu()"><span class="material-symbols-outlined text-base">shopping_bag</span>My Cart</a>
     <button onclick="window.location.href='vault.html'" class="px-6 py-3 w-full mt-2 rounded-sm font-bold text-xs uppercase tracking-[0.15em]" style="background:#C9A36B; color:#453c2e;">Rent Now</button>
 </div>
 
@@ -223,8 +230,6 @@
 
   <!-- ===================== HERO ===================== -->
   <section class="relative flex flex-col items-center hero-gradient">
-    <div class="absolute inset-0 spotlight pointer-events-none"></div>
-
     <!-- Hero copy.
          Mobile/tablet-portrait (<768px): unchanged auto-height behavior —
          this range never had the overlap bug, so it just keeps its
@@ -239,7 +244,7 @@
          then top-aligned and sized to fit inside that fixed 224px so
          they never reach into the video's territory. -->
     <div class="relative z-20 flex flex-col items-center justify-center md:justify-start gap-3 md:gap-2 w-full max-w-6xl mx-auto px-6 mt-14 mb-4 md:-mb-32 md:h-56 text-center overflow-hidden">
-      <h1 class="font-['Great_Vibes'] text-4xl sm:text-5xl md:text-5xl text-secondary-fixed-dim leading-tight px-2 drop-shadow-lg">
+      <h1 class="font-['Great_Vibes'] text-4xl sm:text-5xl md:text-5xl text-secondary-fixed-dim leading-tight pt-3 pl-4 pr-2 drop-shadow-lg">
         More iconic the outfit, less you wear it
       </h1>
       <p class="font-aptos text-sm sm:text-base md:text-sm text-on-primary-container/90 mx-auto max-w-sm md:max-w-md px-4 md:px-0 tracking-wide font-light drop-shadow-md">
@@ -479,7 +484,7 @@
       </div>
       <div class="relative reveal">
         <div class="aspect-square bg-secondary-fixed-dim/10 rounded-full absolute -top-8 -right-8 w-48 h-48 blur-3xl"></div>
-        <img alt="Western Luxury Collection" class="lift-on-hover relative z-10 w-full h-auto rounded-lg shadow-[0_20px_50px_-12px_rgba(0,0,0,0.4)] p-2 bg-surface/50 backdrop-blur-sm border border-secondary-fixed-dim/20 hover:border-secondary-fixed-dim/50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0H6jVho5OG6d7NJEk7Y6AdpqXpvpkGjJDsyYOGWm3pPqtQ8efnhVQiRxqhQv4HNR1nXiWTUmpMy9C50AKLVWvO7klr8qUr5K-w9_H0_GmIGazy8my70_mfKRQnK1zjaY9d381v8aCewcjJWFluxqTDWg3zGmh959fpWjMN3SoxcQt8NmcbR2Q9S_MU7_DM81B-KnDKSgidX5MawOw1r4ZaFvS1X7sbK4eLdgx70EMVaDgz60kFNonAdKthuk0r23YhTkY8i84IFQK"/>
+        <img alt="Western Luxury Collection" width="475" height="317" loading="lazy" class="lift-on-hover relative z-10 w-full h-auto rounded-lg shadow-[0_20px_50px_-12px_rgba(0,0,0,0.4)] p-2 bg-surface/50 backdrop-blur-sm border border-secondary-fixed-dim/20 hover:border-secondary-fixed-dim/50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0H6jVho5OG6d7NJEk7Y6AdpqXpvpkGjJDsyYOGWm3pPqtQ8efnhVQiRxqhQv4HNR1nXiWTUmpMy9C50AKLVWvO7klr8qUr5K-w9_H0_GmIGazy8my70_mfKRQnK1zjaY9d381v8aCewcjJWFluxqTDWg3zGmh959fpWjMN3SoxcQt8NmcbR2Q9S_MU7_DM81B-KnDKSgidX5MawOw1r4ZaFvS1X7sbK4eLdgx70EMVaDgz60kFNonAdKthuk0r23YhTkY8i84IFQK"/>
       </div>
     </div>
   </section>
@@ -591,26 +596,77 @@
 
   // Auth-aware nav: show "Login" (→ /login) when signed out, leave the
   // person icon pointing at account.html as-is when a session exists.
+  // Admins additionally get an "Admin"/"Admin Panel" link revealed —
+  // there was previously no way to reach /admin from the site itself.
   (function () {
     let loggedIn = false;
     try {
       const auth = JSON.parse(localStorage.getItem('sahas_auth') || 'null');
       loggedIn = Boolean(auth && auth.loggedIn);
     } catch (e) {}
-    if (loggedIn) return;
 
-    const desktop = document.getElementById('nav-account-desktop');
-    if (desktop) { desktop.href = '/login'; desktop.insertAdjacentHTML('beforeend', '<span>Login</span>'); }
+    if (!loggedIn) {
+      const desktop = document.getElementById('nav-account-desktop');
+      if (desktop) { desktop.href = '/login'; desktop.insertAdjacentHTML('beforeend', '<span>Login</span>'); }
 
-    const mobile = document.getElementById('nav-account-mobile');
-    if (mobile) { mobile.href = '/login'; mobile.textContent = 'Login'; }
+      const mobile = document.getElementById('nav-account-mobile');
+      if (mobile) { mobile.href = '/login'; mobile.textContent = 'Login'; }
 
-    const bottom = document.getElementById('nav-account-bottom');
-    if (bottom) {
-      bottom.href = '/login';
-      const label = bottom.querySelector('span:last-child');
-      if (label) label.textContent = 'Login';
+      const bottom = document.getElementById('nav-account-bottom');
+      if (bottom) {
+        bottom.href = '/login';
+        const label = bottom.querySelector('span:last-child');
+        if (label) label.textContent = 'Login';
+      }
+      return;
     }
+
+    // Signed in — role isn't cached client-side anywhere, so this is the
+    // one place worth a real request to find out if the admin links
+    // should show.
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data || !data.user || data.user.role !== 'admin') return;
+        const adminDesktop = document.getElementById('nav-admin-desktop');
+        if (adminDesktop) adminDesktop.style.display = '';
+        const adminMobile = document.getElementById('nav-admin-mobile');
+        if (adminMobile) adminMobile.style.display = '';
+      })
+      .catch(() => {});
+  })();
+</script>
+<script>
+  // Header cart badge — same guest cart vault.html reads/writes
+  // (localStorage 'sahas_cart') for signed-out visitors, or the real
+  // per-account DB cart (server/routes/cart.js) once signed in, so this
+  // always matches what the Cart page itself would show.
+  (function () {
+    const badge = document.getElementById('cartCount');
+    if (!badge) return;
+    function setBadge(n) {
+      badge.textContent = n;
+      badge.classList.toggle('show', n > 0);
+    }
+    function guestCount() {
+      try {
+        const list = JSON.parse(localStorage.getItem('sahas_cart') || '[]');
+        return Array.isArray(list) ? list.length : 0;
+      } catch (e) { return 0; }
+    }
+    let loggedIn = false;
+    try {
+      const auth = JSON.parse(localStorage.getItem('sahas_auth') || 'null');
+      loggedIn = Boolean(auth && auth.loggedIn);
+    } catch (e) {}
+
+    setBadge(guestCount());
+    if (!loggedIn) return;
+
+    fetch('/api/cart', { credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => { if (data && Array.isArray(data.items)) setBadge(data.items.length); })
+      .catch(() => {});
   })();
 </script>
 </body>

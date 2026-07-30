@@ -18,4 +18,9 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// The admin dashboard's "recent orders" query sorts by createdAt across
+// ALL users (server/routes/admin/dashboard.js), so the per-user index
+// above doesn't help it — this does.
+orderSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model('Order', orderSchema);

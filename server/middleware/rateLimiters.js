@@ -28,4 +28,43 @@ const signupLimiter = rateLimit({
   },
 });
 
-module.exports = { loginLimiter, signupLimiter };
+// Broad DoS backstop across the whole API — generous enough that no
+// legitimate session gets anywhere near it, just a guard against scripted
+// abuse hammering any single endpoint.
+const apiLimiter = rateLimit({
+  windowMs: 15 * MINUTE,
+  limit: 300,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({ error: 'Too many requests. Please slow down and try again shortly.' });
+  },
+});
+
+// Image processing (sharp, in server/services/imageProcessor.js) is
+// CPU-heavy — a tighter limit on product create/update specifically
+// keeps a burst of uploads from starving the event loop for everyone
+// else on the same process.
+const uploadLimiter = rateLimit({
+  windowMs: 15 * MINUTE,
+  limit: 30,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({ error: 'Too many uploads. Please wait a few minutes and try again.' });
+  },
+});
+
+// Payment endpoints are the one place a scripted retry loop could cause
+// real financial or Razorpay-API-quota damage, not just annoyance.
+const paymentLimiter = rateLimit({
+  windowMs: 15 * MINUTE,
+  limit: 20,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({ error: 'Too many payment attempts. Please wait a few minutes and try again.' });
+  },
+});
+
+module.exports = { loginLimiter, signupLimiter, apiLimiter, uploadLimiter, paymentLimiter };

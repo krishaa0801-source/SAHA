@@ -7,10 +7,12 @@ const PUBLIC_DIR = path.join(__dirname, '..', '..', 'public');
 const UPLOADS_DIR = path.join(PUBLIC_DIR, 'uploads');
 const HANGER_DIR = path.join(UPLOADS_DIR, 'products', 'hangers');
 const GALLERY_DIR = path.join(UPLOADS_DIR, 'products', 'gallery');
+const REVIEW_DIR = path.join(UPLOADS_DIR, 'reviews');
 
 const HANGER_MAX_DIMENSION = 1600;
 const GALLERY_MAX_DIMENSION = 1800;
 const THUMBNAIL_MAX_DIMENSION = 400;
+const REVIEWER_AVATAR_MAX_DIMENSION = 300;
 const JPEG_QUALITY = 82;
 const WEBP_QUALITY = 82;
 
@@ -81,6 +83,23 @@ async function processGalleryImage(buffer, mimetype, productId) {
   };
 }
 
+// Small avatar photo for a review's customer — same re-encode/resize/
+// never-upscale treatment as the product images, keyed by reviewId so
+// re-uploading on edit simply overwrites it.
+async function processReviewerImage(buffer, mimetype, reviewId) {
+  await ensureDir(REVIEW_DIR);
+  const ext = extensionFor(mimetype);
+  const filename = `${reviewId}.${ext}`;
+  const pipeline = sharp(buffer).resize({
+    width: REVIEWER_AVATAR_MAX_DIMENSION,
+    height: REVIEWER_AVATAR_MAX_DIMENSION,
+    fit: 'inside',
+    withoutEnlargement: true,
+  });
+  await encode(pipeline, ext).toFile(path.join(REVIEW_DIR, filename));
+  return `/uploads/reviews/${filename}`;
+}
+
 // Deletes every gallery file for a product (used on product delete, and
 // before re-writing gallery images on edit).
 async function removeGalleryDir(productId) {
@@ -130,6 +149,7 @@ async function duplicateGalleryImages(galleryImages, newProductId) {
 module.exports = {
   processHangerImage,
   processGalleryImage,
+  processReviewerImage,
   removeGalleryDir,
   removePublicFile,
   duplicateHangerImage,

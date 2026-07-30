@@ -4,6 +4,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Saha's Shared Wardrobe | Policy</title>
+<meta name="description" content="Rental, cancellation, and care policies for Saha's Shared Wardrobe."/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Hanken+Grotesk:wght@300;400;500;700&family=Great+Vibes&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -41,6 +42,14 @@
   body {
       cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="%23C9A36B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3m0 0a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm-9 12c0-1.5 2-3 9-3s9 1.5 9 3v1H3v-1z"/><path d="M12 5v2"/></svg>'), auto;
   }
+
+  /* ===== Header cart badge (matches vault.html's .nav-badge) ===== */
+  .nav-badge{
+    display:none;position:absolute;top:-6px;right:-10px;min-width:16px;height:16px;padding:0 4px;
+    border-radius:999px;background:#C9A36B;color:#453C2E;
+    font-size:.6rem;font-weight:800;line-height:16px;text-align:center;
+  }
+  .nav-badge.show{display:inline-block}
 
   .font-aptos { font-family: 'Hanken Grotesk', sans-serif; }
 
@@ -83,6 +92,11 @@
     <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="fit-match.html">Fit Match<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
     <a class="relative font-bold text-xs uppercase tracking-widest py-1" style="color:#C9A36B;" href="policy.html">Policy<span class="absolute bottom-0 left-0 w-full h-[2px]" style="background:#C9A36B;"></span></a>
     <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="contact.html">Contact<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a class="relative flex items-center gap-1.5 font-bold text-xs uppercase tracking-widest" style="color:#efe0cd;" href="cart.html" aria-label="My Cart">
+      <span class="material-symbols-outlined text-xl">shopping_bag</span>
+      <span class="hidden xl:inline">My Cart</span>
+      <span id="cartCount" class="nav-badge"></span>
+    </a>
     <a id="nav-account-desktop" class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1 flex items-center gap-1" style="color:#efe0cd;" href="account.html"><span class="material-symbols-outlined text-base">person</span><span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
     <button onclick="window.location.href='vault.html'" class="px-7 py-2.5 rounded-sm font-bold text-xs uppercase tracking-[0.15em] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300" style="background:#C9A36B; color:#453c2e;" onmouseover="this.style.background='#fdd397'" onmouseout="this.style.background='#C9A36B'">Rent Now</button>
   </nav>
@@ -97,6 +111,7 @@
     <a class="font-bold text-sm uppercase tracking-widest" style="color:#C9A36B;" href="policy.html" onclick="toggleMenu()">Policy</a>
     <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="contact.html" onclick="toggleMenu()">Contact Us</a>
     <a id="nav-account-mobile" class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="account.html" onclick="toggleMenu()">My Account</a>
+    <a class="font-bold text-sm uppercase tracking-widest flex items-center gap-1.5" style="color:#efe0cd;" href="cart.html" onclick="toggleMenu()"><span class="material-symbols-outlined text-base">shopping_bag</span>My Cart</a>
     <button onclick="window.location.href='vault.html'" class="px-6 py-3 w-full mt-2 rounded-sm font-bold text-xs uppercase tracking-[0.15em]" style="background:#C9A36B; color:#453c2e;">Rent Now</button>
 </div>
 
@@ -733,6 +748,39 @@
       const label = bottom.querySelector('span:last-child');
       if (label) label.textContent = 'Login';
     }
+  })();
+</script>
+<script>
+  // Header cart badge — same guest cart vault.html reads/writes
+  // (localStorage 'sahas_cart') for signed-out visitors, or the real
+  // per-account DB cart (server/routes/cart.js) once signed in, so this
+  // always matches what the Cart page itself would show.
+  (function () {
+    const badge = document.getElementById('cartCount');
+    if (!badge) return;
+    function setBadge(n) {
+      badge.textContent = n;
+      badge.classList.toggle('show', n > 0);
+    }
+    function guestCount() {
+      try {
+        const list = JSON.parse(localStorage.getItem('sahas_cart') || '[]');
+        return Array.isArray(list) ? list.length : 0;
+      } catch (e) { return 0; }
+    }
+    let loggedIn = false;
+    try {
+      const auth = JSON.parse(localStorage.getItem('sahas_auth') || 'null');
+      loggedIn = Boolean(auth && auth.loggedIn);
+    } catch (e) {}
+
+    setBadge(guestCount());
+    if (!loggedIn) return;
+
+    fetch('/api/cart', { credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => { if (data && Array.isArray(data.items)) setBadge(data.items.length); })
+      .catch(() => {});
   })();
 </script>
 </body>

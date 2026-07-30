@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saha's Wardrobe — The Style Vault</title>
+<meta name="description" content="Browse and rent designer dresses, suits, jackets, and more from Saha's Style Vault — filter by size, category, and availability.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -126,6 +127,23 @@ img,svg{display:block}
   background:var(--gold-bright);border-color:var(--gold-bright);color:var(--btn-text);
   box-shadow:0 0 22px rgba(253,211,151,.4);
 }
+.filter-toggle-wrap{position:relative;display:inline-flex;flex:none}
+/* Small "clear all filters" indicator overlaid on the corner of the toggle
+   button — same show/hide mechanism as .nav-badge above. Sits outside
+   .filter-toggle (a sibling, not a child) so clicking it never bubbles into
+   the toggle's own open/close click handler. */
+.filter-clear-badge{
+  display:none;position:absolute;top:-6px;right:-6px;
+  width:20px;height:20px;padding:0;border-radius:999px;
+  background:var(--busy);color:var(--cream);
+  border:2px solid var(--bg);
+  align-items:center;justify-content:center;
+  font-size:.85rem;font-weight:800;line-height:1;
+  box-shadow:0 0 10px rgba(177,90,90,.5);
+  transition:transform .2s var(--ease-spring),box-shadow .2s,background .2s;
+}
+.filter-clear-badge.show{display:flex}
+.filter-clear-badge:hover{transform:scale(1.15);background:#c46868;box-shadow:0 0 14px rgba(177,90,90,.75)}
 
 /* ============ FILTER BAR ============ */
 .filters{
@@ -229,28 +247,17 @@ img,svg{display:block}
 
 /* ============ <HangingGarment/> React island (rack cards only) ============
    Rendered by vault-react/ (compiled to vault-react.bundle.js) — this file
-   only styles the generic shell (layering, hover/nudge, responsiveness,
-   where the hook reaches up to). The component decides its own size,
-   category-aware hanger shape, and the hanger's position (including
-   centering on the garment's OWN measured neckline, not blindly on 50%)
-   from the loaded photo; nothing here is per-product or per-category.
-   Applying the SAME hover/lift/nudge rules that used to target .fig to
-   .hanging-garment is what makes "transforms apply to the whole
-   component" true — the illustrated-SVG cards (.fig) keep working
-   unchanged below. The product detail sidebar shows a plain .garment-photo
-   instead (see further down) — no hanger there at all.
-
-   Layer order is deliberately garment-over-arms: z-index 30 hook (always
-   fully visible, straddling the rod), z-index 20 the garment photo,
-   z-index 10 the neck+arms — so fabric naturally covers the arms wherever
-   it's opaque, the way clothing actually sits on a hanger, instead of
-   wireframe lines drawn on top of it. --rod-offset is the ONE page-layout
-   fact the component needs: how far the rod bar sits below this card's top
-   edge (rod-bar top:50px − rod-items padding-top:30px = 20px here). The
-   component positions both hanger layers at that rod line and pads the
-   garment down below it, so the hook meets the rod, the neck bridges the
-   gap, and the arm tips land at the shoulders — all derived, no magic
-   per-item offsets. */
+   only styles the generic shell (layering, hover/nudge, responsiveness).
+   Product photos are shot on a real hanger already, so the component draws
+   no hanger graphic of its own — it just places the photo a small fixed
+   gap below the rod (--rod-offset is the ONE page-layout fact it needs: how
+   far the rod bar sits below this card's top edge — rod-bar top:50px −
+   rod-items padding-top:30px = 20px here). Applying the SAME hover/lift/
+   nudge rules that used to target .fig to .hanging-garment is what makes
+   "transforms apply to the whole component" true — the illustrated-SVG
+   cards (.fig) keep working unchanged below. The product detail sidebar
+   shows a plain .garment-photo instead (see further down) — same idea,
+   just no rod to hang from. */
 .piece .hanging-garment{
   display:block;position:relative;width:100%;overflow:visible;
   transition:transform .25s var(--ease-spring),filter .25s var(--ease-soft);
@@ -258,15 +265,7 @@ img,svg{display:block}
   filter:drop-shadow(0 16px 18px rgba(0,0,0,.4)) drop-shadow(0 5px 7px rgba(0,0,0,.28));
 }
 .rod-items .hanging-garment{--rod-offset:20px}
-/* Render each hanger layer at the intrinsic px size its width/height
-   attributes specify — the component sizes them exactly. (Overrides the
-   generic `.piece svg{width:100%}` rule above, which is only meant for the
-   illustrated-SVG garment cards and would otherwise stretch these to the
-   full card width and blow up their geometry.) */
-.piece .hg-layer{position:absolute;width:auto;height:auto;color:var(--gold-bright)}
-.hg-hook-layer{z-index:30}
-.hg-arms-layer{z-index:10}
-.hanging-garment-img{position:relative;z-index:20;display:block;width:100%;height:auto}
+.hanging-garment-img{position:relative;display:block;width:100%;height:auto}
 
 /* Product detail sidebar: garment photo only, no hanger. Sizing inside
    .detail-stage (object-fit, height) lives with the rest of the sidebar
@@ -347,6 +346,8 @@ img,svg{display:block}
 }
 .detail-brand{color:var(--gold-bright);font-size:.66rem;font-weight:700;letter-spacing:.32em;text-transform:uppercase}
 .detail-name{font-size:1.55rem;line-height:1.25;margin:6px 0 4px}
+.detail-rating{display:flex;align-items:center;gap:8px;margin:2px 0 6px}
+.detail-rating-text{font-size:.78rem;color:var(--cream-2);font-weight:600}
 .spec{
   background:var(--card);border:1px solid rgba(201,163,107,.18);
   border-radius:16px;padding:12px 14px;
@@ -362,11 +363,37 @@ img,svg{display:block}
 }
 .size-dot:hover{transform:translateY(-2px)}
 .size-dot.sel{background:var(--gold);color:var(--btn-text);border-color:var(--gold)}
-.stars{color:var(--gold-bright);letter-spacing:2px;font-size:.85rem}
 h3.section-title{
   font-family:"Playfair Display",Georgia,serif;font-weight:500;font-style:italic;color:var(--gold);
   font-size:1.25rem;letter-spacing:.02em;margin:26px 0 10px;
 }
+
+/* ============ REVIEWS (product sidebar) ============ */
+.reviews-list{display:flex;flex-direction:column;gap:12px}
+.review-card{
+  position:relative;background:var(--card);border:1px solid rgba(201,163,107,.18);
+  border-radius:16px;padding:14px 16px;
+}
+.review-card.featured{border-color:rgba(201,163,107,.45);box-shadow:0 0 0 1px rgba(201,163,107,.12) inset}
+.review-featured-tag{
+  position:absolute;top:-10px;right:14px;display:inline-flex;align-items:center;gap:4px;
+  background:var(--gold);color:var(--btn-text);font-size:.6rem;font-weight:800;
+  letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:999px;
+  box-shadow:0 4px 10px rgba(0,0,0,.3);
+}
+.review-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.review-avatar{width:36px;height:36px;border-radius:999px;object-fit:cover;flex:none}
+.review-avatar-fallback{
+  display:grid;place-items:center;background:var(--gold);color:var(--btn-text);
+  font-weight:700;font-size:.9rem;
+}
+.review-head-text{min-width:0}
+.review-name{display:flex;align-items:center;gap:5px;font-size:.85rem;font-weight:700;color:var(--cream)}
+.review-verified{font-size:.85rem;color:var(--gold-bright)}
+.review-stars{margin-top:2px}
+.review-title{font-size:.9rem;font-weight:700;color:var(--gold-bright);margin-bottom:4px}
+.review-text{font-size:.82rem;line-height:1.55;color:var(--cream-2)}
+.review-date{margin-top:8px;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:rgba(234,219,200,.5)}
 
 /* ============ CALENDAR ============ */
 .calendar{
@@ -443,6 +470,80 @@ h3.section-title{
 }
 .btn-ghost:hover{background:var(--glass-strong)}
 .btn-ghost.on{background:var(--gold);color:var(--btn-text);border-color:var(--gold)}
+
+/* ============ SHARE BUTTON (<ShareButton/> React island) ============
+   The button itself reuses .btn/.btn-ghost verbatim (same size, hover
+   lift and the page's global delegated ripple-on-click both apply for
+   free) — everything below is the popup/toast/modal it owns. */
+.share-btn-wrap{position:relative;flex:none}
+.share-btn--success{background:var(--gold);color:var(--btn-text);border-color:var(--gold)}
+.share-spinner{
+  display:block;width:1.15rem;height:1.15rem;border-radius:999px;
+  border:2px solid rgba(253,211,151,.35);border-top-color:var(--gold-bright);
+  animation:share-spin .7s linear infinite;
+}
+@keyframes share-spin{to{transform:rotate(360deg)}}
+
+.share-popup{
+  position:absolute;bottom:calc(100% + 10px);right:0;z-index:20;
+  min-width:190px;padding:8px;
+  background:var(--card);border:1px solid rgba(201,163,107,.3);
+  border-radius:16px;box-shadow:0 20px 45px rgba(0,0,0,.45);
+  display:flex;flex-direction:column;gap:2px;
+  transform-origin:bottom right;
+  animation:share-pop .2s var(--ease-spring);
+}
+@keyframes share-pop{from{opacity:0;transform:scale(.9) translateY(6px)}to{opacity:1;transform:none}}
+.share-popup-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:10px;border:none;background:none;
+  color:var(--cream);font-size:.82rem;font-weight:600;text-align:left;
+  min-height:40px;transition:background .18s,color .18s;
+}
+.share-popup-item:hover,.share-popup-item:focus-visible{background:var(--glass-strong);color:var(--gold-bright)}
+.share-popup-item svg{flex:none;color:var(--gold-bright)}
+
+.share-toast{
+  position:fixed;left:50%;bottom:28px;z-index:400;
+  transform:translate(-50%,16px);opacity:0;pointer-events:none;
+  max-width:min(90vw,360px);
+  background:var(--card);border:1px solid rgba(201,163,107,.4);
+  color:var(--cream);font-size:.82rem;font-weight:500;line-height:1.4;
+  padding:12px 18px;border-radius:999px;box-shadow:0 16px 40px rgba(0,0,0,.45);
+  transition:opacity .25s var(--ease-soft),transform .25s var(--ease-soft);
+}
+.share-toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+
+.share-modal-overlay{
+  position:fixed;inset:0;z-index:410;
+  background:rgba(24,8,22,.6);backdrop-filter:blur(3px);
+  display:grid;place-items:center;padding:20px;
+}
+.share-modal{
+  position:relative;width:min(360px,100%);
+  background:var(--card);border:1px solid rgba(201,163,107,.35);
+  border-radius:20px;padding:24px 22px 22px;
+  box-shadow:0 30px 70px rgba(0,0,0,.5);
+  animation:share-pop .22s var(--ease-spring);
+}
+.share-modal-close{
+  position:absolute;top:12px;right:12px;width:32px;height:32px;
+  display:grid;place-items:center;border-radius:999px;
+  background:var(--glass);border:1px solid rgba(201,163,107,.35);
+  color:var(--gold-bright);font-size:.9rem;
+  transition:background .2s,transform .2s;
+}
+.share-modal-close:hover{background:var(--glass-strong);transform:rotate(90deg)}
+.share-modal-label{color:var(--gold-bright);font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin:0 28px 12px 0}
+.share-modal-row{display:flex;gap:8px}
+.share-modal-row input{
+  flex:1;min-width:0;background:rgba(133,73,125,.25);
+  border:1px solid rgba(201,163,107,.4);border-radius:999px;
+  padding:10px 14px;color:var(--cream);font-size:.8rem;font-family:inherit;
+}
+.share-modal-row input:focus-visible{border-color:var(--gold)}
+.share-modal-copy{flex:none;padding:10px 18px}
+
 .ripple{
   position:absolute;border-radius:999px;pointer-events:none;
   background:rgba(255,255,255,.45);transform:scale(0);
@@ -460,6 +561,7 @@ h3.section-title{
   .search input{font-size:.88rem}
   .filter-toggle{width:40px;height:40px;flex:none}
   .filter-toggle .material-symbols-outlined{font-size:1.15rem}
+  .filter-clear-badge{width:17px;height:17px;font-size:.75rem;top:-5px;right:-5px}
 }
 @media (max-width:600px){
   .sidebar{width:100vw;border-radius:0;border-left:none}
@@ -497,6 +599,7 @@ h3.section-title{
       <span class="hidden xl:inline">My Cart</span>
       <span id="cartCount" class="nav-badge"></span>
     </a>
+    <a id="nav-admin-desktop" class="relative font-bold text-xs uppercase tracking-widest py-1" style="display:none;color:#C9A36B;" href="/admin">Admin</a>
     <a id="nav-account-desktop" class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1 flex items-center gap-1" style="color:#efe0cd;" href="account.html"><span class="material-symbols-outlined text-base">person</span><span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
     <button onclick="document.getElementById('vault').scrollIntoView({behavior:'smooth'})" class="px-7 py-2.5 rounded-sm font-bold text-xs uppercase tracking-[0.15em] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300" style="background:#C9A36B;color:#453c2e;" onmouseover="this.style.background='#fdd397'" onmouseout="this.style.background='#C9A36B'">Rent Now</button>
   </nav>
@@ -509,6 +612,7 @@ h3.section-title{
   <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="fit-match.html" onclick="toggleMenu()">Saha Fit Match</a>
   <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="policy.html" onclick="toggleMenu()">Policy</a>
   <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="contact.html" onclick="toggleMenu()">Contact Us</a>
+  <a id="nav-admin-mobile" class="font-bold text-sm uppercase tracking-widest" style="display:none;color:#C9A36B;" href="/admin" onclick="toggleMenu()">Admin Panel</a>
   <a id="nav-account-mobile" class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="account.html" onclick="toggleMenu()">My Account</a>
   <a class="font-bold text-sm uppercase tracking-widest flex items-center gap-1.5" style="color:#efe0cd;" href="cart.html" onclick="toggleMenu()"><span class="material-symbols-outlined text-base">shopping_bag</span>My Cart</a>
   <button onclick="toggleMenu();document.getElementById('vault').scrollIntoView({behavior:'smooth'})" class="px-6 py-3 w-full mt-2 rounded-sm font-bold text-xs uppercase tracking-[0.15em]" style="background:#C9A36B;color:#453c2e;">Rent Now</button>
@@ -523,9 +627,14 @@ h3.section-title{
       </svg>
       <input id="searchInput" type="search" placeholder="Search the vault — gowns, brands, occasions…" aria-label="Search outfits">
     </div>
-    <button class="filter-toggle" id="filterToggleBtn" aria-expanded="false" aria-controls="filtersPanel" aria-label="Show filters">
-      <span class="material-symbols-outlined" aria-hidden="true">tune</span>
-    </button>
+    <div class="filter-toggle-wrap">
+      <button class="filter-toggle" id="filterToggleBtn" aria-expanded="false" aria-controls="filtersPanel" aria-label="Show filters">
+        <span class="material-symbols-outlined" aria-hidden="true">tune</span>
+      </button>
+      <button class="filter-clear-badge" id="filterClearBadge" type="button" aria-label="Clear all filters">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -586,6 +695,7 @@ h3.section-title{
      shown on this page comes from MongoDB via /api/products and
      /api/categories — there is no local/hardcoded catalog anymore. -->
 <script src="vault-react.bundle.js"></script>
+<script src="assets/fitmatch-client.js"></script>
 <script>
 /* ---------- mobile menu (site header) ---------- */
 function toggleMenu() {
@@ -622,6 +732,37 @@ function toggleMenu() {
 let ITEMS = [];
 let CATEGORIES = [];
 
+// Every string here (product/category name, brand, description) is
+// admin-entered, not end-user-entered — but it still goes straight into
+// innerHTML template strings below, so a compromised/malicious admin
+// session could otherwise plant stored XSS that fires for every visitor.
+// This is the one place all of that text passes through before hitting
+// the DOM.
+function escapeHtml(str) {
+  return String(str ?? '').replace(/[&<>"']/g, (ch) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  }[ch]));
+}
+
+// Rounds to the nearest whole star for the icon row (the exact average is
+// always shown alongside as text, e.g. "4.2 (38 reviews)") — Material
+// Symbols' fill axis (loaded with FILL@0..1 in the <head> font request)
+// is what turns the same "star" glyph solid vs outlined.
+function renderStars(avg, sizeRem) {
+  const size = sizeRem || 1;
+  const full = Math.round(avg || 0);
+  let html = '';
+  for (let i = 1; i <= 5; i++) {
+    const filled = i <= full;
+    html += `<span class="material-symbols-outlined" style="font-size:${size}rem;color:var(--gold-bright);${filled ? "font-variation-settings:'FILL' 1" : 'opacity:.35'}" aria-hidden="true">star</span>`;
+  }
+  return html;
+}
+
 // Shapes a /api/products item into exactly what Card.jsx/HangingGarment.jsx
 // already expect (id, name, brand, image, sizes, price, tags, avail,
 // collectionName) — so vault-react itself needs no changes at all.
@@ -639,6 +780,7 @@ function toVaultItem(p, categoryNameBySlug) {
     sizes: p.sizes.filter((s) => s.available).map((s) => s.size),
     tags: [p.category],
     avail: p.status === 'available' ? 'now' : 'unavailable',
+    rating: p.rating || { average: 0, count: 0 },
   };
 }
 
@@ -664,17 +806,28 @@ function renderVault() {
     sec.dataset.collection = cat.slug;
     sec.innerHTML = `
       <header class="rod-head">
-        <h2>${cat.name}</h2>
+        <h2>${escapeHtml(cat.name)}</h2>
       </header>
       <div class="rod-wrap">
         <div class="rod-bar" aria-hidden="true"></div>
-        <div class="rod-items" role="list" aria-label="${cat.name}"></div>
+        <div class="rod-items" role="list" aria-label="${escapeHtml(cat.name)}"></div>
       </div>`;
     const rack = sec.querySelector('.rod-items');
     if (window.VaultReact) {
       window.VaultReact.mountRack(rack, colItems);
     }
     vault.appendChild(sec);
+    // Rods are created asynchronously (after the /api/products fetch
+    // resolves), so the scroll-reveal IntersectionObserver's one-time
+    // querySelectorAll pass (further down this script) never sees them —
+    // it runs synchronously at script-load time, before any of this
+    // exists. Observing each section here, at the moment it's actually
+    // added, is what makes it fade/slide in instead of staying stuck at
+    // opacity:0 forever. `io` is defined later in this same script but
+    // already exists by the time renderVault() actually runs (it's only
+    // invoked from the bootstrap at the bottom, after the whole script
+    // has executed once).
+    io.observe(sec);
   });
 }
 
@@ -702,6 +855,32 @@ function nudge(p,on){
 
 /* ---------- filters ---------- */
 const state={sizes:new Set(),cats:new Set(),availNow:false,q:''};
+
+// Everything in `state` except `q` (search — not a "filter", must survive a
+// filters-clear) counts toward the active-filter badge. Reading `state`'s
+// own keys generically means any filter added later (color, brand, price,
+// occasion, gender, ...) is picked up here with zero changes to this code.
+const NON_FILTER_STATE_KEYS=new Set(['q']);
+function hasActiveFilters(){
+  return Object.entries(state).some(([key,val])=>{
+    if(NON_FILTER_STATE_KEYS.has(key))return false;
+    if(val instanceof Set)return val.size>0;
+    if(Array.isArray(val))return val.length>0;
+    if(typeof val==='number')return val!==0;
+    return Boolean(val);
+  });
+}
+function clearActiveFilters(){
+  Object.keys(state).forEach(key=>{
+    if(NON_FILTER_STATE_KEYS.has(key))return;
+    const val=state[key];
+    if(val instanceof Set)val.clear();
+    else if(Array.isArray(val))val.length=0;
+    else if(typeof val==='number')state[key]=0;
+    else state[key]=false;
+  });
+  document.querySelectorAll('#filtersPanel [aria-pressed="true"]').forEach(c=>c.setAttribute('aria-pressed','false'));
+}
 function chipRow(hostId,items,set){
   const host=document.getElementById(hostId);
   items.forEach(([val,label])=>{
@@ -724,26 +903,42 @@ availBtn.addEventListener('click',()=>{
   applyFilters();
 });
 document.getElementById('clearFilters').addEventListener('click',()=>{
-  state.sizes.clear();state.cats.clear();state.availNow=false;state.q='';
-  document.getElementById('searchInput').value='';
-  document.querySelectorAll('.chip[aria-pressed="true"]').forEach(c=>c.setAttribute('aria-pressed','false'));
+  // Search query is intentionally left untouched — "Clear all" clears
+  // filters, not what the shopper typed into the search box.
+  clearActiveFilters();
   applyFilters();
 });
 
 /* ---------- filter panel toggle ---------- */
 const filterToggleBtn=document.getElementById('filterToggleBtn');
+const filterClearBadge=document.getElementById('filterClearBadge');
 const filtersPanel=document.getElementById('filtersPanel');
 function setFiltersOpen(open){
   filtersPanel.classList.toggle('show',open);
   filterToggleBtn.setAttribute('aria-expanded',open);
   filterToggleBtn.setAttribute('aria-label',open?'Hide filters':'Show filters');
 }
+function updateFilterBadge(){
+  filterClearBadge.classList.toggle('show',hasActiveFilters());
+}
 filterToggleBtn.addEventListener('click',()=>setFiltersOpen(!filtersPanel.classList.contains('show')));
+// The × badge is a sibling of filterToggleBtn (not a child), so a click on
+// it never bubbles into the toggle button's own click handler above —
+// opening/closing the panel via the tune icon is unaffected. stopPropagation
+// here just keeps it from also tripping the outside-click-closes handler
+// below as a separate, redundant event.
+filterClearBadge.addEventListener('click',e=>{
+  e.stopPropagation();
+  clearActiveFilters();
+  setFiltersOpen(false);
+  applyFilters();
+});
 document.addEventListener('click',e=>{
   if(!filtersPanel.classList.contains('show'))return;
   if(filtersPanel.contains(e.target)||filterToggleBtn.contains(e.target))return;
   setFiltersOpen(false);
 });
+updateFilterBadge();
 let qT;document.getElementById('searchInput').addEventListener('input',e=>{
   clearTimeout(qT);qT=setTimeout(()=>{state.q=e.target.value.trim().toLowerCase();applyFilters()},180);
 });
@@ -765,12 +960,16 @@ function applyFilters(){
     if(n)anyVisible=true;
   });
   vault.classList.toggle('no-results',!anyVisible);
+  updateFilterBadge();
 }
 
 /* ---------- scroll reveal + gentle parallax ---------- */
 const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
-document.querySelectorAll('.rod-section').forEach(s=>io.observe(s));
+// Rod sections are created asynchronously by renderVault() (see above,
+// called from the bootstrap at the bottom of this script), which
+// observes each one itself as it's appended — there's nothing to scan
+// for here yet at script-load time.
 if(!reduceMotion){
   const wraps=[...document.querySelectorAll('.rod-wrap')];
   let ticking=false;
@@ -832,11 +1031,11 @@ function syncCartAdd(entry){
   // etc. are display data for this page's own UI and are never trusted
   // by the backend; it re-fetches and re-validates the product itself.
   const payload={itemId:entry.itemId,size:entry.size,from:entry.from,to:entry.to};
-  fetch('/api/cart/items',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)}).catch(()=>{});
+  fetch('/api/cart/items',{method:'POST',headers:{'Content-Type':'application/json','X-Requested-With':'XMLHttpRequest'},credentials:'include',body:JSON.stringify(payload)}).catch(()=>{});
 }
 function syncCartRemove(itemId){
   if(!isLoggedIn())return;
-  fetch('/api/cart/items/item/'+encodeURIComponent(itemId),{method:'DELETE',credentials:'include'}).catch(()=>{});
+  fetch('/api/cart/items/item/'+encodeURIComponent(itemId),{method:'DELETE',headers:{'X-Requested-With':'XMLHttpRequest'},credentials:'include'}).catch(()=>{});
 }
 function updateCartBadge(){
   const c=document.getElementById('cartCount');
@@ -864,14 +1063,15 @@ function openSidebar(it,pieceEl){
   inner.innerHTML=`
     <button class="sidebar-close" id="sbClose" aria-label="Close details">✕</button>
     <div class="detail-stage" id="detailStage"></div>
-    <div class="detail-brand">${it.brand}</div>
-    <h2 class="detail-name">${it.name}</h2>
-    ${it.description?`<p style="font-size:.85rem;line-height:1.6;color:var(--cream-2);margin-top:8px">${it.description}</p>`:''}
+    <div class="detail-brand">${escapeHtml(it.brand)}</div>
+    <h2 class="detail-name">${escapeHtml(it.name)}</h2>
+    ${it.rating&&it.rating.count>0?`<div class="detail-rating">${renderStars(it.rating.average)}<span class="detail-rating-text">${it.rating.average.toFixed(1)} (${it.rating.count} review${it.rating.count===1?'':'s'})</span></div>`:''}
+    ${it.description?`<p style="font-size:.85rem;line-height:1.6;color:var(--cream-2);margin-top:8px">${escapeHtml(it.description)}</p>`:''}
     <div class="spec" style="margin:18px 0 12px"><div class="k">Available Sizes</div>
       <div class="sizes">${['XS','S','M','L','XL','XXL'].map(s=>it.sizes.includes(s)?`<button class="size-dot" data-size="${s}">${s}</button>`:`<span class="size-dot" style="opacity:.25;cursor:not-allowed" aria-disabled="true">${s}</span>`).join('')}</div>
     </div>
     <div class="spec" style="margin-bottom:4px"><div class="k">Size &amp; Fit</div>
-      <div class="v" style="font-size:.82rem;font-weight:400;line-height:1.55;margin-top:6px">Not sure which size to pick? <a href="fit-match.html" style="color:var(--gold-bright);text-decoration:underline">Try Saha Fit Match</a> for a personalised recommendation.</div>
+      <div class="v" id="fitMatchBody" style="font-size:.82rem;font-weight:400;line-height:1.55;margin-top:6px">Not sure which size to pick? <a href="fit-match.html" style="color:var(--gold-bright);text-decoration:underline">Try Saha Fit Match</a> for a personalised recommendation.</div>
     </div>
     <h3 class="section-title">Choose your dates</h3>
     <div class="calendar" id="cal"></div>
@@ -885,11 +1085,15 @@ function openSidebar(it,pieceEl){
       <button class="btn btn-ghost ${CartStore.hasItem(it.id)?'on':''}" id="cartBtn" aria-label="Add to cart" aria-pressed="${CartStore.hasItem(it.id)}">
         <span class="material-symbols-outlined" style="font-size:1.15rem;display:block" aria-hidden="true">add_shopping_cart</span>
       </button>
+      <div id="shareBtnHost"></div>
       <button class="btn btn-gold" id="rentBtn" disabled>Rent Now</button>
-    </div>`;
+    </div>
+    <div id="reviewsSection"></div>`;
   if(window.VaultReact){
     window.VaultReact.mountDetail(document.getElementById('detailStage'),it);
+    window.VaultReact.mountShare(document.getElementById('shareBtnHost'),it);
   }
+  loadProductReviews(it.id);
   sidebar.classList.add('show');overlay.classList.add('show');
   document.getElementById('sbClose').addEventListener('click',closeSidebar);
   document.getElementById('sbClose').focus();
@@ -899,6 +1103,48 @@ function openSidebar(it,pieceEl){
     d.classList.add('sel');
     selectedSize=d.textContent.trim();
   }));
+  renderFitMatch();
+  // Shows the shopper's saved Fit Match recommendation for THIS product's
+  // sizes (or prompts them to complete it) and pre-selects a size dot when
+  // possible — a nested closure (not a top-level function like
+  // loadProductReviews) specifically so it can set the outer `selectedSize`
+  // the "Add to cart" flow already reads. Same isConnected guard as
+  // loadProductReviews below, since the sidebar can be closed/reopened for
+  // a different piece before this async call resolves.
+  async function renderFitMatch(){
+    const host=document.getElementById('fitMatchBody');
+    if(!host)return;
+    const profile=await FitMatchClient.getProfile();
+    if(!host.isConnected)return;
+    if(!profile){
+      host.innerHTML=`Complete Fit Match to get your recommended size. <a href="fit-match.html" class="chip" style="display:inline-flex;margin-top:8px;text-decoration:none">Take Fit Match</a>`;
+      return;
+    }
+    const rec=profile.recommendedSize;
+    const selectDot=(size)=>{
+      const dot=inner.querySelector(`.size-dot[data-size="${size}"]`);
+      if(!dot)return false;
+      inner.querySelectorAll('.size-dot.sel').forEach(x=>x.classList.remove('sel'));
+      dot.classList.add('sel');
+      selectedSize=size;
+      return true;
+    };
+    if(it.sizes.includes(rec)){
+      host.innerHTML=`Your Saha Fit Match: Recommended Size - <strong style="color:var(--gold-bright)">${escapeHtml(rec)}</strong>`;
+      selectDot(rec);
+    }else{
+      const order=['XS','S','M','L','XL','XXL'];
+      const idx=order.indexOf(rec);
+      const nearest=order
+        .map((s,i)=>({s,dist:Math.abs(i-idx)}))
+        .filter(x=>x.s!==rec&&it.sizes.includes(x.s))
+        .sort((a,b)=>a.dist-b.dist)[0];
+      host.innerHTML=`
+        Your Saha Fit Match: Recommended Size - <strong>${escapeHtml(rec)}</strong><br>
+        <span style="color:var(--gold-bright)">Your recommended size is currently unavailable.${nearest?` We suggest <strong>${escapeHtml(nearest.s)}</strong> instead.`:''}</span>`;
+      if(nearest)selectDot(nearest.s);
+    }
+  }
   const cartBtn=document.getElementById('cartBtn');
   const cal=new RentalCalendar(document.getElementById('cal'),it);
   cartBtn.addEventListener('click',()=>{
@@ -920,6 +1166,47 @@ function openSidebar(it,pieceEl){
     cartBtn.classList.toggle('on',turningOn);cartBtn.setAttribute('aria-pressed',turningOn);
     updateCartBadge();
   });
+}
+
+// Reviews are fetched separately from the product catalog (they change
+// far more often, per-product, and the list endpoint already returns up
+// to 500 products — no reason to carry every review along with it) and
+// rendered into the placeholder left in openSidebar's template above.
+// Admin-entered reviews only (see server/routes/admin/reviews.js) — there
+// is no customer-facing "write a review" flow.
+async function loadProductReviews(productId){
+  const host=document.getElementById('reviewsSection');
+  if(!host)return;
+  let reviews=[];
+  try{
+    const res=await fetch(`/api/products/${encodeURIComponent(productId)}/reviews`);
+    const data=res.ok?await res.json():null;
+    reviews=(data&&Array.isArray(data.reviews))?data.reviews:[];
+  }catch(e){
+    host.innerHTML='';
+    return;
+  }
+  if(!host.isConnected)return; // sidebar was closed/reopened before this resolved
+  if(!reviews.length){host.innerHTML='';return}
+  host.innerHTML=`
+    <h3 class="section-title">Customer Reviews</h3>
+    <div class="reviews-list">
+      ${reviews.map(r=>`
+        <div class="review-card${r.featured?' featured':''}">
+          ${r.featured?'<span class="review-featured-tag"><span class="material-symbols-outlined" style="font-size:.85rem" aria-hidden="true">push_pin</span>Featured</span>':''}
+          <div class="review-head">
+            ${r.customerImage?`<img class="review-avatar" src="${r.customerImage}" alt="" loading="lazy">`:`<div class="review-avatar review-avatar-fallback">${escapeHtml((r.customerName||'?').charAt(0).toUpperCase())}</div>`}
+            <div class="review-head-text">
+              <div class="review-name">${escapeHtml(r.customerName)}${r.verified?'<span class="review-verified material-symbols-outlined" style="font-variation-settings:\'FILL\' 1" title="Verified Purchase" aria-label="Verified Purchase">verified</span>':''}</div>
+              <div class="review-stars">${renderStars(r.rating,0.8)}</div>
+            </div>
+          </div>
+          <div class="review-title">${escapeHtml(r.title)}</div>
+          <p class="review-text">${escapeHtml(r.text)}</p>
+          <div class="review-date">${new Date(r.reviewDate).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
+        </div>
+      `).join('')}
+    </div>`;
 }
 
 /* ---------- calendar (API-ready) ---------- */
@@ -1071,26 +1358,62 @@ const VaultAPI={
 <script>
   // Auth-aware nav: show "Login" (→ /login) when signed out, leave the
   // person icon pointing at account.html as-is when a session exists.
+  // Admins additionally get an "Admin"/"Admin Panel" link revealed —
+  // there was previously no way to reach /admin from the site itself.
   (function () {
     let loggedIn = false;
     try {
       const auth = JSON.parse(localStorage.getItem('sahas_auth') || 'null');
       loggedIn = Boolean(auth && auth.loggedIn);
     } catch (e) {}
-    if (loggedIn) return;
 
-    const desktop = document.getElementById('nav-account-desktop');
-    if (desktop) { desktop.href = '/login'; desktop.insertAdjacentHTML('beforeend', '<span>Login</span>'); }
+    if (!loggedIn) {
+      const desktop = document.getElementById('nav-account-desktop');
+      if (desktop) { desktop.href = '/login'; desktop.insertAdjacentHTML('beforeend', '<span>Login</span>'); }
 
-    const mobile = document.getElementById('nav-account-mobile');
-    if (mobile) { mobile.href = '/login'; mobile.textContent = 'Login'; }
+      const mobile = document.getElementById('nav-account-mobile');
+      if (mobile) { mobile.href = '/login'; mobile.textContent = 'Login'; }
 
-    const bottom = document.getElementById('nav-account-bottom');
-    if (bottom) {
-      bottom.href = '/login';
-      const label = bottom.querySelector('span:last-child');
-      if (label) label.textContent = 'Login';
+      const bottom = document.getElementById('nav-account-bottom');
+      if (bottom) {
+        bottom.href = '/login';
+        const label = bottom.querySelector('span:last-child');
+        if (label) label.textContent = 'Login';
+      }
+      return;
     }
+
+    // Signed in — role isn't cached client-side anywhere, so this is the
+    // one place worth a real request to find out if the admin links
+    // should show.
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data || !data.user || data.user.role !== 'admin') return;
+        const adminDesktop = document.getElementById('nav-admin-desktop');
+        if (adminDesktop) adminDesktop.style.display = '';
+        const adminMobile = document.getElementById('nav-admin-mobile');
+        if (adminMobile) adminMobile.style.display = '';
+      })
+      .catch(() => {});
+
+    // The badge above already shows the local guest-cart count instantly
+    // (updateCartBadge(), localStorage). Signed in, the real cart lives in
+    // the DB and can include items from other sessions/devices this
+    // browser's localStorage never saw (or that were removed from the
+    // Cart page, which only writes to the DB) — so reconcile once against
+    // the server on load. Best-effort: on any failure the instant local
+    // count from above just stands.
+    fetch('/api/cart', { credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data || !Array.isArray(data.items)) return;
+        const c = document.getElementById('cartCount');
+        if (!c) return;
+        c.textContent = data.items.length;
+        c.classList.toggle('show', data.items.length > 0);
+      })
+      .catch(() => {});
   })();
 </script>
 </body>

@@ -26,6 +26,18 @@ const galleryImageSchema = new mongoose.Schema(
   { _id: false }
 );
 
+// Denormalized from Review (see routes/admin/reviews.js's
+// recomputeProductRating) rather than aggregated live on every read —
+// the public product LIST endpoint returns up to 500 products per
+// request, so a live $avg over Reviews for each one isn't worth it.
+const ratingSchema = new mongoose.Schema(
+  {
+    average: { type: Number, default: 0 },
+    count: { type: Number, default: 0 },
+  },
+  { _id: false }
+);
+
 // The catalog's authoritative source of truth. _id is a generated hex
 // string (see server/routes/admin/products.js) rather than a Mongo
 // ObjectId — every existing `productId: String` reference in Cart, Order,
@@ -44,9 +56,16 @@ const productSchema = new mongoose.Schema(
     image: { type: String, required: true }, // hanger PNG URL (public/uploads/products/hangers/...)
     galleryImages: { type: [galleryImageSchema], default: [] },
     status: { type: String, enum: ['available', 'rented', 'hidden'], default: 'available' },
+    rating: { type: ratingSchema, default: () => ({ average: 0, count: 0 }) },
   },
   { timestamps: true }
 );
+
+// Covers the public list's category filter and the admin dashboard's
+// status-filtered "recently added" query (server/routes/admin/dashboard.js,
+// server/routes/products.js).
+productSchema.index({ category: 1 });
+productSchema.index({ status: 1, createdAt: -1 });
 
 module.exports = mongoose.model('Product', productSchema);
 module.exports.SIZE_ENUM = SIZE_ENUM;

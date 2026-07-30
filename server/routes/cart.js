@@ -1,13 +1,42 @@
 const express = require('express');
+const { body, param } = require('express-validator');
 const Cart = require('../models/Cart');
 const Product = require('../models/Product');
 const requireAuth = require('../middleware/requireAuth');
-const { priceLine, COUPONS } = require('../services/pricing');
+const handleValidationErrors = require('../middleware/validate');
+const { priceLine } = require('../services/pricing');
 const { resolveCart } = require('../services/cartResolver');
+const { findValidCoupon } = require('../services/couponService');
 const { hasOverlap } = require('../services/booking');
 
 const router = express.Router();
 router.use(requireAuth);
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+// Type/format sanity checks only — the actual business validation (does
+// this size exist, are these dates well-formed and available) already
+// happens in services/pricing.js's priceLine() against the live Product,
+// which every one of these routes calls right after. This layer just
+// rejects obviously-malformed input (wrong type, empty string) earlier
+// and with a clearer message.
+const addItemValidators = [
+  body('itemId').isString().trim().notEmpty().withMessage('Item is required.'),
+  body('size').isString().trim().notEmpty().withMessage('Size is required.'),
+  body('qty').optional().isInt({ min: 1, max: 5 }).withMessage('Quantity must be between 1 and 5.'),
+  body('from').optional({ checkFalsy: true }).matches(DATE_RE).withMessage('Invalid start date.'),
+  body('to').optional({ checkFalsy: true }).matches(DATE_RE).withMessage('Invalid end date.'),
+];
+
+const patchItemValidators = [
+  param('cartId').isString().trim().notEmpty(),
+  body('size').optional().isString().trim().notEmpty().withMessage('Size is required.'),
+  body('qty').optional().isInt({ min: 1, max: 5 }).withMessage('Quantity must be between 1 and 5.'),
+  body('from').optional({ checkFalsy: true }).matches(DATE_RE).withMessage('Invalid start date.'),
+  body('to').optional({ checkFalsy: true }).matches(DATE_RE).withMessage('Invalid end date.'),
+];
+
+const couponValidators = [body('code').isString().trim().notEmpty().isLength({ max: 30 }).withMessage('Enter a valid code.')];
 
 async function getOrCreateCart(userId) {
   let cart = await Cart.findOne({ user: userId });
@@ -56,7 +85,7 @@ router.get('/', async (req, res) => {
 // Body may ONLY contain: itemId (Product id), size, qty, from, to. Any
 // price/name/brand/image/sizes the client sends is ignored — the
 // product is re-fetched from MongoDB and re-validated every time.
-router.post('/items', async (req, res) => {
+router.post('/items', addItemValidators, handleValidationErrors, async (req, res) => {
   try {
     const { itemId, size, qty, from, to } = req.body || {};
     const product = await fetchProduct(itemId);
@@ -88,7 +117,7 @@ router.post('/items', async (req, res) => {
   }
 });
 
-router.patch('/items/:cartId', async (req, res) => {
+router.patch('/items/:cartId', patchItemValidators, handleValidationErrors, async (req, res) => {
   try {
     const { qty, size, from, to } = req.body || {};
     const cart = await getOrCreateCart(req.session.userId);
@@ -147,13 +176,27 @@ router.delete('/items/:cartId', async (req, res) => {
   }
 });
 
-router.put('/coupon', async (req, res) => {
+router.put('/coupon', couponValidators, handleValidationErrors, async (req, res) => {
   try {
     const code = String((req.body || {}).code || '').trim().toUpperCase();
-    if (!COUPONS[code]) {
-      return res.status(400).json({ error: "That code isn't valid or has expired." });
-    }
     const cart = await getOrCreateCart(req.session.userId);
+
+    // Price the cart as it stands today (ignoring whatever coupon may
+    // already be applied) so minOrderAmount/product/category restrictions
+    // are checked against the real, current cart — not stale numbers.
+    const { lines } = await resolveCart(cart);
+    const base = lines.reduce((sum, l) => sum + l.lineSubtotal + l.lineRentalCharge, 0);
+
+    const { error } = await findValidCoupon(code, {
+      userId: req.session.userId,
+      base,
+      cartProductIds: lines.map((l) => l.productId),
+      cartCategorySlugs: lines.map((l) => l.category),
+    });
+    if (error) {
+      return res.status(400).json({ error });
+    }
+
     cart.coupon = code;
     await cart.save();
     res.json(await toPublicCart(cart));

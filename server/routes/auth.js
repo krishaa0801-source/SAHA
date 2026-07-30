@@ -1,7 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
+const { body } = require('express-validator');
 const User = require('../models/User');
 const requireAuth = require('../middleware/requireAuth');
+const handleValidationErrors = require('../middleware/validate');
 const { loginLimiter, signupLimiter } = require('../middleware/rateLimiters');
 
 const router = express.Router();
@@ -19,14 +21,16 @@ function toPublicUser(user) {
   };
 }
 
-router.post('/signup', signupLimiter, async (req, res) => {
+const signupValidators = [
+  body('fullName').trim().notEmpty().withMessage('Full name is required.').isLength({ max: 100 }),
+  body('email').trim().isEmail().withMessage('Enter a valid email address.'),
+  body('phone').optional({ checkFalsy: true }).trim().isLength({ max: 20 }).withMessage('Phone number is too long.'),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters.'),
+];
+
+router.post('/signup', signupLimiter, signupValidators, handleValidationErrors, async (req, res) => {
   try {
     const { fullName, email, phone, password } = req.body || {};
-    if (!fullName || !email || !password || String(password).length < 6) {
-      return res.status(400).json({
-        error: 'Full name, a valid email, and a password of at least 6 characters are required.',
-      });
-    }
     const normalizedEmail = String(email).trim().toLowerCase();
     const existing = await User.findOne({ email: normalizedEmail });
     if (existing) {
@@ -48,12 +52,14 @@ router.post('/signup', signupLimiter, async (req, res) => {
   }
 });
 
-router.post('/login', loginLimiter, async (req, res) => {
+const loginValidators = [
+  body('email').trim().isEmail().withMessage('Enter a valid email address.'),
+  body('password').notEmpty().withMessage('Password is required.'),
+];
+
+router.post('/login', loginLimiter, loginValidators, handleValidationErrors, async (req, res) => {
   try {
     const { email, password } = req.body || {};
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required.' });
-    }
     const normalizedEmail = String(email).trim().toLowerCase();
     const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
@@ -73,7 +79,7 @@ router.post('/login', loginLimiter, async (req, res) => {
 router.post('/logout', (req, res) => {
   if (!req.session) return res.json({ ok: true });
   req.session.destroy(() => {
-    res.clearCookie('connect.sid');
+    res.clearCookie('saha.sid');
     res.json({ ok: true });
   });
 });
@@ -84,7 +90,16 @@ router.get('/me', requireAuth, async (req, res) => {
   res.json({ user: toPublicUser(user) });
 });
 
-router.put('/me', requireAuth, async (req, res) => {
+const updateProfileValidators = [
+  body('fname').trim().notEmpty().withMessage('First name is required.').isLength({ max: 100 }),
+  body('lname').optional({ checkFalsy: true }).trim().isLength({ max: 100 }),
+  body('phone').optional({ checkFalsy: true }).trim().isLength({ max: 20 }).withMessage('Phone number is too long.'),
+  body('address').optional({ checkFalsy: true }).trim().isLength({ max: 300 }),
+  body('city').optional({ checkFalsy: true }).trim().isLength({ max: 100 }),
+  body('pin').optional({ checkFalsy: true }).trim().isLength({ max: 12 }).withMessage('Pincode is too long.'),
+];
+
+router.put('/me', requireAuth, updateProfileValidators, handleValidationErrors, async (req, res) => {
   const { fname, lname, phone, address, city, pin } = req.body || {};
   const user = await User.findByIdAndUpdate(
     req.session.userId,

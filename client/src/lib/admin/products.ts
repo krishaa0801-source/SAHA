@@ -64,7 +64,10 @@ async function parseJsonResponse(res: Response): Promise<any> {
 async function jsonRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`/api/admin/products${path}`, {
     credentials: 'include',
-    headers: init?.body ? { 'Content-Type': 'application/json' } : undefined,
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
+    },
     ...init,
   });
   const data = await parseJsonResponse(res);
@@ -73,7 +76,12 @@ async function jsonRequest<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 async function multipartRequest<T>(path: string, method: 'POST' | 'PUT', formData: FormData): Promise<T> {
-  const res = await fetch(`/api/admin/products${path}`, { method, credentials: 'include', body: formData });
+  const res = await fetch(`/api/admin/products${path}`, {
+    method,
+    credentials: 'include',
+    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    body: formData,
+  });
   const data = await parseJsonResponse(res);
   if (!res.ok) throw new AdminApiError(data?.error || 'Something went wrong. Please try again.', data?.fields);
   return data as T;

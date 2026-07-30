@@ -48,7 +48,10 @@ async function parseJsonResponse(res: Response): Promise<any> {
 async function request(path: string, init?: RequestInit): Promise<CartState> {
   const res = await fetch(`/api/cart${path}`, {
     credentials: 'include',
-    headers: init?.body ? { 'Content-Type': 'application/json' } : undefined,
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
+    },
     ...init,
   });
   const data = await parseJsonResponse(res);

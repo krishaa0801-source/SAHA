@@ -1,11 +1,13 @@
 import { createRoot } from 'react-dom/client';
 import Card from './Card.jsx';
 import GarmentPhoto from './GarmentPhoto.jsx';
+import ShareButton from './ShareButton.jsx';
 
-/* The only two integration points vault.html needs. Both take plain DOM
-   nodes + plain data — the rest of the page never has to know React is
-   involved, and never positions a hanger itself. The rack hangs each
-   product from its hanger; the product detail view just shows the photo. */
+/* The integration points vault.html needs. All three take plain DOM nodes
+   + plain data — the rest of the page never has to know React is
+   involved. The rack hangs each product from its hanger; the product
+   detail view just shows the photo; the share button owns its own popup/
+   toast/fallback modal so the sidebar just has to give it a mount point. */
 
 function mountRack(container, items) {
   createRoot(container).render(
@@ -24,4 +26,11 @@ function mountDetail(container, item) {
   detailRoot.render(<GarmentPhoto garment={item} className="garment-photo--detail" />);
 }
 
-window.VaultReact = { mountRack, mountDetail };
+let shareRoot = null;
+function mountShare(container, item) {
+  if (shareRoot) shareRoot.unmount();
+  shareRoot = createRoot(container);
+  shareRoot.render(<ShareButton product={item} />);
+}
+
+window.VaultReact = { mountRack, mountDetail, mountShare };

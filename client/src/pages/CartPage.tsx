@@ -5,6 +5,7 @@ import { fmtRs } from '../lib/cartMath';
 import { createRazorpayOrder, getRazorpayKey, verifyPayment } from '../lib/payments';
 import CartItemCard from '../components/CartItemCard';
 import CartSummary from '../components/CartSummary';
+import MobileMenu from '../components/MobileMenu';
 
 declare global {
   interface Window {
@@ -131,18 +132,20 @@ export default function CartPage() {
 
   async function finalizeCheckout(response: any) {
     try {
-      const verified = await verifyPayment({
+      const result = await verifyPayment({
         razorpay_order_id: response.razorpay_order_id,
         razorpay_payment_id: response.razorpay_payment_id,
         razorpay_signature: response.razorpay_signature,
       });
-      if (!verified) {
+      if (!result.success) {
         alert('Payment verification failed. If money was deducted, it will be refunded automatically.');
         return;
       }
       // The server already created the rental order(s) and cleared the
-      // cart as part of verifying payment — there's nothing left to send.
-      navigate('/account.html');
+      // cart as part of verifying payment — hand them off via router
+      // state so the confirmation page can show exactly what was booked
+      // without a second round trip.
+      navigate('/order-confirmed', { state: { orders: result.orders } });
     } finally {
       setCheckingOut(false);
     }
@@ -163,6 +166,11 @@ export default function CartPage() {
         <a href="/account.html" className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest transition-colors" style={{ color: 'rgba(239,224,205,0.6)' }}>
           <span className="material-symbols-outlined text-base">person</span>
         </a>
+        {/* Mobile-only nav — same hamburger/dropdown as every other page.
+            Desktop keeps this page's own distinct 3-link checkout header. */}
+        <div className="lg:hidden">
+          <MobileMenu />
+        </div>
       </header>
 
       <main className="pt-[68px] pb-28 lg:pb-16">

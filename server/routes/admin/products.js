@@ -13,6 +13,8 @@ const {
   duplicateGalleryImages,
 } = require('../../services/imageProcessor');
 const { buildProductFilter, buildProductSort } = require('../../services/productQuery');
+const { uploadLimiter } = require('../../middleware/rateLimiters');
+const logger = require('../../utils/logger');
 
 const router = express.Router();
 
@@ -163,7 +165,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/', productImageUpload, async (req, res) => {
+router.post('/', uploadLimiter, productImageUpload, async (req, res) => {
   const productId = newProductId();
   try {
     const categories = await Category.find().select('slug').lean();
@@ -198,12 +200,12 @@ router.post('/', productImageUpload, async (req, res) => {
 
     res.status(201).json({ product: toAdminProduct(product) });
   } catch (err) {
-    console.error('Create product error:', err);
+    logger.error('Create product error:', err);
     res.status(500).json({ error: 'Could not create the product. Please try again.' });
   }
 });
 
-router.put('/:id', productImageUpload, async (req, res) => {
+router.put('/:id', uploadLimiter, productImageUpload, async (req, res) => {
   try {
     const existing = await Product.findById(req.params.id);
     if (!existing) return res.status(404).json({ error: 'Product not found.' });
@@ -237,7 +239,7 @@ router.put('/:id', productImageUpload, async (req, res) => {
 
     res.json({ product: toAdminProduct(existing) });
   } catch (err) {
-    console.error('Update product error:', err);
+    logger.error('Update product error:', err);
     res.status(500).json({ error: 'Could not update the product. Please try again.' });
   }
 });
@@ -308,7 +310,7 @@ router.post('/:id/duplicate', async (req, res) => {
 
     res.status(201).json({ product: toAdminProduct(product) });
   } catch (err) {
-    console.error('Duplicate product error:', err);
+    logger.error('Duplicate product error:', err);
     res.status(500).json({ error: 'Could not duplicate the product. Please try again.' });
   }
 });

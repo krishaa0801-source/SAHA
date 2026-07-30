@@ -5,9 +5,13 @@ const Razorpay = require('razorpay');
 const Cart = require('../models/Cart');
 const Order = require('../models/Order');
 const Payment = require('../models/Payment');
+const Coupon = require('../models/Coupon');
 const requireAuth = require('../middleware/requireAuth');
 const { resolveCart } = require('../services/cartResolver');
+const { findValidCoupon } = require('../services/couponService');
 const { reserveBooking, hasOverlap } = require('../services/booking');
+const { paymentLimiter } = require('../middleware/rateLimiters');
+const logger = require('../utils/logger');
 
 const router = express.Router();
 
@@ -25,7 +29,7 @@ router.get('/key', (req, res) => {
 // always derived from the signed-in user's own cart, re-priced from
 // MongoDB right here — there is no request field that can move this
 // number.
-router.post('/create-order', requireAuth, async (req, res) => {
+router.post('/create-order', paymentLimiter, requireAuth, async (req, res) => {
   try {
     const cart = await Cart.findOne({ user: req.session.userId });
     if (!cart || !cart.items.length) {
@@ -70,7 +74,7 @@ router.post('/create-order', requireAuth, async (req, res) => {
     if (err.statusCode === 401) {
       return res.status(401).json({ error: 'Razorpay authentication failed.' });
     }
-    console.error('Razorpay create-order error:', err);
+    logger.error('Razorpay create-order error:', err);
     res.status(500).json({ error: 'Failed to create payment order.' });
   }
 });
@@ -79,7 +83,7 @@ router.post('/create-order', requireAuth, async (req, res) => {
 // Order documents itself from the user's current cart, re-priced fresh
 // from MongoDB. The client never gets to say what an order is worth; it
 // only ever gets told what verification/creation succeeded.
-router.post('/verify-payment', requireAuth, async (req, res) => {
+router.post('/verify-payment', paymentLimiter, requireAuth, async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body || {};
 
@@ -126,6 +130,10 @@ router.post('/verify-payment', requireAuth, async (req, res) => {
     }
 
     const { lines } = await resolveCart(cart);
+    // Captured after resolveCart, which already self-heals an invalid
+    // stored coupon (see services/cartResolver.js) — so this is only
+    // ever a code that was valid as of this exact moment.
+    const appliedCouponCode = cart.coupon;
 
     // Order creation, booking reservation, and clearing the cart all
     // happen in one MongoDB transaction: if ANY line's dates have been
@@ -177,6 +185,31 @@ router.post('/verify-payment', requireAuth, async (req, res) => {
           orders.push(order);
         }
 
+        // Redemption is counted here, atomically with order creation, so a
+        // usage-limited code can never be over-redeemed by a race. This is
+        // a best-effort re-check, not a guard that can abort the
+        // transaction: by this point Razorpay has genuinely been charged
+        // and the rental is being fulfilled, so an extremely narrow race
+        // (someone else exhausting the limit between create-order and
+        // here) just means this one redemption silently isn't counted —
+        // never worth unwinding an already-paid order over.
+        if (appliedCouponCode) {
+          const base = lines.reduce((sum, l) => sum + l.lineSubtotal + l.lineRentalCharge, 0);
+          const { coupon } = await findValidCoupon(appliedCouponCode, {
+            userId: req.session.userId,
+            base,
+            cartProductIds: lines.map((l) => l.productId),
+            cartCategorySlugs: lines.map((l) => l.category),
+          });
+          if (coupon) {
+            await Coupon.updateOne(
+              { _id: coupon._id },
+              { $inc: { usedCount: 1 }, $addToSet: { usedByUsers: req.session.userId } },
+              { session }
+            );
+          }
+        }
+
         cart.items = [];
         cart.coupon = '';
         await cart.save({ session });
@@ -199,7 +232,7 @@ router.post('/verify-payment', requireAuth, async (req, res) => {
 
     res.json({ success: true, orders });
   } catch (err) {
-    console.error('verify-payment error:', err);
+    logger.error('verify-payment error:', err);
     res.status(500).json({ error: 'Payment succeeded but we could not save your rental. Please contact support.' });
   }
 });

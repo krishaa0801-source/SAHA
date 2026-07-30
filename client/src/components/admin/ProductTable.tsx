@@ -50,7 +50,7 @@ export default function ProductTable({ products, categories, onEdit, onView, onD
           {products.map((p) => (
             <tr key={p.id} className={busyId === p.id ? 'busy' : ''}>
               <td>
-                <img className="admin-table-thumb" src={p.galleryImages[0]?.thumbnailUrl || p.image} alt={p.name} />
+                <img className="admin-table-thumb" src={p.galleryImages[0]?.thumbnailUrl || p.image} alt={p.name} loading="lazy" />
               </td>
               <td>
                 <div className="admin-table-name">{p.name}</div>

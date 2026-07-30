@@ -1,4 +1,5 @@
 import { CartTotals } from './cart';
+import { Order } from './orders';
 
 export async function getRazorpayKey(): Promise<string> {
   const res = await fetch('/api/payments/key', { credentials: 'include' });
@@ -14,6 +15,7 @@ export async function createRazorpayOrder(): Promise<{ order_id: string; amount:
   const res = await fetch('/api/payments/create-order', {
     method: 'POST',
     credentials: 'include',
+    headers: { 'X-Requested-With': 'XMLHttpRequest' },
   });
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
@@ -30,16 +32,22 @@ export type VerifyPaymentInput = {
   razorpay_signature: string;
 };
 
+export type VerifyPaymentResult = {
+  success: boolean;
+  orders: Order[];
+};
+
 // On success, the server has already created the Order documents from
-// the cart it just charged — there is nothing further for the client to
-// submit.
-export async function verifyPayment(input: VerifyPaymentInput): Promise<boolean> {
+// the cart it just charged — `orders` here is exactly that, so the
+// confirmation page can show what was just booked without a second
+// round trip.
+export async function verifyPayment(input: VerifyPaymentInput): Promise<VerifyPaymentResult> {
   const res = await fetch('/api/payments/verify-payment', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
     credentials: 'include',
     body: JSON.stringify(input),
   });
   const data = await res.json().catch(() => ({}));
-  return res.ok && Boolean(data.success);
+  return { success: res.ok && Boolean(data.success), orders: data.orders || [] };
 }

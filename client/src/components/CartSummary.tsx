@@ -14,8 +14,8 @@ type CartSummaryProps = {
 
 export default function CartSummary({ totals: t, couponCode, couponError, onApplyCoupon, onRemoveCoupon, onCheckout, checkoutDisabled }: CartSummaryProps) {
   return (
-    <div className="glass-card lg:sticky lg:top-[86px]">
-      <h3 className="font-['Playfair_Display'] text-lg mb-4" style={{ color: '#efe0cd' }}>
+    <div className="glass-card px-7 py-7 sm:px-8 sm:py-7 lg:px-9 lg:py-8 lg:sticky lg:top-[86px]">
+      <h3 className="font-['Playfair_Display'] text-lg mb-6" style={{ color: '#efe0cd' }}>
         Order Summary
       </h3>
 
@@ -40,9 +40,9 @@ export default function CartSummary({ totals: t, couponCode, couponError, onAppl
         <span className="v">{t.tax ? fmtRs(t.tax) : '—'}</span>
       </div>
 
-      <hr className="divider" />
+      <hr className="divider order-summary-divider" />
       <CouponBox couponCode={couponCode} discount={t.discount} onApply={onApplyCoupon} onRemove={onRemoveCoupon} error={couponError} />
-      <hr className="divider" />
+      <hr className="divider order-summary-divider" />
 
       <div className="summary-row total">
         <span className="k">Estimated Total</span>

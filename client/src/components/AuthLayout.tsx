@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useState } from 'react';
+import MobileMenu from './MobileMenu';
 
 // Same fashion photo already used on the homepage's "Our Philosophy" section,
 // reused here rather than pointing at a new external asset.
@@ -62,6 +63,13 @@ export default function AuthLayout({ tagline, children }: AuthLayoutProps) {
             Saha's
           </span>
         </a>
+
+        {/* Mobile-only nav — same hamburger/dropdown as every other page,
+            so login/signup aren't the one place it's missing. Desktop is
+            untouched: the left image panel already carries its own logo. */}
+        <div className="lg:hidden absolute top-6 right-6 z-20">
+          <MobileMenu />
+        </div>
 
         <div className={`auth-reveal ${visible ? 'visible' : ''} w-full max-w-md relative z-10 mt-14 lg:mt-0`}>
           <div className="glass-card rounded-2xl p-8 sm:p-10">{children}</div>

@@ -30,4 +30,8 @@ const productImageUpload = upload.fields([
   { name: 'galleryImages', maxCount: MAX_GALLERY_IMAGES },
 ]);
 
-module.exports = { productImageUpload, MAX_GALLERY_IMAGES };
+// Used on the review create/update routes — a single optional customer
+// avatar photo.
+const reviewImageUpload = upload.fields([{ name: 'customerImage', maxCount: 1 }]);
+
+module.exports = { productImageUpload, reviewImageUpload, MAX_GALLERY_IMAGES };

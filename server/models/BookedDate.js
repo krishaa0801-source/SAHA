@@ -23,5 +23,10 @@ const bookedDateSchema = new mongoose.Schema({
 });
 
 bookedDateSchema.index({ productId: 1, date: 1 }, { unique: true });
+// The admin dashboard's "currently rented" stat (BookedDate.distinct
+// ('productId', { date: today })) filters on `date` alone, which the
+// compound index above can't serve efficiently since date isn't its
+// prefix key — this standalone index is what that query actually uses.
+bookedDateSchema.index({ date: 1 });
 
 module.exports = mongoose.model('BookedDate', bookedDateSchema);

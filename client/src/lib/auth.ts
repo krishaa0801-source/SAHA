@@ -3,6 +3,7 @@
 // localStorage copies below are just a UI cache (greeting name, "Login"
 // vs "Account" nav state) — they are never the source of truth for access.
 import { mergeGuestCartIfAny } from './cart';
+import { clearFitMatchCache, refreshFitMatchCache } from './fitMatch';
 
 const USER_KEY = 'sahas_user_data';
 const REMEMBER_KEY = 'sahas_remember_email';
@@ -50,7 +51,7 @@ export function getRememberedEmail(): string {
 export async function loginRequest(email: string, password: string, remember: boolean): Promise<StoredUser> {
   const res = await fetch('/api/auth/login', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
     credentials: 'include',
     body: JSON.stringify({ email, password }),
   });
@@ -58,6 +59,7 @@ export async function loginRequest(email: string, password: string, remember: bo
   if (!res.ok) throw new Error(data?.error || 'Incorrect email or password.');
   cacheUser(data.user, remember);
   await mergeGuestCartIfAny();
+  await refreshFitMatchCache();
   return data.user;
 }
 
@@ -71,7 +73,7 @@ export type SignupInput = {
 export async function signupRequest(input: SignupInput): Promise<StoredUser> {
   const res = await fetch('/api/auth/signup', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
     credentials: 'include',
     body: JSON.stringify(input),
   });
@@ -79,6 +81,7 @@ export async function signupRequest(input: SignupInput): Promise<StoredUser> {
   if (!res.ok) throw new Error(data?.error || 'Could not create your account. Please try again.');
   cacheUser(data.user, true);
   await mergeGuestCartIfAny();
+  await refreshFitMatchCache();
   return data.user;
 }
 
@@ -94,7 +97,7 @@ export type ProfileInput = {
 export async function updateProfile(input: ProfileInput): Promise<StoredUser> {
   const res = await fetch('/api/auth/me', {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
     credentials: 'include',
     body: JSON.stringify(input),
   });
@@ -110,10 +113,15 @@ export async function updateProfile(input: ProfileInput): Promise<StoredUser> {
 
 export async function logoutRequest(): Promise<void> {
   try {
-    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    });
   } catch {
     // best-effort — still clear local cache below
   }
   localStorage.removeItem('sahas_auth');
   localStorage.removeItem(USER_KEY);
+  clearFitMatchCache();
 }

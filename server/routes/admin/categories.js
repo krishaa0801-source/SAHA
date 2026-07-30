@@ -1,8 +1,14 @@
 const express = require('express');
+const { body } = require('express-validator');
 const Category = require('../../models/Category');
 const Product = require('../../models/Product');
+const handleValidationErrors = require('../../middleware/validate');
 
 const router = express.Router();
+
+const nameValidators = [
+  body('name').isString().trim().notEmpty().withMessage('Category name is required.').isLength({ max: 60 }).withMessage('Category name is too long.'),
+];
 
 function slugify(name) {
   return String(name)
@@ -21,7 +27,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', nameValidators, handleValidationErrors, async (req, res) => {
   try {
     const name = String((req.body || {}).name || '').trim();
     if (!name) {
@@ -45,7 +51,7 @@ router.post('/', async (req, res) => {
 // Renames the display name only — slug is intentionally immutable once
 // created, since Product.category stores the slug; changing it on rename
 // would silently orphan every product already using this category.
-router.put('/:id', async (req, res) => {
+router.put('/:id', nameValidators, handleValidationErrors, async (req, res) => {
   try {
     const name = String((req.body || {}).name || '').trim();
     if (!name) {
