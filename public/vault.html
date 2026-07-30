@@ -594,13 +594,13 @@ h3.section-title{
     <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="fit-match.html">Fit Match<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
     <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="policy.html">Policy<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
     <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="contact.html">Contact<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
-    <a class="relative flex items-center gap-1.5 font-bold text-xs uppercase tracking-widest" style="color:#efe0cd;" href="cart.html" aria-label="My Cart">
+    <a class="relative flex items-center gap-1.5 font-bold text-xs uppercase tracking-widest" style="color:#efe0cd;" href="/cart" aria-label="My Cart">
       <span class="material-symbols-outlined text-xl">shopping_bag</span>
       <span class="hidden xl:inline">My Cart</span>
       <span id="cartCount" class="nav-badge"></span>
     </a>
     <a id="nav-admin-desktop" class="relative font-bold text-xs uppercase tracking-widest py-1" style="display:none;color:#C9A36B;" href="/admin">Admin</a>
-    <a id="nav-account-desktop" class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1 flex items-center gap-1" style="color:#efe0cd;" href="account.html"><span class="material-symbols-outlined text-base">person</span><span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a id="nav-account-desktop" class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1 flex items-center gap-1" style="color:#efe0cd;" href="/account"><span class="material-symbols-outlined text-base">person</span><span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
     <button onclick="document.getElementById('vault').scrollIntoView({behavior:'smooth'})" class="px-7 py-2.5 rounded-sm font-bold text-xs uppercase tracking-[0.15em] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300" style="background:#C9A36B;color:#453c2e;" onmouseover="this.style.background='#fdd397'" onmouseout="this.style.background='#C9A36B'">Rent Now</button>
   </nav>
   <button class="lg:hidden relative z-[70]" style="color:#C9A36B;" onclick="toggleMenu()"><span class="material-symbols-outlined text-3xl" id="menu-icon">menu</span></button>
@@ -613,8 +613,8 @@ h3.section-title{
   <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="policy.html" onclick="toggleMenu()">Policy</a>
   <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="contact.html" onclick="toggleMenu()">Contact Us</a>
   <a id="nav-admin-mobile" class="font-bold text-sm uppercase tracking-widest" style="display:none;color:#C9A36B;" href="/admin" onclick="toggleMenu()">Admin Panel</a>
-  <a id="nav-account-mobile" class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="account.html" onclick="toggleMenu()">My Account</a>
-  <a class="font-bold text-sm uppercase tracking-widest flex items-center gap-1.5" style="color:#efe0cd;" href="cart.html" onclick="toggleMenu()"><span class="material-symbols-outlined text-base">shopping_bag</span>My Cart</a>
+  <a id="nav-account-mobile" class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="/account" onclick="toggleMenu()">My Account</a>
+  <a class="font-bold text-sm uppercase tracking-widest flex items-center gap-1.5" style="color:#efe0cd;" href="/cart" onclick="toggleMenu()"><span class="material-symbols-outlined text-base">shopping_bag</span>My Cart</a>
   <button onclick="toggleMenu();document.getElementById('vault').scrollIntoView({behavior:'smooth'})" class="px-6 py-3 w-full mt-2 rounded-sm font-bold text-xs uppercase tracking-[0.15em]" style="background:#C9A36B;color:#453c2e;">Rent Now</button>
 </div>
 
@@ -682,7 +682,7 @@ h3.section-title{
     <span class="material-symbols-outlined text-2xl">straighten</span>
     <span class="text-[9px] font-bold uppercase tracking-wider">Fit Match</span>
   </a>
-  <a id="nav-account-bottom" class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="account.html">
+  <a id="nav-account-bottom" class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="/account">
     <span class="material-symbols-outlined text-2xl">person</span>
     <span class="text-[9px] font-bold uppercase tracking-wider">Account</span>
   </a>
@@ -1334,7 +1334,7 @@ const VaultAPI={
     };
     CartStore.addOrUpdate(entry);
     syncCartAdd(entry);
-    window.location.href = 'cart.html';
+    window.location.href = '/cart';
   }
 };
 
@@ -1360,6 +1360,11 @@ const VaultAPI={
   // person icon pointing at account.html as-is when a session exists.
   // Admins additionally get an "Admin"/"Admin Panel" link revealed —
   // there was previously no way to reach /admin from the site itself.
+  // Kept inline (not assets/nav-auth.js, which the other static pages
+  // share) because it also reconciles the cart badge this page's own
+  // updateCartBadge() already maintains in real time as items are
+  // added/removed — pulling that apart cleanly wasn't worth the risk on
+  // the page with the most other moving JS parts.
   (function () {
     let loggedIn = false;
     try {

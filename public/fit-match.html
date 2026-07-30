@@ -123,12 +123,12 @@
     <a class="relative font-bold text-xs uppercase tracking-widest py-1" style="color:#C9A36B;" href="fit-match.html">Fit Match<span class="absolute bottom-0 left-0 w-full h-[2px]" style="background:#C9A36B;"></span></a>
     <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="policy.html">Policy<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
     <a class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1" style="color:#efe0cd;" href="contact.html">Contact<span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
-    <a class="relative flex items-center gap-1.5 font-bold text-xs uppercase tracking-widest" style="color:#efe0cd;" href="cart.html" aria-label="My Cart">
+    <a class="relative flex items-center gap-1.5 font-bold text-xs uppercase tracking-widest" style="color:#efe0cd;" href="/cart" aria-label="My Cart">
       <span class="material-symbols-outlined text-xl">shopping_bag</span>
       <span class="hidden xl:inline">My Cart</span>
       <span id="cartCount" class="nav-badge"></span>
     </a>
-    <a id="nav-account-desktop" class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1 flex items-center gap-1" style="color:#efe0cd;" href="account.html"><span class="material-symbols-outlined text-base">person</span><span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+    <a id="nav-account-desktop" class="relative hover:text-secondary transition-colors duration-300 font-bold text-xs uppercase tracking-widest group py-1 flex items-center gap-1" style="color:#efe0cd;" href="/account"><span class="material-symbols-outlined text-base">person</span><span class="absolute bottom-0 left-0 w-0 h-[2px] bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
     <button onclick="window.location.href='vault.html'" class="px-7 py-2.5 rounded-sm font-bold text-xs uppercase tracking-[0.15em] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300" style="background:#C9A36B; color:#453c2e;" onmouseover="this.style.background='#fdd397'" onmouseout="this.style.background='#C9A36B'">Rent Now</button>
   </nav>
   <!-- Burger Menu Button -->
@@ -141,8 +141,8 @@
     <a class="font-bold text-sm uppercase tracking-widest" style="color:#C9A36B;" href="fit-match.html" onclick="toggleMenu()">Saha Fit Match</a>
     <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="policy.html" onclick="toggleMenu()">Policy</a>
     <a class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="contact.html" onclick="toggleMenu()">Contact Us</a>
-    <a id="nav-account-mobile" class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="account.html" onclick="toggleMenu()">My Account</a>
-    <a class="font-bold text-sm uppercase tracking-widest flex items-center gap-1.5" style="color:#efe0cd;" href="cart.html" onclick="toggleMenu()"><span class="material-symbols-outlined text-base">shopping_bag</span>My Cart</a>
+    <a id="nav-account-mobile" class="font-bold text-sm uppercase tracking-widest" style="color:#efe0cd;" href="/account" onclick="toggleMenu()">My Account</a>
+    <a class="font-bold text-sm uppercase tracking-widest flex items-center gap-1.5" style="color:#efe0cd;" href="/cart" onclick="toggleMenu()"><span class="material-symbols-outlined text-base">shopping_bag</span>My Cart</a>
     <button onclick="window.location.href='vault.html'" class="px-6 py-3 w-full mt-2 rounded-sm font-bold text-xs uppercase tracking-[0.15em]" style="background:#C9A36B; color:#453c2e;">Rent Now</button>
 </div>
 
@@ -294,7 +294,7 @@
     <span class="material-symbols-outlined text-2xl">straighten</span>
     <span class="text-[9px] font-bold uppercase tracking-wider">Fit Match</span>
   </a>
-  <a id="nav-account-bottom" class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="account.html">
+  <a id="nav-account-bottom" class="flex flex-col items-center gap-1 text-primary hover:text-secondary transition-colors" href="/account">
     <span class="material-symbols-outlined text-2xl">person</span>
     <span class="text-[9px] font-bold uppercase tracking-wider">Account</span>
   </a>
@@ -415,63 +415,6 @@
     document.getElementById('result-section').classList.remove('hidden');
   })();
 </script>
-<script>
-  // Auth-aware nav: show "Login" (→ /login) when signed out, leave the
-  // person icon pointing at account.html as-is when a session exists.
-  (function () {
-    let loggedIn = false;
-    try {
-      const auth = JSON.parse(localStorage.getItem('sahas_auth') || 'null');
-      loggedIn = Boolean(auth && auth.loggedIn);
-    } catch (e) {}
-    if (loggedIn) return;
-
-    const desktop = document.getElementById('nav-account-desktop');
-    if (desktop) { desktop.href = '/login'; desktop.insertAdjacentHTML('beforeend', '<span>Login</span>'); }
-
-    const mobile = document.getElementById('nav-account-mobile');
-    if (mobile) { mobile.href = '/login'; mobile.textContent = 'Login'; }
-
-    const bottom = document.getElementById('nav-account-bottom');
-    if (bottom) {
-      bottom.href = '/login';
-      const label = bottom.querySelector('span:last-child');
-      if (label) label.textContent = 'Login';
-    }
-  })();
-</script>
-<script>
-  // Header cart badge — same guest cart vault.html reads/writes
-  // (localStorage 'sahas_cart') for signed-out visitors, or the real
-  // per-account DB cart (server/routes/cart.js) once signed in, so this
-  // always matches what the Cart page itself would show.
-  (function () {
-    const badge = document.getElementById('cartCount');
-    if (!badge) return;
-    function setBadge(n) {
-      badge.textContent = n;
-      badge.classList.toggle('show', n > 0);
-    }
-    function guestCount() {
-      try {
-        const list = JSON.parse(localStorage.getItem('sahas_cart') || '[]');
-        return Array.isArray(list) ? list.length : 0;
-      } catch (e) { return 0; }
-    }
-    let loggedIn = false;
-    try {
-      const auth = JSON.parse(localStorage.getItem('sahas_auth') || 'null');
-      loggedIn = Boolean(auth && auth.loggedIn);
-    } catch (e) {}
-
-    setBadge(guestCount());
-    if (!loggedIn) return;
-
-    fetch('/api/cart', { credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => { if (data && Array.isArray(data.items)) setBadge(data.items.length); })
-      .catch(() => {});
-  })();
-</script>
+<script src="assets/nav-auth.js"></script>
 </body>
 </html>

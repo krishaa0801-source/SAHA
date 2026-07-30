@@ -93,7 +93,12 @@ app.use(
 );
 
 app.use(compression());
-app.use(express.json({ limit: '2mb' }));
+// The verify callback stashes the exact raw bytes on req.rawBody — needed
+// by the Razorpay webhook route (server/routes/payments.js) to compute its
+// HMAC signature. Razorpay signs the literal bytes it sent; re-serializing
+// the already-parsed req.body with JSON.stringify() can produce different
+// bytes (key order, whitespace) and silently fail verification.
+app.use(express.json({ limit: '2mb', verify: (req, res, buf) => { req.rawBody = buf; } }));
 // Strips any $/. keys from req.body/query/params — defense-in-depth
 // against NoSQL-injection-style payloads on top of the explicit String()
 // casts routes already apply before building Mongo queries.
