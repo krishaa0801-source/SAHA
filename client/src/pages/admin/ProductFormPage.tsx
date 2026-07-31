@@ -78,7 +78,7 @@ export default function ProductFormPage() {
     const next: Record<string, string> = {};
     if (!fields.name.trim()) next.name = 'Product name is required.';
     if (!fields.category) next.category = 'Choose a category.';
-    if (!(fields.price > 0)) next.price = 'Rental price must be greater than 0.';
+    if (!(fields.price > 0)) next.price = 'Base Rental Price must be greater than 0.';
     if (!fields.sizes.some((s) => s.quantity > 0)) next.sizes = 'Add at least one size with a stock quantity greater than 0.';
     if (!hangerFile && !hangerExistingUrl) next.image = 'A hanger image is required.';
     if (!galleryEntries.length) next.galleryImages = 'At least one product gallery image is required.';
@@ -163,7 +163,7 @@ export default function ProductFormPage() {
               <input className="field-input" value={fields.brand} onChange={(e) => setFields({ ...fields, brand: e.target.value })} />
             </div>
             <div>
-              <label className="field-label">Rental Price (₹ / day)</label>
+              <label className="field-label">Base Rental Price (₹)</label>
               <input
                 type="number"
                 min={0}
@@ -176,6 +176,9 @@ export default function ProductFormPage() {
                 }}
               />
               {errors.price && <p className="field-error">{errors.price}</p>}
+              <p className="admin-hint">
+                One-time flat fee. Tiers: 1–2 days = base price · 3–7 days = ×1.3 · 8+ days = ×1.5.
+              </p>
             </div>
             <div>
               <label className="field-label">Status</label>

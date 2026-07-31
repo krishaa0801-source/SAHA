@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CartItem } from '../lib/cart';
-import { diffDays, fmtDateDisplay, fmtRs } from '../lib/cartMath';
+import { diffDays, fmtDateDisplay, fmtRs, rentalPrice, tierForDays } from '../lib/cartMath';
 import QtyStepper from './QtyStepper';
 import DateRangePicker from './DateRangePicker';
 
@@ -30,7 +30,8 @@ export default function CartItemCard({
   onDatesChange,
 }: CartItemCardProps) {
   const days = diffDays(entry.from, entry.to);
-  const lineTotal = entry.price * entry.qty * days;
+  const tier = tierForDays(days);
+  const lineTotal = rentalPrice(entry.price, days) * entry.qty;
   const sizes = entry.sizes && entry.sizes.length ? entry.sizes : [entry.size];
   const fromDisp = fmtDateDisplay(entry.from);
   const toDisp = fmtDateDisplay(entry.to);
@@ -79,13 +80,10 @@ export default function CartItemCard({
           </div>
           <div>
             <span className="field-label" style={{ marginBottom: 2 }}>
-              Rental Price
+              Base Rental Price
             </span>
             <span className="text-sm font-semibold" style={{ color: '#fdd397' }}>
               {fmtRs(entry.price)}
-              <span className="text-[0.65rem]" style={{ color: 'rgba(239,224,205,0.4)' }}>
-                /day
-              </span>
             </span>
           </div>
           <div>
@@ -146,7 +144,7 @@ export default function CartItemCard({
         <div className="flex-1" />
         <div className="mt-3 pt-3 flex justify-between items-baseline" style={{ borderTop: '1px dashed rgba(201,163,107,0.2)' }}>
           <span className="text-xs" style={{ color: 'rgba(239,224,205,0.5)' }}>
-            {entry.qty} × {days} day{days > 1 ? 's' : ''}
+            {entry.qty} × {tier.label} ({days} day{days > 1 ? 's' : ''})
           </span>
           <span className="font-bold text-lg font-['Playfair_Display']" style={{ color: '#fdd397' }}>
             {fmtRs(lineTotal)}

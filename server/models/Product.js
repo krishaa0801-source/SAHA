@@ -51,7 +51,11 @@ const productSchema = new mongoose.Schema(
     category: { type: String, required: true }, // Category.slug
     brand: { type: String, default: '', trim: true },
     description: { type: String, default: '', trim: true },
-    price: { type: Number, required: true, min: 0 }, // rental price per day
+    // Base Rental Price — a flat one-time fee, not a daily rate. The
+    // actual charge for a given rental is this × a tier multiplier from
+    // services/pricing.js (1x for 1-2 days, 1.3x for 3-7, 1.5x for 8+),
+    // never × number of days.
+    price: { type: Number, required: true, min: 0 },
     sizes: { type: [sizeSchema], default: [] },
     image: { type: String, required: true }, // hanger PNG URL (public/uploads/products/hangers/...)
     galleryImages: { type: [galleryImageSchema], default: [] },

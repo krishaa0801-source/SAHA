@@ -10,6 +10,13 @@ const orderSchema = new mongoose.Schema(
     from: { type: String, required: true },
     to: { type: String, required: true },
     days: { type: Number, required: true },
+    // Snapshotted at order time from services/pricing.js's
+    // calculateRentalPrice(), so a later change to the product's base
+    // price (or, in theory, the tier rules) never rewrites history —
+    // this order stays priced exactly as it was charged.
+    basePrice: { type: Number, required: true },
+    tierMultiplier: { type: Number, required: true },
+    tierLabel: { type: String, required: true },
     total: { type: Number, required: true },
     status: { type: String, enum: ['confirmed', 'completed', 'cancelled'], default: 'confirmed' },
     razorpayOrderId: { type: String, default: '' },

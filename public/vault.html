@@ -452,6 +452,13 @@ h3.section-title{
 .price-row .v{font-weight:600;color:var(--cream)}
 .price-row.total .k{color:var(--gold-bright);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.72rem}
 .price-row.total .v{color:var(--gold-bright);font-size:1.15rem;font-weight:700}
+.tier-table{margin:12px 0 4px;background:var(--card);border:1px solid rgba(201,163,107,.22);border-radius:16px;padding:12px 16px}
+.tier-table-head{font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-bright);margin-bottom:6px}
+.tier-row{display:flex;justify-content:space-between;align-items:center;padding:7px 8px;margin:0 -8px;font-size:.82rem;color:var(--cream-2);border-radius:10px;transition:background .2s,color .2s}
+.tier-row+.tier-row{border-top:1px dashed rgba(201,163,107,.15)}
+.tier-row .tier-amt{font-weight:700;color:var(--cream)}
+.tier-row.active{background:rgba(201,163,107,.16);color:var(--gold-bright)}
+.tier-row.active .tier-amt{color:var(--gold-bright)}
 .cta-row{display:flex;gap:12px;margin-top:18px}
 .btn{
   position:relative;overflow:hidden;border-radius:999px;border:none;
@@ -1058,6 +1065,21 @@ function closeSidebar(){
   if(lastFocus)lastFocus.focus();
 }
 
+// Mirrors server/services/pricing.js's RENTAL_PRICING_TIERS/getPricingTier
+// exactly — a rental is a ONE-TIME flat fee for the chosen tier, never
+// price × number of days. This drives both the always-visible tier table
+// below and the live "Estimated total" once dates are picked; the server
+// re-derives the real charge from the same rule independently, so this is
+// display-only and never trusted for the actual amount charged.
+const PRICING_TIERS=[
+  {min:1,max:2,mult:1,label:'1–2 Days'},
+  {min:3,max:7,mult:1.3,label:'3–7 Days'},
+  {min:8,max:Infinity,mult:1.5,label:'8+ Days'}
+];
+function tierForDays(days){
+  return PRICING_TIERS.find(t=>days>=t.min&&days<=t.max)||PRICING_TIERS[PRICING_TIERS.length-1];
+}
+
 function openSidebar(it,pieceEl){
   lastFocus=pieceEl;openPiece=pieceEl;pieceEl.classList.add('open');
   inner.innerHTML=`
@@ -1072,6 +1094,13 @@ function openSidebar(it,pieceEl){
     </div>
     <div class="spec" style="margin-bottom:4px"><div class="k">Size &amp; Fit</div>
       <div class="v" id="fitMatchBody" style="font-size:.82rem;font-weight:400;line-height:1.55;margin-top:6px">Not sure which size to pick? <a href="fit-match.html" style="color:var(--gold-bright);text-decoration:underline">Try Saha Fit Match</a> for a personalised recommendation.</div>
+    </div>
+    <div class="spec" style="margin:18px 0 4px"><div class="k">Base Rental Price</div>
+      <div class="v" style="font-size:1.3rem;font-weight:700;color:var(--gold-bright)">₹${it.price.toLocaleString('en-IN')}</div>
+    </div>
+    <div class="tier-table" id="tierTable">
+      <div class="tier-table-head">Rental Pricing Tiers</div>
+      ${PRICING_TIERS.map(t=>`<div class="tier-row" data-label="${t.label}"><span class="tier-days">${t.label}</span><span class="tier-amt">₹${Math.round(it.price*t.mult).toLocaleString('en-IN')}</span></div>`).join('')}
     </div>
     <h3 class="section-title">Choose your dates</h3>
     <div class="calendar" id="cal"></div>
@@ -1281,8 +1310,11 @@ class RentalCalendar{
     document.getElementById('prPeriod').textContent=`${fmt(s)} → ${fmt(e)}`;
     document.getElementById('prReturn').textContent=e.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
     document.getElementById('prDays').textContent=`${daysN} day${daysN>1?'s':''}`;
-    const total=daysN*this.item.price;
+    const tier=tierForDays(daysN);
+    const total=Math.round(this.item.price*tier.mult);
     document.getElementById('prTotal').textContent=`₹${total.toLocaleString('en-IN')}`;
+    const tierTable=document.getElementById('tierTable');
+    if(tierTable)tierTable.querySelectorAll('.tier-row').forEach(r=>r.classList.toggle('active',r.dataset.label===tier.label));
     rentBtn.disabled=false;
     rentBtn.onclick=()=>{
       const sizeEl=inner.querySelector('.size-dot.sel');

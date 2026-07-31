@@ -14,6 +14,29 @@
 const DELIVERY_CHARGE = 99; // flat per order when the cart isn't empty — was called "platform fee" client-side before this redesign; same amount, clearer name.
 const TAX_RATE = 0; // e.g. 0.05 for 5% GST — ask the business before enabling.
 
+// Fixed-tier rental pricing. This replaced the old "price per day ×
+// number of days" model — a rental is now a ONE-TIME flat fee for the
+// whole date range, chosen by which bucket the day count falls in. Order
+// matters: the first tier whose range contains `days` wins.
+const RENTAL_PRICING_TIERS = [
+  { min: 1, max: 2, multiplier: 1, label: '1–2 Days' },
+  { min: 3, max: 7, multiplier: 1.3, label: '3–7 Days' },
+  { min: 8, max: Infinity, multiplier: 1.5, label: '8+ Days' },
+];
+
+function getPricingTier(days) {
+  return RENTAL_PRICING_TIERS.find((t) => days >= t.min && days <= t.max) || RENTAL_PRICING_TIERS[RENTAL_PRICING_TIERS.length - 1];
+}
+
+// THE one place the app turns a product's base price + a day count into
+// money. Every rental total anywhere — cart, checkout, Razorpay amount,
+// Order records, admin displays — must go through this (directly or via
+// priceLine below) so they can never disagree.
+function calculateRentalPrice(basePrice, days) {
+  const tier = getPricingTier(days);
+  return { basePrice, days, tierLabel: tier.label, tierMultiplier: tier.multiplier, total: basePrice * tier.multiplier };
+}
+
 const { computeDiscount } = require('./couponService');
 const { getDetailImage } = require('../utils/productImage');
 
@@ -57,8 +80,15 @@ function priceLine({ product, size, qty, from, to }) {
     return { error: 'Choose a valid rental start and end date.' };
   }
 
-  const lineSubtotal = product.price * safeQty; // first day
-  const lineRentalCharge = product.price * safeQty * Math.max(days - 1, 0); // additional days
+  const unitPricing = calculateRentalPrice(product.price, days);
+  // lineSubtotal/lineRentalCharge keep their old names (calculateTotals
+  // and every consumer of it — CartSummary's "Subtotal"/"Rental Charges"
+  // rows — sum these two independently) but now mean something new:
+  // lineSubtotal is the base price × qty, and lineRentalCharge is the
+  // tier premium on top of it (0 for the 1x tier). The two still always
+  // add up to lineTotal.
+  const lineSubtotal = unitPricing.basePrice * safeQty;
+  const lineRentalCharge = (unitPricing.total - unitPricing.basePrice) * safeQty;
 
   return {
     productId: product._id,
@@ -73,6 +103,9 @@ function priceLine({ product, size, qty, from, to }) {
     to,
     days,
     unitPrice: product.price,
+    basePrice: unitPricing.basePrice,
+    tierLabel: unitPricing.tierLabel,
+    tierMultiplier: unitPricing.tierMultiplier,
     lineSubtotal,
     lineRentalCharge,
     lineTotal: lineSubtotal + lineRentalCharge,
@@ -103,4 +136,13 @@ function calculateTotals(lines, coupon) {
   return { subtotal, rentalCharges, deliveryCharge, discount, tax, total };
 }
 
-module.exports = { DELIVERY_CHARGE, TAX_RATE, diffDays, priceLine, calculateTotals };
+module.exports = {
+  DELIVERY_CHARGE,
+  TAX_RATE,
+  RENTAL_PRICING_TIERS,
+  getPricingTier,
+  calculateRentalPrice,
+  diffDays,
+  priceLine,
+  calculateTotals,
+};

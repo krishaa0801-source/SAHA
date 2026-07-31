@@ -40,7 +40,7 @@ function parseProductFields(body, categorySlugs) {
   else data.category = category;
 
   const price = Number(body.price);
-  if (!Number.isFinite(price) || price <= 0) errors.price = 'Rental price must be a number greater than 0.';
+  if (!Number.isFinite(price) || price <= 0) errors.price = 'Base Rental Price must be a number greater than 0.';
   else data.price = price;
 
   data.brand = String(body.brand || '').trim();

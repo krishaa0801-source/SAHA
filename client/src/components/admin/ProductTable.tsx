@@ -39,7 +39,7 @@ export default function ProductTable({ products, categories, onEdit, onView, onD
             <th></th>
             <th>Product</th>
             <th>Category</th>
-            <th>Price / day</th>
+            <th>Base Price</th>
             <th>Sizes</th>
             <th>Availability</th>
             <th>Created</th>

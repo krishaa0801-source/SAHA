@@ -8,7 +8,7 @@ import HangingGarment from './HangingGarment.jsx';
    vault.html, not per-card — keep working unmodified against this DOM
    regardless of who rendered it. */
 export default function Card({ item }) {
-  const ariaLabel = `${item.name} by ${item.brand}, rent ₹${item.price.toLocaleString('en-IN')} per day. Open details`;
+  const ariaLabel = `${item.name} by ${item.brand}, base rental price ₹${item.price.toLocaleString('en-IN')}. Open details`;
   const searchText = `${item.name} ${item.brand} ${item.collectionName}`.toLowerCase();
   return (
     <button
