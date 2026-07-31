@@ -62,6 +62,7 @@ async function toPublicCart(cart) {
       brand: l.brand,
       image: l.image,
       price: l.unitPrice,
+      securityDeposit: l.lineSecurityDeposit,
       sizes: l.sizes,
       size: l.size,
       qty: l.qty,

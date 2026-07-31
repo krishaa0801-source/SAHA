@@ -8,8 +8,12 @@
 // once you have a real number. The old frontend math never charged tax
 // either, so this doesn't change what anyone pays today.
 //
-// There is no security deposit anywhere in this module — it was removed
-// (calculation, storage, and display) at the business's request.
+// Security deposits are tracked entirely separately from rental pricing:
+// they're added to the grand total AFTER discount and tax are computed
+// (coupons never reduce a deposit, and it's never taxed), and every
+// per-line figure keeps the two apart (lineRentalCharge vs.
+// lineSecurityDeposit) so a refund/forfeit later never has to guess which
+// part of a line's total was which.
 
 const DELIVERY_CHARGE = 99; // flat per order when the cart isn't empty — was called "platform fee" client-side before this redesign; same amount, clearer name.
 const TAX_RATE = 0; // e.g. 0.05 for 5% GST — ask the business before enabling.
@@ -89,6 +93,11 @@ function priceLine({ product, size, qty, from, to }) {
   // add up to lineTotal.
   const lineSubtotal = unitPricing.basePrice * safeQty;
   const lineRentalCharge = (unitPricing.total - unitPricing.basePrice) * safeQty;
+  // Security deposit scales with qty (each physical unit rented needs its
+  // own deposit) but is completely untouched by the day count/tier — it's
+  // a flat refundable hold, not rental revenue.
+  const unitSecurityDeposit = product.securityDeposit || 0;
+  const lineSecurityDeposit = unitSecurityDeposit * safeQty;
 
   return {
     productId: product._id,
@@ -108,7 +117,9 @@ function priceLine({ product, size, qty, from, to }) {
     tierMultiplier: unitPricing.tierMultiplier,
     lineSubtotal,
     lineRentalCharge,
-    lineTotal: lineSubtotal + lineRentalCharge,
+    lineTotal: lineSubtotal + lineRentalCharge, // rental only — deposit is never folded into this
+    unitSecurityDeposit,
+    lineSecurityDeposit,
   };
 }
 
@@ -120,20 +131,25 @@ function priceLine({ product, size, qty, from, to }) {
 function calculateTotals(lines, coupon) {
   let subtotal = 0;
   let rentalCharges = 0;
+  let securityDeposit = 0;
   lines.forEach((l) => {
     subtotal += l.lineSubtotal;
     rentalCharges += l.lineRentalCharge;
+    securityDeposit += l.lineSecurityDeposit;
   });
 
   const deliveryCharge = lines.length ? DELIVERY_CHARGE : 0;
+  // `base` — what coupons discount and what tax is computed on — is
+  // rental-only, same as before security deposits existed. Deposit is
+  // added to `total` afterward, untouched by either.
   const base = subtotal + rentalCharges;
   const discount = computeDiscount(coupon, base);
 
   const taxableBase = Math.max(base + deliveryCharge - discount, 0);
   const tax = Math.round(taxableBase * TAX_RATE);
-  const total = taxableBase + tax;
+  const total = taxableBase + tax + securityDeposit;
 
-  return { subtotal, rentalCharges, deliveryCharge, discount, tax, total };
+  return { subtotal, rentalCharges, deliveryCharge, discount, tax, securityDeposit, total };
 }
 
 module.exports = {

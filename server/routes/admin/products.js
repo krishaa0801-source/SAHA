@@ -43,6 +43,12 @@ function parseProductFields(body, categorySlugs) {
   if (!Number.isFinite(price) || price <= 0) errors.price = 'Base Rental Price must be a number greater than 0.';
   else data.price = price;
 
+  // Completely separate from rental price (see server/services/pricing.js)
+  // — required on every create/edit, same as price, not just defaulted.
+  const securityDeposit = Number(body.securityDeposit);
+  if (!Number.isFinite(securityDeposit) || securityDeposit <= 0) errors.securityDeposit = 'Security Deposit must be a number greater than 0.';
+  else data.securityDeposit = securityDeposit;
+
   data.brand = String(body.brand || '').trim();
   data.description = String(body.description || '').trim();
 
@@ -128,6 +134,9 @@ function toAdminProduct(product) {
     brand: product.brand,
     description: product.description,
     price: product.price,
+    // `?? 0` covers products that predate this field on .lean() reads,
+    // which skip the schema default (see models/Product.js).
+    securityDeposit: product.securityDeposit ?? 0,
     sizes: product.sizes,
     image: product.image,
     galleryImages: [...product.galleryImages].sort((a, b) => a.order - b.order),
@@ -302,6 +311,7 @@ router.post('/:id/duplicate', async (req, res) => {
       brand: source.brand,
       description: source.description,
       price: source.price,
+      securityDeposit: source.securityDeposit || 0,
       sizes: source.sizes,
       image,
       galleryImages,

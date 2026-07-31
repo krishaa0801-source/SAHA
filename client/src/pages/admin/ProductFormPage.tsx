@@ -20,6 +20,7 @@ const EMPTY_FIELDS: ProductFormFields = {
   brand: '',
   description: '',
   price: 0,
+  securityDeposit: 0,
   status: 'available',
   sizes: [],
 };
@@ -36,6 +37,7 @@ export default function ProductFormPage() {
   const [hangerFile, setHangerFile] = useState<File | null>(null);
   const [galleryEntries, setGalleryEntries] = useState<GalleryEntry[]>([]);
   const [priceInput, setPriceInput] = useState('');
+  const [depositInput, setDepositInput] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(isEdit);
   const [submitting, setSubmitting] = useState(false);
@@ -56,10 +58,12 @@ export default function ProductFormPage() {
           brand: product.brand,
           description: product.description,
           price: product.price,
+          securityDeposit: product.securityDeposit,
           status: product.status,
           sizes: product.sizes,
         });
         setPriceInput(String(product.price));
+        setDepositInput(String(product.securityDeposit));
         setHangerExistingUrl(product.image);
         setGalleryEntries(product.galleryImages.map((g) => ({ type: 'existing' as const, url: g.url, thumbnailUrl: g.thumbnailUrl })));
         setLoading(false);
@@ -79,6 +83,7 @@ export default function ProductFormPage() {
     if (!fields.name.trim()) next.name = 'Product name is required.';
     if (!fields.category) next.category = 'Choose a category.';
     if (!(fields.price > 0)) next.price = 'Base Rental Price must be greater than 0.';
+    if (!(fields.securityDeposit > 0)) next.securityDeposit = 'Security Deposit must be greater than 0.';
     if (!fields.sizes.some((s) => s.quantity > 0)) next.sizes = 'Add at least one size with a stock quantity greater than 0.';
     if (!hangerFile && !hangerExistingUrl) next.image = 'A hanger image is required.';
     if (!galleryEntries.length) next.galleryImages = 'At least one product gallery image is required.';
@@ -179,6 +184,22 @@ export default function ProductFormPage() {
               <p className="admin-hint">
                 One-time flat fee. Tiers: 1–2 days = base price · 3–7 days = ×1.3 · 8+ days = ×1.5.
               </p>
+            </div>
+            <div>
+              <label className="field-label">Security Deposit (₹)</label>
+              <input
+                type="number"
+                min={0}
+                step="0.01"
+                className={`field-input ${errors.securityDeposit ? 'field-invalid' : ''}`}
+                value={depositInput}
+                onChange={(e) => {
+                  setDepositInput(e.target.value);
+                  setFields({ ...fields, securityDeposit: parseFloat(e.target.value) || 0 });
+                }}
+              />
+              {errors.securityDeposit && <p className="field-error">{errors.securityDeposit}</p>}
+              <p className="admin-hint">Fully refundable, separate from the rental price. Never discounted or taxed.</p>
             </div>
             <div>
               <label className="field-label">Status</label>

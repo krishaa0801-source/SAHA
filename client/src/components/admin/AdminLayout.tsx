@@ -5,6 +5,7 @@ import { logoutRequest } from '../../lib/auth';
 const NAV_ITEMS = [
   { to: '/admin', label: 'Dashboard', icon: 'space_dashboard', end: true },
   { to: '/admin/products', label: 'Products', icon: 'checkroom', end: false },
+  { to: '/admin/orders', label: 'Orders', icon: 'receipt_long', end: false },
   { to: '/admin/categories', label: 'Categories', icon: 'category', end: false },
   { to: '/admin/reviews', label: 'Reviews', icon: 'reviews', end: false },
   { to: '/admin/coupons', label: 'Coupons', icon: 'sell', end: false },

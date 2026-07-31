@@ -28,6 +28,12 @@ export default function CartSummary({ totals: t, couponCode, couponError, onAppl
         <span className="v">{fmtRs(t.rentalCharges)}</span>
       </div>
       <div className="summary-row">
+        <span className="k">
+          Security Deposit <span style={{ color: 'rgba(239,224,205,0.4)', fontSize: '0.68rem' }}>(refundable)</span>
+        </span>
+        <span className="v">{fmtRs(t.securityDeposit)}</span>
+      </div>
+      <div className="summary-row">
         <span className="k">Delivery Charge</span>
         <span className="v">{fmtRs(t.deliveryCharge)}</span>
       </div>

@@ -21,6 +21,7 @@ function toPublicProduct(product) {
     brand: product.brand,
     description: product.description,
     price: product.price,
+    securityDeposit: product.securityDeposit || 0,
     sizes: product.sizes.map((s) => ({ size: s.size, available: s.quantity > 0 })),
     image: product.image,
     detailImage: getDetailImage(product),

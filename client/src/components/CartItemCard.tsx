@@ -142,13 +142,23 @@ export default function CartItemCard({
         </div>
 
         <div className="flex-1" />
-        <div className="mt-3 pt-3 flex justify-between items-baseline" style={{ borderTop: '1px dashed rgba(201,163,107,0.2)' }}>
-          <span className="text-xs" style={{ color: 'rgba(239,224,205,0.5)' }}>
-            {entry.qty} × {tier.label} ({days} day{days > 1 ? 's' : ''})
-          </span>
-          <span className="font-bold text-lg font-['Playfair_Display']" style={{ color: '#fdd397' }}>
-            {fmtRs(lineTotal)}
-          </span>
+        <div className="mt-3 pt-3" style={{ borderTop: '1px dashed rgba(201,163,107,0.2)' }}>
+          <div className="flex justify-between items-baseline">
+            <span className="text-xs" style={{ color: 'rgba(239,224,205,0.5)' }}>
+              Rental Price · {entry.qty} × {tier.label} ({days} day{days > 1 ? 's' : ''})
+            </span>
+            <span className="font-bold text-lg font-['Playfair_Display']" style={{ color: '#fdd397' }}>
+              {fmtRs(lineTotal)}
+            </span>
+          </div>
+          <div className="flex justify-between items-baseline mt-1">
+            <span className="text-xs" style={{ color: 'rgba(239,224,205,0.5)' }}>
+              Security Deposit <span style={{ color: 'rgba(239,224,205,0.35)' }}>(refundable)</span>
+            </span>
+            <span className="text-sm font-semibold" style={{ color: '#efe0cd' }}>
+              {fmtRs(entry.securityDeposit)}
+            </span>
+          </div>
         </div>
       </div>
     </div>

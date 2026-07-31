@@ -56,8 +56,14 @@ const productSchema = new mongoose.Schema(
     // services/pricing.js (1x for 1-2 days, 1.3x for 3-7, 1.5x for 8+),
     // never × number of days.
     price: { type: Number, required: true, min: 0 },
+    // Refundable Security Deposit — entirely separate from the rental
+    // price above (server/services/pricing.js keeps the two apart end to
+    // end: coupons discount the rental price only, never this). Defaults
+    // to 0 purely so products that predate this field still read cleanly;
+    // the admin form itself requires a positive value on every create/edit.
+    securityDeposit: { type: Number, required: true, min: 0, default: 0 },
     sizes: { type: [sizeSchema], default: [] },
-    image: { type: String, required: true }, // hanger PNG URL (public/uploads/products/hangers/...)
+    image: { type: String, required: true }, // hanger PNG URL (Cloudinary — see server/services/imageProcessor.js)
     galleryImages: { type: [galleryImageSchema], default: [] },
     status: { type: String, enum: ['available', 'rented', 'hidden'], default: 'available' },
     rating: { type: ratingSchema, default: () => ({ average: 0, count: 0 }) },

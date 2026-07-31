@@ -4,6 +4,7 @@ auth-dist/
 .env.local
 .DS_Store
 
-# Admin-uploaded product images (server/services/imageProcessor.js) —
-# runtime content generated per-deployment from MongoDB, not source.
+# Pre-Cloudinary leftovers: product/review images now live on Cloudinary
+# (server/services/imageProcessor.js), never written here anymore. Left
+# ignored as a safety net in case anything still lands here locally.
 public/uploads/

@@ -459,6 +459,10 @@ h3.section-title{
 .tier-row .tier-amt{font-weight:700;color:var(--cream)}
 .tier-row.active{background:rgba(201,163,107,.16);color:var(--gold-bright)}
 .tier-row.active .tier-amt{color:var(--gold-bright)}
+.deposit-note{
+  font-size:.74rem;line-height:1.5;color:var(--cream-2);font-style:italic;
+  border-left:2px solid rgba(201,163,107,.4);padding:2px 0 2px 12px;margin:0 0 18px;
+}
 .cta-row{display:flex;gap:12px;margin-top:18px}
 .btn{
   position:relative;overflow:hidden;border-radius:999px;border:none;
@@ -784,6 +788,7 @@ function toVaultItem(p, categoryNameBySlug) {
     category: p.category,
     collectionName: categoryNameBySlug.get(p.category) || p.category,
     price: p.price,
+    securityDeposit: p.securityDeposit || 0,
     sizes: p.sizes.filter((s) => s.available).map((s) => s.size),
     tags: [p.category],
     avail: p.status === 'available' ? 'now' : 'unavailable',
@@ -1102,6 +1107,10 @@ function openSidebar(it,pieceEl){
       <div class="tier-table-head">Rental Pricing Tiers</div>
       ${PRICING_TIERS.map(t=>`<div class="tier-row" data-label="${t.label}"><span class="tier-days">${t.label}</span><span class="tier-amt">₹${Math.round(it.price*t.mult).toLocaleString('en-IN')}</span></div>`).join('')}
     </div>
+    <div class="spec" style="margin:18px 0 4px"><div class="k">Refundable Security Deposit</div>
+      <div class="v" style="font-size:1.3rem;font-weight:700;color:var(--cream)">₹${it.securityDeposit.toLocaleString('en-IN')}</div>
+    </div>
+    <p class="deposit-note">The security deposit is fully refundable after the outfit is returned in its original condition.</p>
     <h3 class="section-title">Choose your dates</h3>
     <div class="calendar" id="cal"></div>
     <div class="price-card" id="priceCard">

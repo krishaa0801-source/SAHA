@@ -16,6 +16,8 @@ export type AdminProduct = {
   brand: string;
   description: string;
   price: number;
+  // Refundable, entirely separate from `price` — see server/services/pricing.js.
+  securityDeposit: number;
   sizes: SizeRow[];
   image: string;
   galleryImages: GalleryImage[];
@@ -39,6 +41,7 @@ export type ProductFormFields = {
   brand: string;
   description: string;
   price: number;
+  securityDeposit: number;
   status: ProductStatus;
   sizes: SizeRow[];
 };
@@ -94,6 +97,7 @@ function buildProductFormData(fields: ProductFormFields, hangerFile: File | null
   fd.append('brand', fields.brand);
   fd.append('description', fields.description);
   fd.append('price', String(fields.price));
+  fd.append('securityDeposit', String(fields.securityDeposit));
   fd.append('status', fields.status);
   fd.append('sizes', JSON.stringify(fields.sizes));
 

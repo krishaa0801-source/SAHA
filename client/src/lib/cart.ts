@@ -4,8 +4,7 @@
 //
 // Every price/name field below is server-computed — the backend
 // re-derives it from the Product catalog on every request. Nothing this
-// module sends to the server ever includes a price. There is no security
-// deposit anywhere in this app — it was removed at the business's request.
+// module sends to the server ever includes a price.
 const GUEST_CART_KEY = 'sahas_cart';
 
 export type CartItem = {
@@ -15,6 +14,10 @@ export type CartItem = {
   brand: string;
   image: string;
   price: number;
+  // Refundable — never discounted, never taxed, never part of `price` ×
+  // days math. Already qty-multiplied by the server (server/services/
+  // pricing.js).
+  securityDeposit: number;
   sizes: string[];
   size: string;
   qty: number;
@@ -28,6 +31,7 @@ export type CartTotals = {
   deliveryCharge: number;
   discount: number;
   tax: number;
+  securityDeposit: number;
   total: number;
 };
 

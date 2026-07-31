@@ -40,6 +40,7 @@ export default function ProductTable({ products, categories, onEdit, onView, onD
             <th>Product</th>
             <th>Category</th>
             <th>Base Price</th>
+            <th>Security Deposit</th>
             <th>Sizes</th>
             <th>Availability</th>
             <th>Created</th>
@@ -58,6 +59,7 @@ export default function ProductTable({ products, categories, onEdit, onView, onD
               </td>
               <td>{categoryName(p.category)}</td>
               <td>₹{p.price.toLocaleString('en-IN')}</td>
+              <td>₹{p.securityDeposit.toLocaleString('en-IN')}</td>
               <td>
                 <div className="admin-size-pills">
                   {p.sizes.map((s) => (

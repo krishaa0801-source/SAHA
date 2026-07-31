@@ -11,7 +11,9 @@ const router = express.Router();
 // trust-the-client hole this redesign removes.
 router.get('/', requireAuth, async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.session.userId }).sort({ createdAt: -1 });
+    // depositNote is an internal admin reason (see routes/admin/orders.js)
+    // — never sent to the customer who placed the order.
+    const orders = await Order.find({ user: req.session.userId }).select('-depositNote').sort({ createdAt: -1 });
     res.json({ orders });
   } catch (err) {
     res.status(500).json({ error: 'Could not load your rentals. Please try again.' });

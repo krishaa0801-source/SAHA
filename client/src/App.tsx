@@ -13,6 +13,7 @@ const AdminGuard = lazy(() => import('./components/admin/AdminGuard'));
 const AdminLayout = lazy(() => import('./components/admin/AdminLayout'));
 const ToastProvider = lazy(() => import('./components/admin/ToastProvider'));
 const DashboardPage = lazy(() => import('./pages/admin/DashboardPage'));
+const OrdersPage = lazy(() => import('./pages/admin/OrdersPage'));
 const ProductsPage = lazy(() => import('./pages/admin/ProductsPage'));
 const ProductFormPage = lazy(() => import('./pages/admin/ProductFormPage'));
 const CategoriesPage = lazy(() => import('./pages/admin/CategoriesPage'));
@@ -101,6 +102,14 @@ export default function App() {
           element={
             <Suspense fallback={null}>
               <ProductFormPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="orders"
+          element={
+            <Suspense fallback={null}>
+              <OrdersPage />
             </Suspense>
           }
         />
