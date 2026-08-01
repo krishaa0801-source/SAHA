@@ -55,6 +55,8 @@ router.post('/create-order', paymentLimiter, requireAuth, async (req, res) => {
       amount,
       currency: 'INR',
       receipt: `saha_${Date.now()}`, // Razorpay caps receipt at 40 chars
+      payment_capture: 1, // explicit auto-capture (also the API default) — self-documents the production setup
+      expire_by: Math.floor(Date.now() / 1000) + 20 * 60, // stale/abandoned orders stop being payable after 20 minutes
     });
 
     // Recorded before the client ever sees the order id — this is the
@@ -308,9 +310,39 @@ router.post('/webhook', async (req, res) => {
     }
 
     const { event, payload } = req.body || {};
+
+    // payment.failed: same atomic claim pattern as the captured case below,
+    // just landing on the schema's existing (previously unused) 'failed'
+    // status instead of 'paid'. Gives failed live attempts (e.g. an OTP
+    // timeout) a real record instead of sitting at 'created' forever
+    // indistinguishable from "customer never finished checkout." No
+    // fulfillment to run — there's nothing to book for a failed payment.
+    if (event === 'payment.failed') {
+      const failedEntity = payload && payload.payment && payload.payment.entity;
+      const failedOrderId = failedEntity && failedEntity.order_id;
+      const failedPaymentId = failedEntity && failedEntity.id;
+      if (!failedOrderId) {
+        return res.status(400).json({ error: 'Malformed payment.failed payload.' });
+      }
+
+      const failedPayment = await Payment.findOneAndUpdate(
+        { razorpayOrderId: failedOrderId, status: 'created' },
+        { status: 'failed', razorpayPaymentId: failedPaymentId || '' },
+        { new: true }
+      );
+      if (failedPayment) {
+        logger.info(`Payment failed: order ${failedOrderId}${failedPaymentId ? ` (payment ${failedPaymentId})` : ''} — ${(failedEntity && failedEntity.error_description) || 'no reason given'}.`);
+      }
+      return res.json({ received: true });
+    }
+
     if (event !== 'payment.captured') {
-      // We only act on captures; everything else is acknowledged and
-      // ignored so Razorpay doesn't keep retrying events we don't need.
+      // Every other subscribed/unsubscribed event Razorpay might send
+      // (refunds, disputes, etc.) — nothing in this app acts on these yet,
+      // but they're logged rather than silently dropped so nothing Razorpay
+      // sends is invisible in the logs. Always acknowledged so Razorpay
+      // doesn't keep retrying a delivery we're intentionally not acting on.
+      logger.info(`Razorpay webhook received (no handler): ${event}`);
       return res.json({ received: true });
     }
 

@@ -22,6 +22,14 @@ function validateEnv() {
   if (process.env.SESSION_SECRET === INSECURE_SESSION_SECRET) {
     throw new Error('SESSION_SECRET is still the insecure development default. Generate a real one before deploying to production.');
   }
+  // A test-mode key silently serves a fully-functional-looking checkout
+  // that never moves real money and never triggers real bank OTP/UPI
+  // flows — the exact failure mode that caused this check to be added.
+  // Better to refuse to boot than to fail invisibly mid-checkout for a
+  // real customer.
+  if (!process.env.RAZORPAY_KEY_ID.startsWith('rzp_live_')) {
+    throw new Error('RAZORPAY_KEY_ID is not a live-mode key (must start with "rzp_live_"). Refusing to start in production with a test key.');
+  }
 }
 
 module.exports = { validateEnv, INSECURE_SESSION_SECRET };
