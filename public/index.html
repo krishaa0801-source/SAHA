@@ -567,27 +567,90 @@
   }, { threshold: 0.15 });
   revealEls.forEach(el => io.observe(el));
 
-  // Populate film roll with polaroid-style reviews
-  const reviews = [
-    { name: "Ananya", quote: "Wore a designer saree to my cousin's wedding for less than a third of the rental price elsewhere!", rotation: "-4deg", emoji: "✨" },
-    { name: "Priya", quote: "The cocktail dress fit perfectly and arrived steamed & ready — zero stress.", rotation: "3deg", emoji: "💃" },
-    { name: "Meher", quote: "Returned it in the prepaid pouch, done in two minutes. So easy.", rotation: "-2deg", emoji: "👗" },
-    { name: "Riya", quote: "I've worn 4 different looks this month without buying a single thing.", rotation: "5deg", emoji: "🌸" },
-    { name: "Diya", quote: "The blazer set was a total head-turner at my office party.", rotation: "-3deg", emoji: "🔥" },
-    { name: "Sana", quote: "Felt like I had a stylist on call — picked the perfect outfit for me.", rotation: "2deg", emoji: "💫" },
-  ];
+  // "Spotted in Saha's" — real, approved customer reviews fetched from
+  // the database (server/routes/reviews.js: published reviews only,
+  // featured first then newest). Nothing here is hardcoded — a new
+  // published review appears automatically on the next page load, no
+  // code changes needed.
+  function escapeHtmlHome(str) {
+    return String(str ?? '').replace(/[&<>"']/g, (ch) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+    }[ch]));
+  }
 
-  const container = document.getElementById('reviews-container');
-  const renderCards = () => reviews.map(r => `
-    <div class="polaroid-card" style="--rotation:${r.rotation}">
-      <div class="w-full h-48 bg-gradient-to-br from-primary to-deep-aubergine rounded-sm flex items-center justify-center text-5xl">${r.emoji}</div>
-      <p class="text-sm text-on-surface mt-3 font-aptos leading-snug">"${r.quote}"</p>
-      <p class="polaroid-caption text-xl mt-2">— ${r.name}</p>
-    </div>
-  `).join('');
+  function starsHtmlHome(rating) {
+    let html = '';
+    for (let i = 1; i <= 5; i++) {
+      const filled = i <= Math.round(rating || 0);
+      html += `<span class="material-symbols-outlined text-secondary-fixed-dim" style="font-size:1rem;${filled ? "font-variation-settings:'FILL' 1" : 'opacity:.35'}" aria-hidden="true">star</span>`;
+    }
+    return html;
+  }
 
-  // duplicate set for seamless loop
-  container.innerHTML = renderCards() + renderCards();
+  function fmtReviewDateHome(iso) {
+    if (!iso) return '';
+    return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  const REVIEW_ROTATIONS = ['-4deg', '3deg', '-2deg', '5deg', '-3deg', '2deg', '-5deg', '4deg'];
+
+  function reviewCardHtml(r, i) {
+    const firstName = (r.customerName || '').trim().split(/\s+/)[0] || "A Saha's Renter";
+    const rotation = REVIEW_ROTATIONS[i % REVIEW_ROTATIONS.length];
+    const photo = r.customerImage
+      ? `<img src="${escapeHtmlHome(r.customerImage)}" alt="" class="w-full h-48 object-cover rounded-sm" loading="lazy">`
+      : `<div class="w-full h-48 bg-gradient-to-br from-primary to-deep-aubergine rounded-sm flex items-center justify-center text-5xl">✨</div>`;
+    const dateLine = r.reviewDate
+      ? `<p class="text-[10px] uppercase tracking-wider text-primary/50 font-aptos mt-1">${fmtReviewDateHome(r.reviewDate)}</p>`
+      : '';
+    return `
+      <div class="polaroid-card" style="--rotation:${rotation}">
+        ${photo}
+        <div class="flex gap-0.5 mt-3">${starsHtmlHome(r.rating)}</div>
+        <p class="text-sm text-on-surface mt-2 font-aptos leading-snug">"${escapeHtmlHome(r.text)}"</p>
+        <p class="polaroid-caption text-xl mt-2">— ${escapeHtmlHome(firstName)}${r.productName ? `, on ${escapeHtmlHome(r.productName)}` : ''}</p>
+        ${dateLine}
+      </div>
+    `;
+  }
+
+  function reviewsEmptyStateHtml() {
+    return `
+      <div class="polaroid-card" style="--rotation:0deg; cursor:default;">
+        <div class="w-full h-48 bg-gradient-to-br from-primary to-deep-aubergine rounded-sm flex items-center justify-center">
+          <span class="material-symbols-outlined text-5xl text-golden-beige">favorite</span>
+        </div>
+        <p class="font-['Great_Vibes'] text-2xl text-deep-aubergine mt-3 text-center">Be the first to share your Saha experience.</p>
+      </div>
+    `;
+  }
+
+  (async function loadSpottedReviews() {
+    const container = document.getElementById('reviews-container');
+    if (!container) return;
+    let reviews = [];
+    try {
+      const res = await fetch('/api/reviews?limit=20');
+      const data = res.ok ? await res.json() : null;
+      reviews = (data && Array.isArray(data.reviews)) ? data.reviews : [];
+    } catch (e) {
+      reviews = [];
+    }
+
+    if (!reviews.length) {
+      container.style.animation = 'none';
+      container.style.width = '100%';
+      container.style.justifyContent = 'center';
+      container.innerHTML = reviewsEmptyStateHtml();
+      return;
+    }
+
+    const cardsHtml = reviews.map(reviewCardHtml).join('');
+    // Duplicated once for the seamless loop — .film-roll-move's keyframe
+    // scrolls exactly -50%, so this always wraps cleanly regardless of
+    // how many real reviews there are.
+    container.innerHTML = cardsHtml + cardsHtml;
+  })();
 
 </script>
 <script src="assets/nav-auth.js"></script>

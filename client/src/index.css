@@ -930,6 +930,16 @@
   border: 1px solid rgba(201, 163, 107, 0.14);
   border-radius: 10px;
 }
+.admin-list li.clickable {
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.admin-list li.clickable:hover,
+.admin-list li.clickable:focus-visible {
+  background: rgba(201, 163, 107, 0.1);
+  border-color: rgba(201, 163, 107, 0.35);
+  outline: none;
+}
 .admin-list-with-thumb {
   display: flex;
   align-items: center;

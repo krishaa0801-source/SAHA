@@ -1,7 +1,7 @@
 export type RecentOrder = {
   _id: string;
   name: string;
-  category: string;
+  customerName: string;
   size: string;
   from: string;
   to: string;

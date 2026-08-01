@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const { body } = require('express-validator');
 const Order = require('../../models/Order');
 const handleValidationErrors = require('../../middleware/validate');
@@ -11,6 +12,16 @@ const DEPOSIT_ACTIONS = ['refund_full', 'refund_partial', 'forfeit'];
 
 // depositNote is intentionally included here — this is the admin-only
 // surface. Customers never see it (see routes/orders.js's .select('-depositNote')).
+//
+// basePrice/tierMultiplier/tierLabel/rentalTotal/depositStatus/etc. were
+// added to the schema after this app already had real orders in
+// production — those older documents were never backfilled, so the
+// fields are genuinely absent (not just falsy) on them. `.lean()` skips
+// schema defaults entirely, so without these fallbacks the admin UI's
+// `.toLocaleString()` calls crash on any pre-migration order. `total`
+// existed from day one, so it's the correct stand-in for `rentalTotal`
+// on an order from before security deposits existed (the deposit really
+// was 0 then).
 function toAdminOrder(order) {
   return {
     id: order._id,
@@ -22,16 +33,16 @@ function toAdminOrder(order) {
     from: order.from,
     to: order.to,
     days: order.days,
-    basePrice: order.basePrice,
-    tierMultiplier: order.tierMultiplier,
-    tierLabel: order.tierLabel,
-    rentalTotal: order.rentalTotal,
-    securityDeposit: order.securityDeposit,
-    total: order.total,
+    basePrice: order.basePrice ?? 0,
+    tierMultiplier: order.tierMultiplier ?? 1,
+    tierLabel: order.tierLabel ?? '—',
+    rentalTotal: order.rentalTotal ?? order.total ?? 0,
+    securityDeposit: order.securityDeposit ?? 0,
+    total: order.total ?? 0,
     status: order.status,
-    depositStatus: order.depositStatus,
-    depositRefundAmount: order.depositRefundAmount,
-    depositNote: order.depositNote,
+    depositStatus: order.depositStatus ?? 'pending',
+    depositRefundAmount: order.depositRefundAmount ?? 0,
+    depositNote: order.depositNote ?? '',
     razorpayOrderId: order.razorpayOrderId,
     razorpayPaymentId: order.razorpayPaymentId,
     createdAt: order.createdAt,
@@ -46,6 +57,12 @@ router.get('/', async (req, res) => {
     const filter = {};
     if (req.query.status && ORDER_STATUSES.includes(req.query.status)) filter.status = req.query.status;
     if (req.query.depositStatus) filter.depositStatus = req.query.depositStatus;
+    // Deep-link support for the dashboard's "Recent Orders" — clicking one
+    // lands here filtered to just that order instead of the whole list.
+    // An invalid id just yields zero results rather than a 500.
+    if (req.query.orderId && mongoose.Types.ObjectId.isValid(req.query.orderId)) {
+      filter._id = req.query.orderId;
+    }
 
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));

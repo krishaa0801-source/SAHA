@@ -33,6 +33,7 @@ export type AdminOrder = {
 export type OrderListParams = {
   status?: OrderStatus | '';
   depositStatus?: DepositStatus | '';
+  orderId?: string;
   page?: number;
   limit?: number;
 };
@@ -71,6 +72,7 @@ export async function fetchAdminOrders(params: OrderListParams = {}): Promise<{ 
   const qs = new URLSearchParams();
   if (params.status) qs.set('status', params.status);
   if (params.depositStatus) qs.set('depositStatus', params.depositStatus);
+  if (params.orderId) qs.set('orderId', params.orderId);
   if (params.page) qs.set('page', String(params.page));
   if (params.limit) qs.set('limit', String(params.limit));
   const query = qs.toString();

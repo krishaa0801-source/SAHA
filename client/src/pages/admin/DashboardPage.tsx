@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { DashboardStats, fetchDashboard } from '../../lib/admin/dashboard';
 import { useToast } from '../../components/admin/ToastProvider';
+
+function fmtDashboardDate(d: string) {
+  return new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
 
 const STAT_TILES: Array<{ key: keyof DashboardStats; label: string; icon: string }> = [
   { key: 'totalProducts', label: 'Total Products', icon: 'checkroom' },
@@ -12,6 +16,7 @@ const STAT_TILES: Array<{ key: keyof DashboardStats; label: string; icon: string
 
 export default function DashboardPage() {
   const { showError } = useToast();
+  const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats | null>(null);
 
   useEffect(() => {
@@ -59,12 +64,25 @@ export default function DashboardPage() {
           ) : (
             <ul className="admin-list">
               {stats.recentOrders.map((o) => (
-                <li key={o._id}>
+                <li
+                  key={o._id}
+                  className="clickable"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => navigate(`/admin/orders?orderId=${o._id}`)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      navigate(`/admin/orders?orderId=${o._id}`);
+                    }
+                  }}
+                >
                   <div>
                     <div className="admin-list-title">{o.name}</div>
                     <div className="admin-list-sub">
-                      Size {o.size} · {o.from} → {o.to}
+                      {o.customerName} · Size {o.size} · {o.from} → {o.to}
                     </div>
+                    <div className="admin-list-sub">Placed {fmtDashboardDate(o.createdAt)}</div>
                   </div>
                   <div className="admin-list-end">
                     <span className={`status-badge status-${o.status}`}>{o.status}</span>
